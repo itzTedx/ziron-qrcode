@@ -198,7 +198,7 @@ export default function ProfileDashboard() {
                       value={shareLink}
                       size={256}
                       imageSettings={{
-                        src: `${process.env.NEXT_PUBLIC_BASE_PATH}/${card.company.logo}`,
+                        src: `${process.env.NEXT_PUBLIC_BASE_PATH}${card.company.logo}`,
                         x: undefined,
                         y: undefined,
                         height: 50,
