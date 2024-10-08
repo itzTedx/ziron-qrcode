@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import { plusJakarta } from "@/fonts";
 import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
@@ -23,6 +24,7 @@ export default function RootLayout({
         <div className="relative flex-1">
           <Header />
           {children}
+          <Toaster richColors />
         </div>
       </body>
     </html>
