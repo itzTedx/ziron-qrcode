@@ -1,3 +1,3 @@
 export default function Home() {
-  return <div className="">Dashboard</div>;
+  return <main className="px-4 py-6 md:px-12">Dashboard</main>;
 }

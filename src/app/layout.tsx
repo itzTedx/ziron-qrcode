@@ -20,9 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn("flex w-full antialiased", plusJakarta.className)}>
         <Sidebar />
-        <div className="flex-1">
+        <div className="relative flex-1">
           <Header />
-          <main className="px-4 py-6 md:px-12">{children}</main>
+          {children}
         </div>
       </body>
     </html>

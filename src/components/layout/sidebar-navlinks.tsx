@@ -25,6 +25,7 @@ export default function NavLinks() {
         const active = link.href === pathname;
         return (
           <li
+            key={link.label}
             className={cn(
               "flex w-full cursor-pointer border-l-8 px-6 py-4 font-semibold hover:bg-muted",
               active

@@ -3,14 +3,13 @@
 import Link from "next/link";
 import * as React from "react";
 
-import { Dialog } from "@radix-ui/react-dialog";
 import { IconPlus } from "@tabler/icons-react";
 
 import CompanyForm from "@/app/company/company-form";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -38,7 +37,10 @@ export function AddAction() {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Add new</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={() => setIsOpen(true)}>
+          <DropdownMenuItem
+            onSelect={() => setIsOpen(true)}
+            className="cursor-pointer"
+          >
             Company
           </DropdownMenuItem>
           <DropdownMenuItem>
@@ -47,22 +49,11 @@ export function AddAction() {
         </DropdownMenuContent>
       </DropdownMenu>
       <Dialog open={open} onOpenChange={setIsOpen}>
-        <DialogContent>
-          <DialogHeader>
+        <DialogContent className="max-w-2xl p-0">
+          <DialogHeader className="border-b p-6">
             <DialogTitle>Add New Company</DialogTitle>
           </DialogHeader>
           <CompanyForm />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => setIsOpen(false)}
-              className="flex items-center gap-1.5"
-            >
-              <IconPlus className="size-4" /> Add Company
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

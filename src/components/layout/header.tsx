@@ -14,7 +14,7 @@ export default function Header() {
   const currentLink = LINKS.find((link) => link.href === pathname);
   const currentPageTitle = currentLink ? currentLink.label : "Dashboard";
   return (
-    <div className="sticky top-0 flex h-20 w-full items-center justify-between gap-3 border-b bg-background/80 px-4 backdrop-blur-lg md:px-12">
+    <div className="sticky top-0 z-50 flex h-20 w-full items-center justify-between gap-3 border-b bg-background/80 px-4 backdrop-blur-lg md:px-12">
       <h1 className="text-2xl font-semibold">{currentPageTitle}</h1>
       <div className="flex gap-3">
         <form action="" className="relative">
