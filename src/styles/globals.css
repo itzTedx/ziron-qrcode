@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 280 60% 5%;
+    --card: 270 20% 98%;
+    --card-foreground: 280 60% 5%;
+    --popover: 270 20% 98%;
+    --popover-foreground: 280 60% 5%;
+    --primary: 245 100% 61%;
+    --primary-foreground: 245 20% 98%;
+    --secondary: 270 100% 59%;
+    --secondary-foreground: 280 60% 5%;
+    --muted: 270 6% 90%;
+    --muted-foreground: 280 5% 50%;
+    --accent: 0 0% 87%;
+    --accent-foreground: 280 60% 5%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 60% 20%;
+    --border: 270 20% 86%;
+    --input: 270 20% 86%;
+    --ring: 245 100% 60%;
+    --radius: 0.5rem;
+
+    --gray-50: 240 33% 98%;
+    --gray-100: 231 28% 90%;
+    --gray-200: 233 27% 82%;
+    --gray-300: 234 16% 70%;
+    --gray-400: 245 20% 66%;
+    --gray-500: 240 23% 60%;
+    --gray-600: 238 26% 52%;
+    --gray-700: 233 22% 40%;
+    --gray-800: 233 42% 30%;
+    --gray-900: 248 60% 17%;
+    --gray-950: 240 85% 10%;
+  }
+
+  .dark {
+    --background: 270 20% 2%;
+    --foreground: 280 60% 95%;
+    --card: 270 20% 2%;
+    --card-foreground: 280 60% 95%;
+    --popover: 270 20% 2%;
+    --popover-foreground: 280 60% 95%;
+    --primary: 253 58% 49%;
+    --primary-foreground: 280 60% 95%;
+    --secondary: 76 87% 41%;
+    --secondary-foreground: 270 20% 2%;
+    --muted: 270 20% 80%;
+    --muted-foreground: 280 60% 95%;
+    --accent: 0 0% 13%;
+    --accent-foreground: 280 60% 95%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 281 61% 10%;
+    --border: 270 20% 60%;
+    --input: 270 20% 80%;
+    --ring: 0 0% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h2 {
+    @apply text-balance text-3xl font-medium tracking-tight md:text-5xl md:leading-[4rem];
+  }
+
+  h3 {
+    @apply text-balance text-2xl font-medium tracking-tight text-gray-900 md:text-3xl md:leading-[2.5rem];
+  }
+}
+
+@media print {
+  @page {
+    size: A1;
+    margin: 0;
+  }
+}
+
+/* //Debugging CSS */
+/* * {
+  outline: 1px solid hsla(0, 100%, 50%, 1);
+} */
