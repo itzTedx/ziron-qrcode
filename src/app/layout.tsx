@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import Header from "@/components/layout/header";
+import Sidebar from "@/components/layout/sidebar";
 import { plusJakarta } from "@/fonts";
 import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
@@ -16,8 +18,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("flex max-h-dvh antialiased", plusJakarta.className)}>
-        {children}
+      <body className={cn("flex w-full antialiased", plusJakarta.className)}>
+        <Sidebar />
+        <div className="flex-1">
+          <Header />
+          <main className="px-4 py-6 md:px-12">{children}</main>
+        </div>
       </body>
     </html>
   );
