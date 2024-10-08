@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { IconPlus } from "@tabler/icons-react";
 
-import CompanyForm from "@/app/company/company-form";
+import CompanyForm from "@/app/(dashboard)/company/company-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

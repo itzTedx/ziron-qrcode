@@ -1,15 +1,17 @@
 import { create } from "zustand";
 
-interface ShareModalProps {
+interface ModalProps {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
+  data: any;
+  setData: (data: any) => void;
 }
 
-const useShareModal = create<ShareModalProps>((set) => ({
+export const useModal = create<ModalProps>((set) => ({
   isOpen: false,
   onOpen: () => set(() => ({ isOpen: true })),
   onClose: () => set(() => ({ isOpen: false })),
+  data: {},
+  setData: (data) => set({ data: { data } }),
 }));
-
-export default useShareModal;

@@ -27,13 +27,16 @@ export default function NavLinks() {
           <li
             key={link.label}
             className={cn(
-              "flex w-full cursor-pointer border-l-8 px-6 py-4 font-semibold hover:bg-muted",
+              "flex w-full cursor-pointer border-l-8 font-semibold hover:bg-muted",
               active
                 ? "border-primary text-primary"
                 : "border-background text-gray-600 hover:border-muted"
             )}
           >
-            <Link href={link.href} className="w-full">
+            <Link
+              href={link.href}
+              className="w-full px-6 py-3 transition-transform active:scale-95"
+            >
               {link.label}
             </Link>
           </li>

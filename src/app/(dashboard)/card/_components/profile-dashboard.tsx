@@ -8,6 +8,7 @@ import {
   IconArrowRight,
   IconChevronRight,
   IconCopy,
+  IconEdit,
 } from "@tabler/icons-react";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
@@ -24,7 +25,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { card } from "@/constants";
-import { cn } from "@/lib/utils";
+import { cn, slugify } from "@/lib/utils";
+
+import Share from "./share";
 
 export default function ProfileDashboard() {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -69,41 +72,48 @@ export default function ProfileDashboard() {
 
   return (
     <div className="-mt-20">
-      <div className="h-48 bg-yellow-500"></div>
-      <div className="container relative -mt-12 grid max-w-6xl grid-cols-10 divide-x rounded-lg bg-background py-6 shadow-lg shadow-muted/30">
-        <div className="col-span-4 flex justify-between px-6">
-          <div className="absolute -top-1/2 left-5 size-36 translate-y-1/3 overflow-hidden rounded-full border-4 border-background">
+      <div className="h-52 bg-yellow-500 md:h-48"></div>
+      <div className="container relative -mt-12 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-6 shadow-lg shadow-muted/30 md:divide-x">
+        <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
+          <div className="absolute -top-1/2 left-5 size-28 translate-y-6 overflow-hidden rounded-full border-4 border-background md:size-36 md:translate-y-1/3">
             <Image src="/sridhun.jpg" fill alt="Profile Image" quality={25} />
           </div>
-          <div className="ml-32">
-            <Badge variant="secondary">{card.company.name}</Badge>
-            <h2 className="text-2xl font-semibold">{card.name}</h2>
+          <div className="w-full max-md:mt-9 md:ml-32">
+            <div className="flex justify-between gap-3">
+              <Badge variant="secondary">{card.company.name}</Badge>
+              <span className="flex gap-3 text-primary">
+                <IconEdit />
+                <Share />
+              </span>
+            </div>
+            <h2 className="text-lg font-semibold lg:text-2xl">{card.name}</h2>
             <p className="text-sm">{card.designation}</p>
           </div>
-          <span>Edit</span>
         </div>
 
-        <div className="col-span-4 flex items-center justify-between gap-4 px-6">
-          <div className="w-full space-y-2">
-            <h3>Link</h3>
+        <div className="col-span-10 flex items-center justify-between gap-4 md:col-span-4 md:px-3 lg:px-6">
+          <div className="w-full space-y-2 max-md:hidden">
+            <h3 className="max-md:text-xs">Link</h3>
             <Input
               readOnly
-              className="w-full bg-gray-50"
+              className="w-full flex-shrink-0 bg-gray-50"
               defaultValue={"https://zironmedia.com/sridhun-prakash"}
             />
           </div>
           <div className="space-y-2">
-            <div className="flex items-center gap-1.5 text-nowrap text-sm">
-              Customize url <IconArrowRight className="size-4" />
+            <div className="hidden items-center gap-1.5 text-nowrap text-xs md:flex md:text-sm">
+              Customize url <IconArrowRight className="size-3 md:size-4" />
             </div>
             <Dialog>
               <DialogTrigger asChild>
                 <Button
                   variant="secondary"
-                  className="flex items-center gap-1.5"
+                  className="hidden items-center gap-1.5 md:flex"
                 >
                   <Icons.share className="size-4 stroke-[1.5]" />
-                  Share url
+                  <span>
+                    Share <span className="max-md:hidden">url</span>
+                  </span>
                 </Button>
               </DialogTrigger>
               <DialogContent
@@ -168,7 +178,8 @@ export default function ProfileDashboard() {
                       </Button>
                     </div>
                     <Link
-                      href="/"
+                      href={`/id/${slugify(card.name)}`}
+                      target="_blank"
                       className="flex items-center justify-between gap-6 pb-3 pt-6"
                     >
                       <div className="flex items-center gap-4">
@@ -192,7 +203,7 @@ export default function ProfileDashboard() {
                     </Link>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-6 px-9 pb-6">
+                  <div className="flex flex-col items-center justify-center gap-6 px-9 pb-9 pt-3">
                     <QRCodeSVG
                       ref={svgRef}
                       value={shareLink}
@@ -226,7 +237,7 @@ export default function ProfileDashboard() {
           </div>
         </div>
 
-        <div className="col-span-2 flex flex-col gap-3 px-6">
+        <div className="col-span-2 hidden flex-col gap-3 px-6 md:flex">
           <Button
             variant="outline"
             className="border-destructive text-destructive"
