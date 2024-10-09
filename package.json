@@ -25,6 +25,7 @@
     "lucide-react": "^0.447.0",
     "next": "14.2.14",
     "next-themes": "^0.3.0",
+    "next-view-transitions": "^0.3.2",
     "qrcode.react": "^4.0.1",
     "react": "^18",
     "react-dom": "^18",

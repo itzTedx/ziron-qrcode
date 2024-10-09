@@ -8,6 +8,12 @@ export const cardSchema = z.object({
   company: z.string(),
   designation: z.string().min(2),
   bio: z.string(),
-  links: z.array(z.string()),
+  links: z
+    .array(
+      z.object({
+        value: z.string().url({ message: "Please enter a valid URL." }),
+      })
+    )
+    .optional(),
   template: z.string(),
 });
