@@ -44,7 +44,7 @@ export function AddAction() {
             Company
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/card">Digital Card</Link>
+            <Link href="/card/new">Digital Card</Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

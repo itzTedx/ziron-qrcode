@@ -95,8 +95,8 @@ export default function CompanyForm() {
                       )}
                     </div>
                     <UploadButton
-                      endpoint="profilePicture"
-                      className="ut-allowed-content:text-secondary-foreground/70 ut-label:text-primary ut-button:w-fit ut-button:px-4 ut-button:h-9 ut-button:bg-primary ut-button:ut-uploading:after:bg-secondary ut-allowed-content:text-xs cursor-pointer transition-all duration-500 ease-in-out hover:bg-primary/5"
+                      endpoint="logoUploader"
+                      className="cursor-pointer transition-all duration-500 ease-in-out hover:bg-primary/5 ut-button:h-9 ut-button:w-fit ut-button:bg-primary ut-button:px-4 ut-allowed-content:text-xs ut-allowed-content:text-secondary-foreground/70 ut-label:text-primary ut-button:ut-uploading:after:bg-secondary"
                       onUploadBegin={() => {
                         setLoading(true);
                         toast.loading("Uploading Image");

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import {
   IconArrowRight,
@@ -10,7 +10,6 @@ import {
   IconCopy,
   IconEdit,
 } from "@tabler/icons-react";
-import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 
 import { Icons } from "@/components/assets/icons";
@@ -27,11 +26,10 @@ import { Input } from "@/components/ui/input";
 import { card } from "@/constants";
 import { cn, slugify } from "@/lib/utils";
 
+import QRCodeDownload from "./qr-code-download";
 import Share from "./share";
 
 export default function ProfileDashboard() {
-  const svgRef = useRef<SVGSVGElement>(null);
-
   const [step, setStep] = useState(1);
   const [copied, setCopied] = useState(false);
   const shareLink = " https://app.zironmedia.com/sridhun_prakash_ziron-media"; // Replace with your actual share link
@@ -47,29 +45,6 @@ export default function ProfileDashboard() {
     }
   };
 
-  const downloadSVG = () => {
-    const svg = svgRef.current;
-
-    if (svg) {
-      const serializer = new XMLSerializer();
-      const svgString = serializer.serializeToString(svg);
-
-      // Create a blob from the SVG string
-      const blob = new Blob([svgString], {
-        type: "image/svg+xml;charset=utf-8",
-      });
-      const url = URL.createObjectURL(blob);
-
-      // Create a download link and trigger it
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${card.name}.svg`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
-
   return (
     <div className="-mt-20">
       <div className="h-52 bg-yellow-500 md:h-48"></div>
@@ -81,7 +56,7 @@ export default function ProfileDashboard() {
           <div className="w-full max-md:mt-9 md:ml-32">
             <div className="flex justify-between gap-3">
               <Badge variant="secondary">{card.company.name}</Badge>
-              <span className="flex gap-3 text-primary">
+              <span className="flex gap-3 text-primary md:hidden">
                 <IconEdit />
                 <Share />
               </span>
@@ -141,9 +116,7 @@ export default function ProfileDashboard() {
                           <h5 className="font-semibold">
                             {copied ? "Link Copied!" : "Copy Link"}
                           </h5>
-                          <p className="line-clamp-1 text-sm">
-                            https://app.zironmedia.com/sridhun_prakash_ziron-media
-                          </p>
+                          <p className="line-clamp-1 text-sm">{shareLink}</p>
                         </div>
                       </div>
                       <Button
@@ -203,34 +176,12 @@ export default function ProfileDashboard() {
                     </Link>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-6 px-9 pb-9 pt-3">
-                    <QRCodeSVG
-                      ref={svgRef}
-                      value={shareLink}
-                      size={256}
-                      imageSettings={{
-                        src: `${process.env.NEXT_PUBLIC_BASE_PATH}${card.company.logo}`,
-                        x: undefined,
-                        y: undefined,
-                        height: 50,
-                        width: 50,
-                        opacity: 1,
-                        excavate: true,
-                      }}
-                    />
-                    <div className="flex w-full flex-col gap-3">
-                      <Button className="w-full" onClick={downloadSVG}>
-                        Download
-                      </Button>
-                      <Button
-                        className="w-full"
-                        onClick={() => setStep(1)}
-                        variant="outline"
-                      >
-                        Back
-                      </Button>
-                    </div>
-                  </div>
+                  <QRCodeDownload
+                    shareLink={shareLink}
+                    logo={`${process.env.NEXT_PUBLIC_BASE_PATH}${card.company.logo}`}
+                    cardName={card.name}
+                    onBack={() => setStep(1)}
+                  />
                 )}
               </DialogContent>
             </Dialog>

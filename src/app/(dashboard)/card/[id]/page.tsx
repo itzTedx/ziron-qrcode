@@ -1,16 +1,19 @@
-import CardForm from "../_components/card-form";
-import ProfileDashboard from "../_components/profile-dashboard";
+import { getCardById } from "@/server/actions/get-card-by-id";
+import { getCompanies } from "@/server/actions/get-company";
 
-export default function CardPage() {
-  return (
-    <main className="relative">
-      <ProfileDashboard />
-      <div className="container grid max-w-6xl gap-8 pt-3 md:grid-cols-10 md:pt-9">
-        <CardForm />
-        <div className="col-span-4 hidden rounded-lg bg-background md:block">
-          Preview
-        </div>
-      </div>
-    </main>
-  );
+import CardCustomizeForm from "./_components/card-customize-form";
+
+interface CardProps {
+  params: { id: string };
+}
+
+export default async function CardPage({ params }: CardProps) {
+  const { companies } = await getCompanies();
+  const { card } = await getCardById(parseInt(params.id));
+
+  const isNew = params.id === "new";
+
+  if (!companies) return null;
+
+  return <CardCustomizeForm data={companies} isNew={isNew} />;
 }

@@ -6,7 +6,14 @@ const f = createUploadthing();
 const auth = (req: Request) => ({ id: "zironmedia" });
 
 export const ourFileRouter = {
-  profilePicture: f(["image", "image/svg+xml"])
+  photo: f({
+    image: { maxFileSize: "4MB", maxFileCount: 1 },
+  })
+    .middleware(({ req }) => auth(req))
+    .onUploadComplete((data) => console.log("file", data)),
+  cover: f({
+    image: { maxFileSize: "4MB", maxFileCount: 1 },
+  })
     .middleware(({ req }) => auth(req))
     .onUploadComplete((data) => console.log("file", data)),
 

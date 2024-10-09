@@ -1,41 +1,110 @@
 import Image from "next/image";
+import Link from "next/link";
 
-import { IconEdit, IconPlus } from "@tabler/icons-react";
+import { IconEdit, IconPlus, IconShare } from "@tabler/icons-react";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { getCompanies } from "@/server/actions/get-company";
 
 export default async function Home() {
-  const { companies, error } = await getCompanies();
+  const { companies } = await getCompanies();
 
   if (!companies) return "";
 
   return (
-    <main className="px-4 py-6 md:px-12">
-      {companies.map((company) => (
-        <div key={company.id} className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full border bg-white p-1">
-              <Image
-                src={company.logo!}
-                alt={`${company.name}'s Logo`}
-                title={`${company.name}'s Logo`}
-                height={35}
-                width={35}
-                className="size-4 object-contain"
-              />
+    <main className="grid gap-8 px-4 py-6 md:px-12">
+      {companies.map((company, i) => (
+        <Collapsible key={company.id} className="w-full" defaultOpen={i === 0}>
+          <div className="flex w-full cursor-pointer items-center justify-between border-b pb-3">
+            <CollapsibleTrigger asChild>
+              <div className="flex w-full items-center gap-3">
+                <div className="flex size-8 items-center justify-center rounded-full border bg-white p-1">
+                  <Image
+                    src={company.logo!}
+                    alt={`${company.name}'s Logo`}
+                    title={`${company.name}'s Logo`}
+                    height={35}
+                    width={35}
+                    className="size-4 object-contain"
+                  />
+                </div>
+                <h2 className="font-medium capitalize">{company.name}</h2>
+              </div>
+            </CollapsibleTrigger>
+            <div className="flex gap-2">
+              <Button size="icon" variant="outline">
+                <IconEdit className="size-4" />
+              </Button>
+              <Button size="icon" variant="outline">
+                <IconPlus className="size-4" />
+              </Button>
             </div>
-            <h2 className="font-medium capitalize">{company.name}</h2>
           </div>
-          <div className="flex gap-2">
-            <Button size="icon" variant="outline">
-              <IconEdit />
-            </Button>
-            <Button size="icon" variant="outline">
-              <IconPlus />
-            </Button>
-          </div>
-        </div>
+          <CollapsibleContent className="grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-4 pt-3">
+            {!company.persons.length && (
+              <div className="col-span-full flex w-full flex-col items-center justify-center gap-3 rounded-md border bg-white py-9">
+                <Image
+                  src="/not-available.svg"
+                  height={200}
+                  width={200}
+                  alt="No Cards Available"
+                />
+
+                <p className="pt-2 font-semibold text-muted-foreground">
+                  No Cards Available
+                </p>
+                <Button className="gap-2" asChild>
+                  <Link href="/card/new">
+                    <IconPlus className="size-4" /> Add Card
+                  </Link>
+                </Button>
+              </div>
+            )}
+            {company.persons.map((person) => (
+              <Card
+                className="p-4 transition-colors duration-500 hover:border-primary"
+                key={person.id}
+              >
+                <CardContent className="flex flex-col items-center justify-between p-0">
+                  <div className="flex flex-col items-center text-center">
+                    <Image
+                      src={person.image}
+                      height={120}
+                      width={120}
+                      alt={`${person.name}'s Photo`}
+                      title={`${person.name}'s Photo`}
+                      className="size-28 rounded-full object-cover"
+                    />
+                    <h3 className="mt-2 font-semibold">{person.name}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {person.designation}
+                    </p>
+                  </div>
+                  <div className="flex w-full gap-2 pt-4">
+                    <Button
+                      className="w-full gap-1.5 text-sm"
+                      variant="outline"
+                      asChild
+                    >
+                      <Link href={`card/${person.id}`}>
+                        <IconEdit className="size-4" /> Edit
+                      </Link>
+                    </Button>
+                    <Button className="w-full gap-1.5 text-sm">
+                      <IconShare className="size-4" /> Share
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </CollapsibleContent>
+        </Collapsible>
       ))}
     </main>
   );

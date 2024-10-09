@@ -5,7 +5,7 @@ import { createSafeActionClient } from "next-safe-action";
 import { companySchema } from "@/types/company-schema";
 
 import { db } from "../db";
-import { Company } from "../schema";
+import { companies } from "../schema";
 
 const action = createSafeActionClient();
 
@@ -14,7 +14,7 @@ export const createCompany = action
   .action(async ({ parsedInput: { name, phone, website, address, logo } }) => {
     try {
       const newCategory = await db
-        .insert(Company)
+        .insert(companies)
         .values({
           name,
           phone,

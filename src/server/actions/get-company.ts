@@ -4,7 +4,11 @@ import { db } from "../db";
 
 export async function getCompanies() {
   try {
-    const companies = await db.query.Company.findMany();
+    const companies = await db.query.companies.findMany({
+      with: {
+        persons: true,
+      },
+    });
 
     if (!companies) throw new Error("Company not found");
 
