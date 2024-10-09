@@ -35,7 +35,7 @@ export default function CompanyForm() {
   }
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="p-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 pt-3">
         <div className="flex gap-6 pb-6">
           <FormField
             control={form.control}
@@ -130,14 +130,14 @@ export default function CompanyForm() {
           <DialogClose asChild>
             <Button
               variant="outline"
-              className="font-mediums border-destructive text-destructive"
+              className="border-destructive font-medium text-destructive"
             >
               Cancel
             </Button>
           </DialogClose>
           <Button
             type="submit"
-            className="font-mediums flex items-center gap-1.5"
+            className="flex items-center gap-1.5 font-medium"
           >
             <IconPlus className="size-4" /> Add Company
           </Button>
