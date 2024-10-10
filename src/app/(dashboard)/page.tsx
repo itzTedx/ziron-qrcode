@@ -41,8 +41,10 @@ export default async function Home() {
               <Button size="icon" variant="outline">
                 <IconEdit className="size-4" />
               </Button>
-              <Button size="icon" variant="outline">
-                <IconPlus className="size-4" />
+              <Button size="icon" variant="outline" asChild>
+                <Link href={`/card/new?company=${company.id}`}>
+                  <IconPlus className="size-4" />
+                </Link>
               </Button>
             </div>
           </div>

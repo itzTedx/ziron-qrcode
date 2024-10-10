@@ -11,6 +11,7 @@
     "migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^17.0.0",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-collapsible": "^1.1.1",

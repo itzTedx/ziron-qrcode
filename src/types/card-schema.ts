@@ -17,4 +17,14 @@ export const cardSchema = z.object({
   cover: z.string().optional(),
 
   slug: z.string().optional(),
+
+  links: z
+    .array(
+      z.object({
+        value: z.string().url({ message: "Please enter a valid URL." }),
+      })
+    )
+    .optional(),
+
+  attachments: z.string().optional(),
 });

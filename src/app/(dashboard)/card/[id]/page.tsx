@@ -1,7 +1,7 @@
 import { getCardById } from "@/server/actions/get-card-by-id";
 import { getCompanies } from "@/server/actions/get-company";
 
-import CardCustomizeForm from "./_components/card-customize-form";
+import CardCustomizeForm from "./_components/card-form";
 
 interface CardProps {
   params: { id: string };
