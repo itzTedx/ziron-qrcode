@@ -1,6 +1,10 @@
 import { Metadata } from "next";
 
+import { plusJakarta } from "@/fonts";
+import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
+
+import Footer from "./_components/footer";
 
 export const metadata: Metadata = {
   title: "Preview",
@@ -17,10 +21,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex min-h-dvh items-center justify-center">
-        <main className="container h-96 max-w-sm rounded-xl bg-background py-4">
+      <body
+        className={cn(
+          "flex min-h-dvh md:items-center md:justify-center",
+          plusJakarta.className
+        )}
+      >
+        <main className="container relative h-[700px] max-w-screen-sm bg-background px-0 md:overflow-hidden md:rounded-xl md:shadow-xl">
           {children}
         </main>
+        <Footer />
       </body>
     </html>
   );

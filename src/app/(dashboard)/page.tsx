@@ -62,7 +62,7 @@ export default async function Home() {
                   No Cards Available
                 </p>
                 <Button className="gap-2" asChild>
-                  <Link href="/card/new">
+                  <Link href={`/card/new?company=${company.id}`}>
                     <IconPlus className="size-4" /> Add Card
                   </Link>
                 </Button>

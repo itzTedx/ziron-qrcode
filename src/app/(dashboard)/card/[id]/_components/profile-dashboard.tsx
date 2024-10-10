@@ -23,8 +23,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { card } from "@/constants";
-import { cn, slugify } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Person } from "@/types/card-customize-props";
 
 import QRCodeDownload from "./qr-code-download";
@@ -59,7 +58,7 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
           alt="cover image"
           title="Cover Image"
           className="object-cover"
-          quality={25}
+          quality={60}
         />
       </div>
       <div className="container relative -mt-12 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-6 shadow-lg shadow-muted/30 md:divide-x">
@@ -165,7 +164,7 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
                       </Button>
                     </div>
                     <Link
-                      href={`/id/${slugify(card.name)}`}
+                      href={`/id/${data.slug}`}
                       target="_blank"
                       className="flex items-center justify-between gap-6 pb-3 pt-6"
                     >
@@ -192,8 +191,8 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
                 ) : (
                   <QRCodeDownload
                     shareLink={shareLink}
-                    logo={`${process.env.NEXT_PUBLIC_BASE_PATH}${card.company.logo}`}
-                    cardName={card.name}
+                    logo={data.company.logo!}
+                    cardName={data.name}
                     onBack={() => setStep(1)}
                   />
                 )}

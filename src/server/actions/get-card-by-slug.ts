@@ -5,10 +5,10 @@ import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { persons } from "../schema";
 
-export async function getCardById(id: string) {
+export async function getCardBySlug(slug: string) {
   try {
     const card = await db.query.persons.findFirst({
-      where: eq(persons.id, parseInt(id)),
+      where: eq(persons.slug, slug),
       with: {
         company: true,
       },
