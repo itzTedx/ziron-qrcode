@@ -7,14 +7,13 @@ import { Edit2, Facebook, MoreVertical, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 
 type SocialLink = {
   id: string;
   name: string;
 };
 
-export default function DndTest() {
+export default function Component() {
   const [links, setLinks] = useState<SocialLink[]>([
     { id: "1", name: "Facebook" },
     { id: "2", name: "Facebook" },
@@ -23,7 +22,6 @@ export default function DndTest() {
     { id: "5", name: "Facebook" },
     { id: "6", name: "Facebook" },
   ]);
-  const [editingId, setEditingId] = useState<string | null>(null);
 
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -35,24 +33,13 @@ export default function DndTest() {
     setLinks(newLinks);
   };
 
-  const handleEdit = (id: string) => {
-    setEditingId(id);
-  };
-
-  const handleSave = (id: string, newName: string) => {
-    setLinks(
-      links.map((link) => (link.id === id ? { ...link, name: newName } : link))
-    );
-    setEditingId(null);
-  };
-
   const handleDelete = (id: string) => {
     setLinks(links.filter((link) => link.id !== id));
   };
 
   const handleAddLink = () => {
     const newId = (links.length + 1).toString();
-    setLinks([...links, { id: newId, name: "New Link" }]);
+    setLinks([...links, { id: newId, name: "Facebook" }]);
   };
 
   return (
@@ -67,45 +54,36 @@ export default function DndTest() {
             >
               {links.map((link, index) => (
                 <Draggable key={link.id} draggableId={link.id} index={index}>
-                  {(provided) => (
+                  {(provided, snapshot) => (
                     <li
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      {...provided.dragHandleProps}
+                      className={`${snapshot.isDragging ? "opacity-50" : ""}`}
                     >
                       <Card>
                         <CardContent className="flex items-center justify-between p-4">
                           <div className="flex items-center space-x-2">
                             <Facebook className="h-5 w-5 text-blue-600" />
-                            {editingId === link.id ? (
-                              <Input
-                                value={link.name}
-                                onChange={(e) =>
-                                  handleSave(link.id, e.target.value)
-                                }
-                                onBlur={() => setEditingId(null)}
-                                className="w-32"
-                              />
-                            ) : (
-                              <span>{link.name}</span>
-                            )}
+                            <span>{link.name}</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleEdit(link.id)}
-                            >
+                            <Button variant="ghost" size="icon">
                               <Edit2 className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="icon"
                               onClick={() => handleDelete(link.id)}
+                              aria-label="Delete link"
                             >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
-                            <Button variant="ghost" size="icon">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              {...provided.dragHandleProps}
+                              aria-label="Drag to reorder"
+                            >
                               <MoreVertical className="h-4 w-4" />
                             </Button>
                           </div>

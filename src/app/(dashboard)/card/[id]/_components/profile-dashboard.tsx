@@ -50,16 +50,18 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
     }
   };
 
-  console.log(data);
-
   return (
     <div className="-mt-20">
-      <div
-        className="h-52 bg-secondary md:h-48"
-        style={{
-          backgroundImage: `url("${data.cover}")`,
-        }}
-      ></div>
+      <div className="relative h-52 bg-secondary md:h-48">
+        <Image
+          src={data.cover}
+          fill
+          alt="cover image"
+          title="Cover Image"
+          className="object-cover"
+          quality={25}
+        />
+      </div>
       <div className="container relative -mt-12 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-6 shadow-lg shadow-muted/30 md:divide-x">
         <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
           <div className="absolute -top-1/2 left-5 size-28 translate-y-6 overflow-hidden rounded-full border-4 border-background md:size-36 md:translate-y-1/3">
