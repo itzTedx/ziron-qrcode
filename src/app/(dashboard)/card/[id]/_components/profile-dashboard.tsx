@@ -36,7 +36,7 @@ interface ProfileDashboardProps {
 export default function ProfileDashboard({ data }: ProfileDashboardProps) {
   const [step, setStep] = useState(1);
   const [copied, setCopied] = useState(false);
-  const shareLink = `https://app.zironmedia.com/id/${data.slug}`; // Replace with your actual share link
+  const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/id/${data.slug}`; // Replace with your actual share link
 
   const copyLink = async () => {
     try {
