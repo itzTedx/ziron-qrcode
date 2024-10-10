@@ -3,7 +3,12 @@
 import CompanyForm from "@/app/(dashboard)/company/company-form";
 import { useCompanyFormModal } from "@/store/use-company-form-modal";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../ui/dialog";
 
 export default function CompanyFormModal() {
   const { isOpen, data, closeModal } = useCompanyFormModal();

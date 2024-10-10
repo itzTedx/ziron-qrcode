@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 
+import ShareModal from "@/components/features/modals/share-modal";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
-import ShareModal from "@/components/modals/share-modal";
 import { Toaster } from "@/components/ui/sonner";
 import { plusJakarta } from "@/fonts";
 import { cn } from "@/lib/utils";

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 import {
   IconBuildingSkyscraper,
@@ -11,17 +10,9 @@ import {
 
 import LinkCard from "@/app/(dashboard)/card/[id]/_components/links-card";
 import SaveContactButton from "@/components/save-contact-button";
-import { getCardBySlug } from "@/server/actions/get-card-by-slug";
 
-export default async function PreviewPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const { card } = await getCardBySlug(params.slug);
-
-  if (!card) notFound();
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function PreviewPage({ card }: { card: any }) {
   return (
     <div className="relative flex h-full w-full flex-col justify-between">
       <div className="md:overflow-y-scroll">

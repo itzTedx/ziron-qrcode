@@ -9,16 +9,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconArrowRight,
   IconCaretUpDownFilled,
+  IconDots,
   IconEdit,
   IconUpload,
   IconUser,
 } from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Command,
   CommandEmpty,
@@ -36,6 +38,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import Iphone15Pro from "@/components/ui/iphone-15-pro";
 import {
   Popover,
   PopoverContent,
@@ -75,12 +78,12 @@ export default function CardCustomizeForm({
     form.setValue("companyId", parseInt(companyIdParams));
   }
 
-  const { fields, append } = useFieldArray({
-    name: "links",
-    control: form.control,
-  });
+  // const { fields, append } = useFieldArray({
+  //   name: "links",
+  //   control: form.control,
+  // });
 
-  const { execute, status } = useAction(createCard, {
+  const { execute } = useAction(createCard, {
     onExecute: () => {
       setLoading(true);
     },
@@ -115,10 +118,10 @@ export default function CardCustomizeForm({
           className={cn(isEditMode && "mt-4")}
         >
           {isEditMode && initialData && <ProfileDashboard data={initialData} />}
-          <div className="container grid max-w-6xl gap-8 pt-3 md:grid-cols-10 md:pt-9">
+          <div className="container grid max-w-6xl gap-8 pt-3 md:grid-cols-12 md:pt-9">
             <Tabs
               defaultValue="information"
-              className="col-span-6 w-full items-start"
+              className="col-span-8 w-full items-start"
             >
               <TabsList className="w-full">
                 <TabsTrigger value="information">Information</TabsTrigger>
@@ -133,7 +136,7 @@ export default function CardCustomizeForm({
                 <FormField
                   control={form.control}
                   name="image"
-                  render={({ field }) => (
+                  render={({}) => (
                     <FormItem className="col-span-2">
                       <FormControl>
                         {!isEditMode && (
@@ -357,7 +360,7 @@ export default function CardCustomizeForm({
                   <FormField
                     control={form.control}
                     name="cover"
-                    render={({ field }) => (
+                    render={({}) => (
                       <FormItem className="col-span-2">
                         <FormLabel>Cover image</FormLabel>
                         <FormControl>
@@ -430,7 +433,7 @@ export default function CardCustomizeForm({
                   <FormField
                     control={form.control}
                     name={`links`}
-                    render={({ field }) => (
+                    render={({}) => (
                       <FormItem>
                         <FormLabel className="text-base font-normal">
                           Links
@@ -517,10 +520,18 @@ export default function CardCustomizeForm({
               </TabsContent>
             </Tabs>
 
-            <div className="col-span-4 hidden h-fit rounded-lg bg-background md:block">
-              Preview
-            </div>
-            <Button type="submit">Submit</Button>
+            <Card className="col-span-4 hidden rounded-lg bg-background md:block">
+              <CardHeader className="flex-row items-center justify-between border-b py-4">
+                <h5>Preview</h5>
+                <IconDots />
+              </CardHeader>
+              <CardContent className="py-5">
+                <Iphone15Pro className="size-full" />
+              </CardContent>
+            </Card>
+            <Button type="submit" disabled={loading}>
+              Submit
+            </Button>
           </div>
         </form>
       </Form>

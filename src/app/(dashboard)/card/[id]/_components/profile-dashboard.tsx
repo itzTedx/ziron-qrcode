@@ -24,7 +24,7 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
 
   return (
     <div className="-mt-20">
-      <div className="relative h-52 bg-secondary md:h-48">
+      <div className="relative h-52 bg-secondary md:h-44">
         <Image
           src={data.cover}
           fill
@@ -34,9 +34,9 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
           quality={60}
         />
       </div>
-      <div className="container relative -mt-12 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-6 shadow-lg shadow-muted/30 md:divide-x">
+      <div className="container relative -mt-16 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-4 shadow-lg shadow-muted/30 md:divide-x">
         <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
-          <div className="absolute -top-1/2 left-5 size-28 translate-y-6 overflow-hidden rounded-full border-4 border-background md:size-36 md:translate-y-1/3">
+          <div className="absolute -top-[60%] left-5 size-28 translate-y-20 overflow-hidden rounded-full border-4 border-background md:size-36 md:translate-y-1/3">
             <Image src={data.image} fill alt="Profile Image" quality={25} />
           </div>
           <div className="w-full max-md:mt-9 md:ml-32">

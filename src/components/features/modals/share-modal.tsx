@@ -9,10 +9,15 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useShareModalStore } from "@/store/use-share-modal";
 
-import { Icons } from "../assets/icons";
-import QRCodeDownload from "../qr-code-download";
-import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Icons } from "../../assets/icons";
+import QRCodeDownload from "../../qr-code-download";
+import { Button } from "../../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../ui/dialog";
 
 export default function ShareModal() {
   const [step, setStep] = useState(1);
