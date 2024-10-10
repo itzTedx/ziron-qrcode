@@ -10,8 +10,9 @@ import {
 } from "@tabler/icons-react";
 
 import LinkCard from "@/app/(dashboard)/card/[id]/_components/links-card";
-import { Button } from "@/components/ui/button";
 import { getCardBySlug } from "@/server/actions/get-card-by-slug";
+
+import SaveContactButton from "../../_components/save-contact-button";
 
 export default async function PreviewPage({
   params,
@@ -95,7 +96,7 @@ export default async function PreviewPage({
         </section>
       </div>
       <div className="sticky bottom-0 mt-auto h-20 w-full max-w-screen-sm bg-background p-4">
-        <Button className="w-full">Add Contact</Button>
+        <SaveContactButton data={card} />
       </div>
     </div>
   );
