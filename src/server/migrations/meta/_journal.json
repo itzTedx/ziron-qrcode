@@ -57,6 +57,13 @@
       "when": 1728494271274,
       "tag": "0007_bright_loners",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1728565893154,
+      "tag": "0008_groovy_bromley",
+      "breakpoints": true
     }
   ]
 }

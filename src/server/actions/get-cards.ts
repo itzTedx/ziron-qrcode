@@ -10,10 +10,10 @@ export async function getCards() {
       },
     });
 
-    if (!cards) throw new Error("Company not found");
+    if (!cards) throw new Error("Card not found");
 
     return { cards };
   } catch (error) {
-    return { error: "Failed to get company details" };
+    return { error: `Failed to get card details${error}` };
   }
 }

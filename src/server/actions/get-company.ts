@@ -14,6 +14,6 @@ export async function getCompanies() {
 
     return { companies };
   } catch (error) {
-    return { error: "Failed to get company details" };
+    return { error: `Failed to get company details${error}` };
   }
 }

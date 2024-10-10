@@ -32,7 +32,7 @@ export const persons = pgTable("persons", {
   image: text("logo").notNull(),
   cover: text("cover").notNull(),
 
-  slug: text("slug"),
+  slug: text("slug").unique(),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
