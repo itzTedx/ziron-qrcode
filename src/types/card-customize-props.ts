@@ -20,12 +20,12 @@ export interface Person {
 }
 
 export interface Company {
-  id: number;
+  id?: number;
   name: string;
   phone: string | null;
   website: string | null;
   address: string | null;
   logo: string | null;
-  createdAt: Date;
-  updatedAt: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date | null;
 }

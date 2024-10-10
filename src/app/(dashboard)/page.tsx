@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { IconEdit, IconPlus, IconShare } from "@tabler/icons-react";
+import { IconEdit, IconPlus } from "@tabler/icons-react";
 
+import CompanyFormModal from "@/components/modals/company-form-modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -11,6 +12,9 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { getCompanies } from "@/server/actions/get-company";
+
+import EditCompanyButton from "./_components/edit-company-button";
+import ShareButton from "./_components/share-button";
 
 export default async function Home() {
   const { companies } = await getCompanies();
@@ -38,9 +42,7 @@ export default async function Home() {
               </div>
             </CollapsibleTrigger>
             <div className="flex gap-2">
-              <Button size="icon" variant="outline">
-                <IconEdit className="size-4" />
-              </Button>
+              <EditCompanyButton initialData={company} />
               <Button size="icon" variant="outline" asChild>
                 <Link href={`/card/new?company=${company.id}`}>
                   <IconPlus className="size-4" />
@@ -98,9 +100,7 @@ export default async function Home() {
                         <IconEdit className="size-4" /> Edit
                       </Link>
                     </Button>
-                    <Button className="w-full gap-1.5 text-sm">
-                      <IconShare className="size-4" /> Share
-                    </Button>
+                    <ShareButton name={person.name} slug={person.slug!} />
                   </div>
                 </CardContent>
               </Card>
@@ -108,6 +108,7 @@ export default async function Home() {
           </CollapsibleContent>
         </Collapsible>
       ))}
+      <CompanyFormModal />
     </main>
   );
 }

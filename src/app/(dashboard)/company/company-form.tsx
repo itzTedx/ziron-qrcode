@@ -24,25 +24,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { UploadButton } from "@/lib/uploadthing";
 import { createCompany } from "@/server/actions/create-company";
+import { Company } from "@/types/card-customize-props";
 import { companySchema } from "@/types/company-schema";
 
-export default function CompanyForm() {
+interface CompanyFormProps {
+  initialData: Company;
+}
+
+export default function CompanyForm({ initialData }: CompanyFormProps) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
 
+  const defaultValues = initialData ? { ...initialData } : {};
+
   const form = useForm<z.infer<typeof companySchema>>({
     resolver: zodResolver(companySchema),
-    defaultValues: {
-      name: "",
-      phone: "+971 ",
-      website: "",
-      address: "",
-      logo: "",
-    },
+    defaultValues,
   });
 
-  const { execute, status } = useAction(createCompany, {
+  const { execute } = useAction(createCompany, {
     onExecute: () => {
       setLoading(true);
     },
@@ -71,11 +72,11 @@ export default function CompanyForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 pt-3">
-        <div className="flex gap-6 pb-6">
+        <div className="flex flex-col gap-6 pb-6 md:flex-row">
           <FormField
             control={form.control}
             name="logo"
-            render={({ field }) => (
+            render={({}) => (
               <FormItem>
                 <FormControl>
                   <div className="mt-2 flex flex-col items-center gap-2">
@@ -99,10 +100,12 @@ export default function CompanyForm() {
                       className="cursor-pointer transition-all duration-500 ease-in-out hover:bg-primary/5 ut-button:h-9 ut-button:w-fit ut-button:bg-primary ut-button:px-4 ut-allowed-content:text-xs ut-allowed-content:text-secondary-foreground/70 ut-label:text-primary ut-button:ut-uploading:after:bg-secondary"
                       onUploadBegin={() => {
                         setLoading(true);
+                        setUploading(true);
                         toast.loading("Uploading Image");
                       }}
                       onClientUploadComplete={(res) => {
                         setLoading(false);
+                        setUploading(false);
                         form.setValue("logo", res[0].url);
                         toast.dismiss();
                         toast.success("Logo Uploaded");
@@ -120,7 +123,7 @@ export default function CompanyForm() {
                             </div>
                           );
                         },
-                        allowedContent({ ready, fileTypes, isUploading }) {
+                        allowedContent({ ready, isUploading }) {
                           if (!ready) return "";
                           if (isUploading) return "";
                           return `Formats: png, svg`;
@@ -208,7 +211,7 @@ export default function CompanyForm() {
             />
           </div>
         </div>
-        <DialogFooter>
+        <DialogFooter className="gap-3">
           <DialogClose asChild>
             <Button
               variant="outline"
@@ -219,7 +222,7 @@ export default function CompanyForm() {
           </DialogClose>
           <Button
             type="submit"
-            disabled={status === "executing"}
+            disabled={loading || form.formState.isDirty}
             className="flex items-center gap-1.5 font-medium"
           >
             <IconPlus className="size-4" /> Add Company

@@ -1,49 +1,36 @@
 "use client";
 
-import { useState } from "react";
-
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { Edit2, Facebook, MoreVertical, Trash2 } from "lucide-react";
+import { IconBrandFacebook, IconPlus } from "@tabler/icons-react";
+import { Edit2, MoreVertical, Trash2 } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { cardSchema } from "@/types/card-schema";
 
-type SocialLink = {
-  id: string;
-  name: string;
-};
+export default function SocialMediaLinks() {
+  const { control } = useFormContext<z.infer<typeof cardSchema>>();
 
-export default function Component() {
-  const [links, setLinks] = useState<SocialLink[]>([
-    { id: "1", name: "Facebook" },
-    { id: "2", name: "Facebook" },
-    { id: "3", name: "Facebook" },
-    { id: "4", name: "Facebook" },
-    { id: "5", name: "Facebook" },
-    { id: "6", name: "Facebook" },
-  ]);
+  const { fields, append, remove, move } = useFieldArray({
+    control,
+    name: "links",
+  });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
 
-    const newLinks = Array.from(links);
-    const [reorderedItem] = newLinks.splice(result.source.index, 1);
-    newLinks.splice(result.destination.index, 0, reorderedItem);
-
-    setLinks(newLinks);
-  };
-
-  const handleDelete = (id: string) => {
-    setLinks(links.filter((link) => link.id !== id));
+    move(result.source.index, result.destination.index);
   };
 
   const handleAddLink = () => {
-    const newId = (links.length + 1).toString();
-    setLinks([...links, { id: newId, name: "Facebook" }]);
+    append({ id: Date.now().toString(), label: "", href: "" });
   };
 
   return (
-    <div className="mx-auto w-full max-w-md p-4">
+    <div className="w-full">
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="list">
           {(provided) => (
@@ -52,8 +39,8 @@ export default function Component() {
               ref={provided.innerRef}
               className="space-y-2"
             >
-              {links.map((link, index) => (
-                <Draggable key={link.id} draggableId={link.id} index={index}>
+              {fields.map((field, index) => (
+                <Draggable key={field.id} draggableId={field.id} index={index}>
                   {(provided, snapshot) => (
                     <li
                       ref={provided.innerRef}
@@ -62,9 +49,21 @@ export default function Component() {
                     >
                       <Card>
                         <CardContent className="flex items-center justify-between p-4">
-                          <div className="flex items-center space-x-2">
-                            <Facebook className="h-5 w-5 text-blue-600" />
-                            <span>{link.name}</span>
+                          <div className="flex items-center space-x-4">
+                            <IconBrandFacebook className="size-9 text-blue-600" />
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {field.label || "Unnamed Link"}
+                              </span>
+                              <a
+                                href={field.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-muted-foreground hover:underline"
+                              >
+                                {field.href || "No URL set"}
+                              </a>
+                            </div>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Button variant="ghost" size="icon">
@@ -73,7 +72,7 @@ export default function Component() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => handleDelete(link.id)}
+                              onClick={() => remove(index)}
                               aria-label="Delete link"
                             >
                               <Trash2 className="h-4 w-4 text-red-500" />
@@ -100,9 +99,11 @@ export default function Component() {
       </DragDropContext>
       <Button
         onClick={handleAddLink}
-        className="mt-4 w-full bg-gray-100 text-gray-700 hover:bg-gray-200"
+        variant="outline"
+        className="mt-4 h-12 w-full gap-2"
       >
-        + Add Link
+        <IconPlus className="mr-2 h-4 w-4" />
+        Add Link
       </Button>
     </div>
   );

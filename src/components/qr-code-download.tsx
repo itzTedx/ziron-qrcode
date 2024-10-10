@@ -6,14 +6,12 @@ import { Button } from "@/components/ui/button";
 
 interface QRCodeDownloadProps {
   shareLink: string;
-  logo: string;
   cardName: string;
-  onBack: () => void; // Callback for the back button
+  onBack: () => void;
 }
 
 export default function QRCodeDownload({
   shareLink,
-  logo,
   cardName,
   onBack,
 }: QRCodeDownloadProps) {
@@ -44,18 +42,7 @@ export default function QRCodeDownload({
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 px-9 pb-9 pt-3">
-      <QRCodeSVG
-        ref={svgRef}
-        value={shareLink}
-        size={256}
-        imageSettings={{
-          src: logo,
-          height: 50,
-          width: 50,
-          opacity: 1,
-          excavate: true,
-        }}
-      />
+      <QRCodeSVG ref={svgRef} value={shareLink} size={256} />
       <div className="flex w-full flex-col gap-3">
         <Button className="w-full" onClick={downloadSVG}>
           Download

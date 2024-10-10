@@ -42,6 +42,7 @@ export const createCard = action
   .action(
     async ({
       parsedInput: {
+        id,
         name,
         phone,
         email,
@@ -56,30 +57,36 @@ export const createCard = action
       try {
         const uniqueSlug = await generateUniqueSlug(name);
 
-        const newCard = await db
-          .insert(persons)
-          .values({
-            name,
-            email,
-            phone,
-            address,
-            bio,
+        if (id) {
+          console.log("existing card");
+        }
 
-            companyId,
-            designation,
+        if (!id) {
+          const newCard = await db
+            .insert(persons)
+            .values({
+              name,
+              email,
+              phone,
+              address,
+              bio,
 
-            image:
-              image ||
-              `https://ui-avatars.com/api/?background=random&name=${name}`,
-            cover: cover || "/images/placeholder-cover.jpg",
+              companyId,
+              designation,
 
-            slug: uniqueSlug,
-          })
-          .returning();
-        revalidatePath("/");
-        return {
-          success: `Digital Card: (${newCard[0].name}) has been created`,
-        };
+              image:
+                image ||
+                `https://ui-avatars.com/api/?background=random&name=${name}`,
+              cover: cover || "/images/placeholder-cover.jpg",
+
+              slug: uniqueSlug,
+            })
+            .returning();
+          revalidatePath("/");
+          return {
+            success: `Digital Card: (${newCard[0].name}) has been created`,
+          };
+        }
       } catch (err) {
         return { error: JSON.stringify(err) };
       }

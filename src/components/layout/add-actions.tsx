@@ -1,18 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import * as React from "react";
 
 import { IconPlus } from "@tabler/icons-react";
 
-import CompanyForm from "@/app/(dashboard)/company/company-form";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,9 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useCompanyFormModal } from "@/store/use-company-form-modal";
 
 export function AddAction() {
-  const [open, setIsOpen] = React.useState(false);
+  const openModal = useCompanyFormModal((state) => state.openModal);
 
   return (
     <>
@@ -38,7 +31,7 @@ export function AddAction() {
           <DropdownMenuLabel>Add new</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onSelect={() => setIsOpen(true)}
+            onClick={() => openModal()}
             className="cursor-pointer"
           >
             Company
@@ -48,14 +41,14 @@ export function AddAction() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Dialog open={open} onOpenChange={setIsOpen}>
+      {/* <Dialog open={open} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-2xl p-0">
           <DialogHeader className="border-b p-6">
             <DialogTitle>Add New Company</DialogTitle>
           </DialogHeader>
           <CompanyForm />
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }

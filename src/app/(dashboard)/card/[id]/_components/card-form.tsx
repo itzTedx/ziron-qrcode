@@ -10,7 +10,6 @@ import {
   IconArrowRight,
   IconCaretUpDownFilled,
   IconEdit,
-  IconPlus,
   IconUpload,
   IconUser,
 } from "@tabler/icons-react";
@@ -51,8 +50,7 @@ import { createCard } from "@/server/actions/create-card";
 import { CardCustomizeProps } from "@/types/card-customize-props";
 import { cardSchema } from "@/types/card-schema";
 
-import DndTest from "./dnd-test";
-import LinkCard from "./links-card";
+import LinksDND from "./links-dnd-test";
 import ProfileDashboard from "./profile-dashboard";
 
 export default function CardCustomizeForm({
@@ -307,7 +305,7 @@ export default function CardCustomizeForm({
                                     className="cursor-pointer px-4 py-2.5 font-medium"
                                     key={cat.id}
                                     onSelect={() => {
-                                      form.setValue("companyId", cat.id);
+                                      form.setValue("companyId", cat.id!);
                                     }}
                                   >
                                     {cat.name}
@@ -409,11 +407,11 @@ export default function CardCustomizeForm({
               </TabsContent>
               <TabsContent value="links" className="flex flex-col gap-8">
                 <div className="w-full space-y-4">
-                  {fields.map((field, index) => (
+                  {/* {fields.map((field, index) => (
                     <FormField
                       control={form.control}
                       key={field.id}
-                      name={`links.${index}.value`}
+                      name={`links.${index}.href`}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-base font-normal">
@@ -427,10 +425,26 @@ export default function CardCustomizeForm({
                         </FormItem>
                       )}
                     />
-                  ))}
-                  <DndTest />
-                  <LinkCard />
-                  <Button
+                  ))} */}
+
+                  <FormField
+                    control={form.control}
+                    name={`links`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-base font-normal">
+                          Links
+                        </FormLabel>
+
+                        <FormControl>
+                          <LinksDND />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* <Button
                     type="button"
                     variant="outline"
                     size="sm"
@@ -439,7 +453,7 @@ export default function CardCustomizeForm({
                   >
                     <IconPlus className="size-4" />
                     Add Link
-                  </Button>
+                  </Button> */}
                 </div>
                 <section>
                   <div className="flex items-center justify-between">
@@ -461,7 +475,7 @@ export default function CardCustomizeForm({
                 <FormField
                   control={form.control}
                   name="cover"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem className="col-span-2">
                       <FormLabel className="flex items-center justify-between text-base font-normal">
                         Attachments
@@ -479,19 +493,19 @@ export default function CardCustomizeForm({
                           endpoint="attachments"
                           onUploadBegin={() => {
                             setLoading(true);
-                            toast.loading("Uploading cover image...");
+                            toast.loading("Uploading attachment file...");
                           }}
                           onUploadError={(error) => {
-                            form.setError("cover", {
+                            form.setError("attachments", {
                               type: "validate",
                               message: error.message,
                             });
                           }}
                           onClientUploadComplete={(res) => {
                             setLoading(false);
-                            form.setValue("cover", res[0].url);
+                            form.setValue("attachments", res[0].url);
                             toast.dismiss();
-                            toast.success("Cover image uploaded");
+                            toast.success("Attachment uploaded");
                           }}
                           config={{ mode: "auto" }}
                         />

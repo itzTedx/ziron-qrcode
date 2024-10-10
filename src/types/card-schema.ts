@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const cardSchema = z.object({
+  id: z.string().optional(),
   name: z
     .string()
     .min(2, { message: "Please enter full name" })
@@ -21,7 +22,9 @@ export const cardSchema = z.object({
   links: z
     .array(
       z.object({
-        value: z.string().url({ message: "Please enter a valid URL." }),
+        id: z.string().optional(),
+        label: z.string().url({ message: "Please enter a valid URL." }),
+        href: z.string().url(),
       })
     )
     .optional(),

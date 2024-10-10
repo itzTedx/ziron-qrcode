@@ -5,6 +5,7 @@ import { extractRouterConfig } from "uploadthing/server";
 
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
+import ShareModal from "@/components/modals/share-modal";
 import { Toaster } from "@/components/ui/sonner";
 import { plusJakarta } from "@/fonts";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,7 @@ export default function RootLayout({
         <Sidebar />
         <div className="relative flex-1">
           <Header />
+          <ShareModal />
           {children}
           <Toaster richColors />
         </div>
