@@ -16,6 +16,11 @@ export const ourFileRouter = {
   })
     .middleware(({ req }) => auth(req))
     .onUploadComplete((data) => console.log("file", data)),
+  attachments: f({
+    pdf: { maxFileSize: "8MB", maxFileCount: 1 },
+  })
+    .middleware(({ req }) => auth(req))
+    .onUploadComplete((data) => console.log("file", data)),
 
   logoUploader: f({
     image: { maxFileSize: "4MB", maxFileCount: 1 },

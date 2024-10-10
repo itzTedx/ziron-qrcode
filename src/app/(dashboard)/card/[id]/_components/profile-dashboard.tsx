@@ -25,14 +25,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { card } from "@/constants";
 import { cn, slugify } from "@/lib/utils";
+import { Person } from "@/types/card-customize-props";
 
 import QRCodeDownload from "./qr-code-download";
 import Share from "./share";
 
-export default function ProfileDashboard() {
+interface ProfileDashboardProps {
+  data: Person;
+}
+
+export default function ProfileDashboard({ data }: ProfileDashboardProps) {
   const [step, setStep] = useState(1);
   const [copied, setCopied] = useState(false);
-  const shareLink = " https://app.zironmedia.com/sridhun_prakash_ziron-media"; // Replace with your actual share link
+  const shareLink = `https://app.zironmedia.com/${data.slug}`; // Replace with your actual share link
 
   const copyLink = async () => {
     try {
@@ -45,24 +50,31 @@ export default function ProfileDashboard() {
     }
   };
 
+  console.log(data);
+
   return (
     <div className="-mt-20">
-      <div className="h-52 bg-yellow-500 md:h-48"></div>
+      <div
+        className="h-52 bg-secondary md:h-48"
+        style={{
+          backgroundImage: `url("${data.cover}")`,
+        }}
+      ></div>
       <div className="container relative -mt-12 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-6 shadow-lg shadow-muted/30 md:divide-x">
         <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
           <div className="absolute -top-1/2 left-5 size-28 translate-y-6 overflow-hidden rounded-full border-4 border-background md:size-36 md:translate-y-1/3">
-            <Image src="/sridhun.jpg" fill alt="Profile Image" quality={25} />
+            <Image src={data.image} fill alt="Profile Image" quality={25} />
           </div>
           <div className="w-full max-md:mt-9 md:ml-32">
             <div className="flex justify-between gap-3">
-              <Badge variant="secondary">{card.company.name}</Badge>
+              <Badge variant="secondary">{data.company.name}</Badge>
               <span className="flex gap-3 text-primary md:hidden">
                 <IconEdit />
                 <Share />
               </span>
             </div>
-            <h2 className="text-lg font-semibold lg:text-2xl">{card.name}</h2>
-            <p className="text-sm">{card.designation}</p>
+            <h2 className="text-lg font-semibold lg:text-2xl">{data.name}</h2>
+            <p className="text-sm">{data.designation}</p>
           </div>
         </div>
 
@@ -72,7 +84,7 @@ export default function ProfileDashboard() {
             <Input
               readOnly
               className="w-full flex-shrink-0 bg-gray-50"
-              defaultValue={"https://zironmedia.com/sridhun-prakash"}
+              defaultValue={shareLink}
             />
           </div>
           <div className="space-y-2">

@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function CardPage() {
   return (
     <div>
-      <Link href="/card/sridhun">Edit Page</Link>
+      <Link href="/card/3">Edit Page</Link>
     </div>
   );
 }

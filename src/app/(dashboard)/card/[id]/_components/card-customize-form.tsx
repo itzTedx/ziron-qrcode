@@ -1,13 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  IconArrowRight,
   IconCaretUpDownFilled,
   IconEdit,
+  IconPlus,
   IconUpload,
   IconUser,
 } from "@tabler/icons-react";
@@ -24,7 +27,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from "@/components/ui/command";
 import {
   Form,
@@ -42,39 +44,29 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { LINKS } from "@/constants";
 import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
+import { CardCustomizeProps } from "@/types/card-customize-props";
 import { cardSchema } from "@/types/card-schema";
 
+import LinkCard from "./links-card";
 import ProfileDashboard from "./profile-dashboard";
-
-interface CardCustomizedProps {
-  data: {
-    id: number;
-    name: string;
-    phone: string | null;
-    website: string | null;
-    address: string | null;
-    logo: string | null;
-    createdAt: Date;
-    updatedAt: Date | null;
-  }[];
-  isNew: boolean;
-}
 
 export default function CardCustomizeForm({
   data,
-  isNew,
-}: CardCustomizedProps) {
+  isEditMode,
+  initialData,
+}: CardCustomizeProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const defaultValues = initialData ? { ...initialData } : {};
+
   const form = useForm<z.infer<typeof cardSchema>>({
     resolver: zodResolver(cardSchema),
-    defaultValues: {
-      name: "",
-    },
+    defaultValues,
   });
 
   const { execute, status } = useAction(createCard, {
@@ -102,15 +94,16 @@ export default function CardCustomizeForm({
   }
 
   const photo = form.getValues("image");
+  const cover = form.getValues("cover");
 
   return (
-    <main className="relative">
+    <main className="relative pb-12">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className={cn(!isNew && "mt-4")}
+          className={cn(isEditMode && "mt-4")}
         >
-          {!isNew && <ProfileDashboard />}
+          {isEditMode && initialData && <ProfileDashboard data={initialData} />}
           <div className="container grid max-w-6xl gap-8 pt-3 md:grid-cols-10 md:pt-9">
             <Tabs
               defaultValue="information"
@@ -126,55 +119,76 @@ export default function CardCustomizeForm({
                 value="information"
                 className="grid grid-cols-2 gap-4"
               >
-                {isNew && (
-                  <div className="flex gap-3 pt-3">
-                    <div className="relative grid size-20 place-items-center overflow-hidden rounded-full border bg-gray-100">
-                      {photo ? (
-                        <Image
-                          src={photo}
-                          alt=""
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <IconUser className="size-8 text-muted-foreground/60" />
-                      )}
-                    </div>
-                    <UploadButton
-                      endpoint="photo"
-                      className="cursor-pointer transition-all duration-500 ease-in-out ut-button:h-9 ut-button:w-fit ut-button:border ut-button:bg-transparent ut-button:px-4 ut-button:text-foreground ut-allowed-content:hidden ut-button:ut-uploading:after:bg-secondary"
-                      onUploadBegin={() => {
-                        setLoading(true);
-                        toast.loading("Uploading Image");
-                      }}
-                      onClientUploadComplete={(res) => {
-                        setLoading(false);
-                        form.setValue("image", res[0].url);
-                        toast.dismiss();
-                        toast.success("Logo Uploaded");
-                      }}
-                      content={{
-                        button({ ready, isUploading }) {
-                          if (ready)
-                            if (isUploading)
-                              return (
-                                <div className="text-sm">Uploading...</div>
-                              );
-                          return (
-                            <div className="flex items-center gap-1.5 text-nowrap text-sm font-medium">
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormControl>
+                        {!isEditMode && (
+                          <div className="flex gap-3 pt-3">
+                            <div className="relative grid size-20 flex-shrink-0 place-items-center overflow-hidden rounded-full border bg-gray-100">
                               {photo ? (
-                                <IconEdit className="size-4" />
+                                <Image
+                                  src={photo}
+                                  alt=""
+                                  fill
+                                  className="object-cover"
+                                />
                               ) : (
-                                <IconUpload className="size-4" />
+                                <IconUser className="size-8 text-muted-foreground/60" />
                               )}
-                              {photo ? "Edit" : "Upload Photo"}
                             </div>
-                          );
-                        },
-                      }}
-                    />
-                  </div>
-                )}
+                            <UploadButton
+                              endpoint="photo"
+                              className="cursor-pointer transition-all duration-500 ease-in-out ut-button:h-9 ut-button:w-fit ut-button:border ut-button:bg-transparent ut-button:px-4 ut-button:text-foreground ut-allowed-content:hidden ut-button:ut-uploading:after:bg-secondary"
+                              onUploadError={(error) => {
+                                form.setError("image", {
+                                  type: "validate",
+                                  message: error.message,
+                                });
+                              }}
+                              onUploadBegin={() => {
+                                setLoading(true);
+                                toast.loading("Uploading Image");
+                              }}
+                              onClientUploadComplete={(res) => {
+                                setLoading(false);
+                                form.setValue("image", res[0].url);
+                                toast.dismiss();
+                                toast.success("Logo Uploaded");
+                              }}
+                              content={{
+                                button({ ready, isUploading }) {
+                                  if (ready)
+                                    if (isUploading)
+                                      return (
+                                        <div className="text-sm">
+                                          Uploading...
+                                        </div>
+                                      );
+                                  return (
+                                    <div className="flex items-center gap-1.5 text-nowrap text-sm font-medium">
+                                      {photo ? (
+                                        <IconEdit className="size-4" />
+                                      ) : (
+                                        <IconUpload className="size-4" />
+                                      )}
+                                      {photo ? "Edit" : "Upload Photo"}
+                                    </div>
+                                  );
+                                },
+                              }}
+                            />
+                          </div>
+                        )}
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="name"
@@ -265,15 +279,19 @@ export default function CardCustomizeForm({
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
+                        <PopoverContent
+                          align="start"
+                          className="p-0 sm:w-[19.5rem]"
+                        >
                           <Command>
                             <CommandInput placeholder="Search Category..." />
-                            <CommandEmpty>No Category found.</CommandEmpty>
-                            <CommandList>
+                            <CommandEmpty>Company not found</CommandEmpty>
+                            <CommandList className="p-1">
                               <CommandGroup>
                                 {data.map((cat) => (
                                   <CommandItem
                                     value={cat.name}
+                                    className="cursor-pointer px-4 py-2.5 font-medium"
                                     key={cat.id}
                                     onSelect={() => {
                                       form.setValue("companyId", cat.id);
@@ -283,7 +301,6 @@ export default function CardCustomizeForm({
                                   </CommandItem>
                                 ))}
                               </CommandGroup>
-                              <CommandSeparator />
                             </CommandList>
                           </Command>
                         </PopoverContent>
@@ -325,27 +342,131 @@ export default function CardCustomizeForm({
                     </FormItem>
                   )}
                 />
-                <div className="col-span-2">
-                  <FormLabel>Cover image</FormLabel>
-                  {form.getValues("cover")}
-                  <UploadDropzone
-                    endpoint="cover"
-                    onUploadBegin={() => {
-                      setLoading(true);
-                      toast.loading("Uploading cover image...");
-                    }}
-                    onClientUploadComplete={(res) => {
-                      setLoading(false);
-                      form.setValue("cover", res[0].url);
-                      toast.dismiss();
-                      toast.success("Cover image uploaded");
-                    }}
+                {!isEditMode && (
+                  <FormField
+                    control={form.control}
+                    name="cover"
+                    render={({ field }) => (
+                      <FormItem className="col-span-2">
+                        <FormLabel>Cover image</FormLabel>
+                        <FormControl>
+                          {cover ? (
+                            <div className="group relative mt-2 flex h-52 w-full items-center justify-center overflow-hidden rounded-md border transition duration-300 hover:brightness-90">
+                              <Button
+                                className="gap-2 opacity-0 shadow-xl backdrop-blur-lg transition-opacity duration-300 group-hover:opacity-100"
+                                type="button"
+                              >
+                                <IconEdit /> Change
+                              </Button>
+                              <Image
+                                src={cover}
+                                fill
+                                alt=""
+                                className="-z-10 object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <UploadDropzone
+                              endpoint="cover"
+                              onUploadBegin={() => {
+                                setLoading(true);
+                                toast.loading("Uploading cover image...");
+                              }}
+                              onUploadError={(error) => {
+                                form.setError("cover", {
+                                  type: "validate",
+                                  message: error.message,
+                                });
+                              }}
+                              onClientUploadComplete={(res) => {
+                                setLoading(false);
+                                form.setValue("cover", res[0].url);
+                                toast.dismiss();
+                                toast.success("Cover image uploaded");
+                              }}
+                              config={{ mode: "auto" }}
+                            />
+                          )}
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
+                )}
+              </TabsContent>
+              <TabsContent value="links" className="flex flex-col gap-8">
+                <div className="w-full space-y-4">
+                  <LinkCard />
+                  <LinkCard />
+                  <LinkCard />
+                  <LinkCard />
+                  <div className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border bg-background p-3 font-medium hover:bg-muted">
+                    <IconPlus className="size-4" /> Add Link
+                  </div>
                 </div>
+                <section>
+                  <div className="flex items-center justify-between">
+                    <h3>Suggestions</h3>
+                    <Button variant="link">View All</Button>
+                  </div>
+                  <div className="grid grid-cols-[repeat(auto-fill,minmax(6.2rem,1fr))] gap-3">
+                    {LINKS.map((link, i) => (
+                      <div
+                        className="flex flex-col items-center rounded-md border bg-background p-3"
+                        key={i}
+                      >
+                        <link.icon className="size-12 stroke-1" />
+                        <p className="text-xs font-medium">{link.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+                <FormField
+                  control={form.control}
+                  name="cover"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel className="flex items-center justify-between text-base font-normal">
+                        Attachments
+                        <Link
+                          target="_blank"
+                          href="https://www.ilovepdf.com/compress_pdf"
+                          className="flex items-center gap-1 px-2 text-xs font-medium text-primary hover:underline"
+                        >
+                          Pdf Compressor
+                          <IconArrowRight className="size-3" />
+                        </Link>
+                      </FormLabel>
+                      <FormControl>
+                        <UploadDropzone
+                          endpoint="attachments"
+                          onUploadBegin={() => {
+                            setLoading(true);
+                            toast.loading("Uploading cover image...");
+                          }}
+                          onUploadError={(error) => {
+                            form.setError("cover", {
+                              type: "validate",
+                              message: error.message,
+                            });
+                          }}
+                          onClientUploadComplete={(res) => {
+                            setLoading(false);
+                            form.setValue("cover", res[0].url);
+                            toast.dismiss();
+                            toast.success("Cover image uploaded");
+                          }}
+                          config={{ mode: "auto" }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </TabsContent>
             </Tabs>
-            {/* <Button type="submit">Submit</Button> */}
-            <div className="col-span-4 hidden rounded-lg bg-background md:block">
+
+            <div className="col-span-4 hidden h-fit rounded-lg bg-background md:block">
               Preview
             </div>
             <Button type="submit">Submit</Button>

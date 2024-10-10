@@ -1,3 +1,12 @@
+import {
+  IconBrandFacebook,
+  IconBrandInstagram,
+  IconBrandLinkedin,
+  IconBrandTiktok,
+  IconBrandWhatsapp,
+  IconWorldWww,
+} from "@tabler/icons-react";
+
 export const card = {
   name: "Sridhun Prakash",
   designation: "Graphic Designer",
@@ -33,3 +42,30 @@ export const card = {
   ],
   template: "default",
 };
+
+export const LINKS = [
+  {
+    name: "Instagram",
+    icon: IconBrandInstagram,
+  },
+  {
+    name: "Facebook",
+    icon: IconBrandFacebook,
+  },
+  {
+    name: "Linkedin",
+    icon: IconBrandLinkedin,
+  },
+  {
+    name: "Whatsapp",
+    icon: IconBrandWhatsapp,
+  },
+  {
+    name: "Tiktok",
+    icon: IconBrandTiktok,
+  },
+  {
+    name: "Custom Link",
+    icon: IconWorldWww,
+  },
+];
