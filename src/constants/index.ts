@@ -1,11 +1,4 @@
-import {
-  IconBrandFacebook,
-  IconBrandInstagram,
-  IconBrandLinkedin,
-  IconBrandTiktok,
-  IconBrandWhatsapp,
-  IconWorldWww,
-} from "@tabler/icons-react";
+import { Icons } from "@/components/assets/icons";
 
 export const card = {
   name: "Sridhun Prakash",
@@ -45,27 +38,53 @@ export const card = {
 
 export const LINKS = [
   {
-    name: "Instagram",
-    icon: IconBrandInstagram,
+    label: "General",
+    links: [
+      {
+        title: "Custom Link",
+        href: "",
+        icon: Icons.www,
+      },
+    ],
   },
   {
-    name: "Facebook",
-    icon: IconBrandFacebook,
-  },
-  {
-    name: "Linkedin",
-    icon: IconBrandLinkedin,
-  },
-  {
-    name: "Whatsapp",
-    icon: IconBrandWhatsapp,
-  },
-  {
-    name: "Tiktok",
-    icon: IconBrandTiktok,
-  },
-  {
-    name: "Custom Link",
-    icon: IconWorldWww,
+    label: "Socials",
+    links: [
+      {
+        title: "Instagram",
+        href: "",
+        icon: Icons.instagram,
+      },
+      {
+        title: "Facebook",
+        href: "",
+        icon: Icons.facebook,
+      },
+      {
+        title: "Whatsapp",
+        href: "",
+        icon: Icons.whatsapp,
+      },
+      {
+        title: "Twitter",
+        href: "",
+        icon: Icons.x,
+      },
+      {
+        title: "Tiktok",
+        href: "",
+        icon: Icons.tiktok,
+      },
+      {
+        title: "Linkedin",
+        href: "",
+        icon: Icons.linkedin,
+      },
+      {
+        title: "Messenger",
+        href: "",
+        icon: Icons.messenger,
+      },
+    ],
   },
 ];

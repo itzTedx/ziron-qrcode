@@ -11,6 +11,12 @@ export const ourFileRouter = {
   })
     .middleware(({ req }) => auth(req))
     .onUploadComplete((data) => console.log("file", data)),
+  icon: f({
+    image: { maxFileSize: "4MB", maxFileCount: 1 },
+    "image/svg+xml": { maxFileSize: "4MB", maxFileCount: 1 },
+  })
+    .middleware(({ req }) => auth(req))
+    .onUploadComplete((data) => console.log("file", data)),
   cover: f({
     image: { maxFileSize: "4MB", maxFileCount: 1 },
   })

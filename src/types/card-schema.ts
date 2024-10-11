@@ -25,6 +25,7 @@ export const cardSchema = z.object({
         id: z.string().optional(),
         label: z.string().url({ message: "Please enter a valid URL." }),
         href: z.string().url(),
+        icon: z.object({}),
       })
     )
     .optional(),

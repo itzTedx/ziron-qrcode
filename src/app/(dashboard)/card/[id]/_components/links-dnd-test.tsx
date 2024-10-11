@@ -8,10 +8,13 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAddLinkModal } from "@/store/use-add-link-modal";
 import { cardSchema } from "@/types/card-schema";
 
 export default function SocialMediaLinks() {
   const { control } = useFormContext<z.infer<typeof cardSchema>>();
+
+  const openModal = useAddLinkModal((state) => state.openModal);
 
   const { fields, append, remove, move } = useFieldArray({
     control,
@@ -26,7 +29,8 @@ export default function SocialMediaLinks() {
   };
 
   const handleAddLink = () => {
-    append({ id: Date.now().toString(), label: "", href: "" });
+    // append({ id: Date.now().toString(), label: "", href: "" });
+    openModal();
   };
 
   return (
@@ -97,6 +101,7 @@ export default function SocialMediaLinks() {
           )}
         </Droppable>
       </DragDropContext>
+
       <Button
         onClick={handleAddLink}
         variant="outline"

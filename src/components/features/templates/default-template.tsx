@@ -19,7 +19,6 @@ interface TemplateProps {
 
 export default function DefaultTemplate({ card, company }: TemplateProps) {
   const companyData = company?.find((c) => c.id === card?.companyId);
-  console.log(company);
 
   if (!card) return null;
   return (

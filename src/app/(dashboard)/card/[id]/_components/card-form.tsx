@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import AddLinkModal from "@/components/features/modals/add-link-modal";
 import DefaultTemplate from "@/components/features/templates/default-template";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -46,10 +47,10 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { LINKS } from "@/constants";
 import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
+import { useAddLinkModal } from "@/store/use-add-link-modal";
 import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
 
@@ -71,6 +72,8 @@ export default function CardCustomizeForm({
 
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const openModal = useAddLinkModal((state) => state.openModal);
 
   const defaultValues = initialData ? { ...initialData } : {};
 
@@ -98,7 +101,6 @@ export default function CardCustomizeForm({
     },
 
     onError: (error) => {
-      console.log(error);
       toast.error("Something went wrong.");
       setLoading(false);
     },
@@ -469,13 +471,16 @@ export default function CardCustomizeForm({
                     Add Link
                   </Button> */}
                 </div>
+                <AddLinkModal />
                 <section>
                   <div className="flex items-center justify-between">
                     <h3>Suggestions</h3>
-                    <Button variant="link">View All</Button>
+                    <Button variant="link" onClick={() => openModal()}>
+                      View All
+                    </Button>
                   </div>
                   <div className="grid grid-cols-[repeat(auto-fill,minmax(6.2rem,1fr))] gap-3">
-                    {LINKS.map((link, i) => (
+                    {/* {LINKS.map((link, i) => (
                       <div
                         className="flex flex-col items-center rounded-md border bg-background p-3"
                         key={i}
@@ -483,7 +488,7 @@ export default function CardCustomizeForm({
                         <link.icon className="size-12 stroke-1" />
                         <p className="text-xs font-medium">{link.name}</p>
                       </div>
-                    ))}
+                    ))} */}
                   </div>
                 </section>
                 <FormField
