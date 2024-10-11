@@ -78,11 +78,6 @@ export default function CardCustomizeForm({
     form.setValue("companyId", parseInt(companyIdParams));
   }
 
-  // const { fields, append } = useFieldArray({
-  //   name: "links",
-  //   control: form.control,
-  // });
-
   const { execute } = useAction(createCard, {
     onExecute: () => {
       setLoading(true);
@@ -107,10 +102,18 @@ export default function CardCustomizeForm({
     execute(values);
   }
 
-  const cardData = form.getValues();
+  const formValues = form.getValues();
 
   const photo = form.getValues("image");
   const cover = form.getValues("cover");
+  const companyId = form.getValues("companyId");
+  const companyData = data?.find((c) => c.id === companyId);
+
+  const cardData = {
+    ...formValues,
+    id: companyId,
+    company: companyData,
+  };
 
   return (
     <main className="relative pb-12">
@@ -166,13 +169,13 @@ export default function CardCustomizeForm({
                               }}
                               onUploadBegin={() => {
                                 setLoading(true);
-                                toast.loading("Uploading Image");
+                                toast.loading("Uploading photo");
                               }}
                               onClientUploadComplete={(res) => {
                                 setLoading(false);
                                 form.setValue("image", res[0].url);
                                 toast.dismiss();
-                                toast.success("Logo Uploaded");
+                                toast.success("Photo Uploaded");
                               }}
                               content={{
                                 button({ ready, isUploading }) {
@@ -247,7 +250,7 @@ export default function CardCustomizeForm({
                         <Input
                           placeholder="+971 98 765 4321"
                           {...field}
-                          type="number"
+                          type="tel"
                         />
                       </FormControl>
 
@@ -529,14 +532,14 @@ export default function CardCustomizeForm({
               </CardHeader>
               <CardContent className="relative py-5">
                 <div className="relative mx-auto h-full w-[290px] rounded-[2.5rem] border-[10px] border-gray-900 bg-gray-900 shadow-xl">
-                  <div className="absolute left-1/2 top-2 z-50 flex h-[1.5rem] w-[80px] -translate-x-1/2 items-center justify-end rounded-full bg-gray-900 px-2">
+                  <div className="absolute left-1/2 top-1.5 z-50 flex h-[1.5rem] w-[80px] -translate-x-1/2 items-center justify-end rounded-full bg-gray-900 px-2">
                     <div className="size-3 rounded-full border-2 border-gray-600 bg-gray-900"></div>
                   </div>
                   <div className="absolute -start-[13px] top-[124px] z-50 h-[46px] w-[3px] rounded-s-lg bg-gray-900"></div>
                   <div className="absolute -start-[13px] top-[178px] z-50 h-[46px] w-[3px] rounded-s-lg bg-gray-900"></div>
                   <div className="absolute -end-[13px] top-[142px] z-50 h-[64px] w-[3px] rounded-e-lg bg-gray-900"></div>
                   <div className="@container h-[572px] w-[272px] overflow-hidden rounded-[2rem] bg-white">
-                    <DefaultTemplate card={cardData} />
+                    <DefaultTemplate card={cardData!} company={data} />
                   </div>
                 </div>
               </CardContent>

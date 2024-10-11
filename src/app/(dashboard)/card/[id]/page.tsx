@@ -23,7 +23,7 @@ export default async function CardPage({ params }: CardProps) {
     <CardCustomizeForm
       data={companies}
       isEditMode={isEditMode}
-      initialData={card || null}
+      initialData={card}
     />
   );
 }

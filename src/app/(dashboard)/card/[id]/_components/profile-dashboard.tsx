@@ -37,7 +37,13 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
       <div className="container relative -mt-16 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-4 shadow-lg shadow-muted/30 md:divide-x">
         <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
           <div className="absolute -top-[60%] left-5 size-28 translate-y-20 overflow-hidden rounded-full border-4 border-background md:size-36 md:translate-y-1/3">
-            <Image src={data.image} fill alt="Profile Image" quality={25} />
+            <Image
+              src={data.image}
+              fill
+              alt="Profile Image"
+              quality={25}
+              className="object-cover"
+            />
           </div>
           <div className="w-full max-md:mt-9 md:ml-32">
             <div className="flex justify-between gap-3">

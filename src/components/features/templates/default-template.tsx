@@ -8,11 +8,20 @@ import {
   IconPinned,
 } from "@tabler/icons-react";
 
-import LinkCard from "@/app/(dashboard)/card/[id]/_components/links-card";
 import SaveContactButton from "@/components/save-contact-button";
+import { cn } from "@/lib/utils";
+import { Company, Person } from "@/types/card-customize-props";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function DefaultTemplate({ card }: { card?: any }) {
+interface TemplateProps {
+  card?: Person;
+  company?: Company[];
+}
+
+export default function DefaultTemplate({ card, company }: TemplateProps) {
+  const companyData = company?.find((c) => c.id === card?.companyId);
+  console.log(company);
+
+  if (!card) return null;
   return (
     <div className="relative flex h-full w-full flex-col justify-between">
       <div className="no-scrollbar md:overflow-y-scroll">
@@ -22,10 +31,10 @@ export default function DefaultTemplate({ card }: { card?: any }) {
             <div
               className="@sm:h-32 flex h-24 w-full items-start justify-center bg-cover bg-center bg-no-repeat pt-4"
               style={{
-                backgroundImage: `url(${card.cover && card.cover})`,
+                backgroundImage: `url(${card.cover ? card.cover : "/images/placeholder-cover.jpg"})`,
               }}
             >
-              {card.company.logo && (
+              {card.company && card.company.logo && (
                 <Image
                   src={card.company.logo}
                   height={100}
@@ -37,11 +46,16 @@ export default function DefaultTemplate({ card }: { card?: any }) {
             </div>
             {card.image && (
               <div className="@sm:size-32 absolute left-1/2 top-1/2 size-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-background bg-gray-100">
-                <Image src={card.image} fill alt="" />
+                <Image src={card.image} fill alt="" className="object-cover" />
               </div>
             )}
           </div>
-          <section className="@sm:mt-12 mt-8 space-y-0.5 px-8 py-4 text-center">
+          <section
+            className={cn(
+              "space-y-0.5 px-8 py-4 text-center",
+              card.image ? "@sm:mt-12 mt-8" : ""
+            )}
+          >
             {card.name && (
               <h1 className="@sm:text-2xl text-xl font-bold">{card.name}</h1>
             )}
@@ -53,21 +67,22 @@ export default function DefaultTemplate({ card }: { card?: any }) {
             )}
           </section>
         </header>
-        {card.company && (
+        {card.company || card.email || card.phone || card.address ? (
           <section className="@sm:px-6 @sm:py-4 border-y px-4 py-3">
             <h2 className="@sm:text-sm pb-3 text-xs font-medium text-gray-600">
               Contact Info
             </h2>
+
             <div className="@sm:space-y-6 space-y-3">
-              {card.company.name && (
+              {card.company || companyData ? (
                 <Link
-                  href={`https://www.google.com/maps/place/${card.company.name}`}
+                  href={`https://www.google.com/maps/place/${companyData?.name || card.company?.name}`}
                   className="@sm:text-base flex items-center gap-2 text-sm"
                 >
                   <IconBuildingSkyscraper className="@sm:size-5 size-4 flex-shrink-0 stroke-[1.5]" />
-                  {card.company.name}
+                  {companyData?.name || card.company?.name}
                 </Link>
-              )}
+              ) : null}
               {card.email && (
                 <Link
                   href={`mailto:${card.email}`}
@@ -97,13 +112,13 @@ export default function DefaultTemplate({ card }: { card?: any }) {
               )}
             </div>
           </section>
-        )}
-        {card.links && (
+        ) : null}
+        {/* {card.links && (
           <section className="@sm:space-y-4 @sm:px-8 space-y-3 px-4">
             <h2 className="pt-3 text-sm font-medium text-gray-600">Links</h2>
             <LinkCard />
           </section>
-        )}
+        )} */}
       </div>
       <div className="sticky bottom-0 mt-auto h-20 w-full max-w-screen-sm bg-background p-4">
         <SaveContactButton data={card} />
