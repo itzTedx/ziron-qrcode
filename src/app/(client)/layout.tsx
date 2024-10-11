@@ -27,7 +27,7 @@ export default function RootLayout({
           plusJakarta.className
         )}
       >
-        <main className="container relative h-[700px] max-w-screen-sm bg-background px-0 md:overflow-hidden md:rounded-xl md:shadow-xl">
+        <main className="@container container relative h-[700px] max-w-screen-sm bg-background px-0 md:overflow-hidden md:rounded-xl md:shadow-xl">
           {children}
         </main>
         <Footer />

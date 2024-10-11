@@ -79,6 +79,12 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+
+  plugins: [
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require("tailwindcss-animate"),
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require("@tailwindcss/container-queries"),
+  ],
 };
 export default withUt(config);
