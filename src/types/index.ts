@@ -1,23 +1,17 @@
-export interface CardCustomizeProps {
-  data: Company[];
-  isEditMode: boolean;
-  initialData?: Person;
-}
-
 export interface Person {
   name: string;
-  email?: string;
+  email?: string | null;
   phone: string;
-  address?: string;
-  bio?: string;
+  address?: string | null;
+  bio?: string | null;
   companyId: number;
-  company?: Company;
-  designation?: string;
-  image?: string;
-  cover?: string;
+  company?: Company | null;
+  designation?: string | null;
+  image?: string | null;
+  cover?: string | null;
   links?: Link[];
-  slug?: string;
-  id?: number;
+  slug?: string | null;
+  id?: number | null;
 }
 
 export interface Company {
@@ -27,7 +21,7 @@ export interface Company {
   website: string | null;
   address: string | null;
   logo: string | null;
-  persons: Person[];
+  persons?: Person[];
   createdAt?: Date;
   updatedAt?: Date | null;
 }

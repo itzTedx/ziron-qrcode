@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Person } from "@/types/card-customize-props";
+import { Person } from "@/types";
 
 interface SaveContactButtonProps {
   data: Person;

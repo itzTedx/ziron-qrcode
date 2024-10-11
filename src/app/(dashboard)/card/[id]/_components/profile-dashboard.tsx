@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useShareModalStore } from "@/store/use-share-modal";
-import { Person } from "@/types/card-customize-props";
+import { Person } from "@/types";
 
 import Share from "./share";
 
@@ -26,7 +26,7 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
     <div className="-mt-20">
       <div className="relative h-52 bg-secondary md:h-44">
         <Image
-          src={data.cover}
+          src={data.cover!}
           fill
           alt="cover image"
           title="Cover Image"
@@ -38,7 +38,7 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
         <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
           <div className="absolute -top-[60%] left-5 size-28 translate-y-20 overflow-hidden rounded-full border-4 border-background md:size-36 md:translate-y-1/3">
             <Image
-              src={data.image}
+              src={data.image!}
               fill
               alt="Profile Image"
               quality={25}
@@ -47,7 +47,7 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
           </div>
           <div className="w-full max-md:mt-9 md:ml-32">
             <div className="flex justify-between gap-3">
-              <Badge variant="secondary">{data.company.name}</Badge>
+              <Badge variant="secondary">{data.company?.name}</Badge>
               <span className="flex gap-3 text-primary md:hidden">
                 <IconEdit />
                 <Share />

@@ -10,7 +10,7 @@ import {
 
 import SaveContactButton from "@/components/save-contact-button";
 import { cn } from "@/lib/utils";
-import { Company, Person } from "@/types/card-customize-props";
+import { Company, Person } from "@/types";
 
 interface TemplateProps {
   card?: Person;

@@ -4,7 +4,7 @@ import { IconEdit } from "@tabler/icons-react";
 
 import { Button } from "@/components/ui/button";
 import { useCompanyFormModal } from "@/store/use-company-form-modal";
-import { Company } from "@/types/card-customize-props";
+import { Company } from "@/types";
 
 interface EditButtonProps {
   initialData: Company;

@@ -11,7 +11,7 @@ import {
 } from "@tabler/icons-react";
 
 import { cn } from "@/lib/utils";
-import { Company } from "@/types/card-customize-props";
+import { Company } from "@/types";
 
 import { Button } from "../ui/button";
 import {

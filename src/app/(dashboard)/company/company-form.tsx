@@ -43,7 +43,7 @@ import { UploadButton } from "@/lib/uploadthing";
 import { createCompany } from "@/server/actions/create-company";
 import { deleteCompany } from "@/server/actions/delete-company";
 import { useCompanyFormModal } from "@/store/use-company-form-modal";
-import { Company } from "@/types/card-customize-props";
+import { Company } from "@/types";
 import { companySchema } from "@/types/company-schema";
 
 interface CompanyFormProps {

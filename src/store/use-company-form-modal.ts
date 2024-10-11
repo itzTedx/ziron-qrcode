@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { Company } from "@/types/card-customize-props";
+import { Company } from "@/types";
 
 interface ShareModalState {
   isOpen: boolean;

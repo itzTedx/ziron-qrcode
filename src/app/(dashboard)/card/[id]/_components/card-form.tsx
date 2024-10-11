@@ -50,11 +50,17 @@ import { LINKS } from "@/constants";
 import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
-import { CardCustomizeProps } from "@/types/card-customize-props";
+import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
 
 import LinksDND from "./links-dnd-test";
 import ProfileDashboard from "./profile-dashboard";
+
+interface CardCustomizeProps {
+  data: Company[];
+  isEditMode: boolean;
+  initialData?: Person;
+}
 
 export default function CardCustomizeForm({
   data,
