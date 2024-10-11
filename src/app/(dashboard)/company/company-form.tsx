@@ -2,17 +2,34 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconBuilding, IconLoader, IconPlus } from "@tabler/icons-react";
+import {
+  IconBuilding,
+  IconEdit,
+  IconLoader,
+  IconPlus,
+  IconTrash,
+} from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
-import { DialogClose, DialogFooter } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -24,6 +41,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { UploadButton } from "@/lib/uploadthing";
 import { createCompany } from "@/server/actions/create-company";
+import { deleteCompany } from "@/server/actions/delete-company";
+import { useCompanyFormModal } from "@/store/use-company-form-modal";
 import { Company } from "@/types/card-customize-props";
 import { companySchema } from "@/types/company-schema";
 
@@ -34,7 +53,12 @@ interface CompanyFormProps {
 export default function CompanyForm({ initialData }: CompanyFormProps) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (initialData) return setIsEditMode(true);
+  }, [initialData]);
 
   const defaultValues = initialData ? { ...initialData } : {};
 
@@ -42,6 +66,8 @@ export default function CompanyForm({ initialData }: CompanyFormProps) {
     resolver: zodResolver(companySchema),
     defaultValues,
   });
+
+  const closeModal = useCompanyFormModal((state) => state.closeModal);
 
   const { execute } = useAction(createCompany, {
     onExecute: () => {
@@ -52,7 +78,7 @@ export default function CompanyForm({ initialData }: CompanyFormProps) {
         router.refresh();
 
         toast.success(data.success);
-        setLoading(false);
+        closeModal();
       }
     },
 
@@ -60,6 +86,17 @@ export default function CompanyForm({ initialData }: CompanyFormProps) {
       console.log(error);
       toast.error("Something went wrong.");
       setLoading(false);
+    },
+  });
+
+  const { execute: deleteAction } = useAction(deleteCompany, {
+    onSuccess: ({ data }) => {
+      if (data?.success) {
+        router.push("/");
+        toast.success(data.success);
+        closeModal();
+      }
+      if (data?.error) toast.error(data.error);
     },
   });
 
@@ -212,20 +249,48 @@ export default function CompanyForm({ initialData }: CompanyFormProps) {
           </div>
         </div>
         <DialogFooter className="gap-3">
-          <DialogClose asChild>
-            <Button
-              variant="outline"
-              className="border-destructive font-medium text-destructive"
-            >
-              Cancel
-            </Button>
-          </DialogClose>
+          {isEditMode && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="gap-1.5 font-medium hover:bg-red-500 hover:text-red-100"
+                >
+                  <IconTrash className="size-4" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the company and all the cards related to it.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className={buttonVariants({ variant: "destructive" })}
+                    onClick={() => deleteAction({ id: initialData.id! })}
+                  >
+                    Yes, I&apos;m sure
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
           <Button
             type="submit"
-            disabled={loading || form.formState.isDirty}
+            disabled={loading}
             className="flex items-center gap-1.5 font-medium"
           >
-            <IconPlus className="size-4" /> Add Company
+            {isEditMode ? (
+              <IconEdit className="size-4" />
+            ) : (
+              <IconPlus className="size-4" />
+            )}
+            {isEditMode ? "Save Changes" : "Add Company"}
           </Button>
         </DialogFooter>
       </form>

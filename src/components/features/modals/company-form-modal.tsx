@@ -17,7 +17,9 @@ export default function CompanyFormModal() {
     <Dialog open={isOpen} onOpenChange={closeModal}>
       <DialogContent className="max-w-2xl p-0">
         <DialogHeader className="border-b p-6">
-          <DialogTitle>Add New Company</DialogTitle>
+          <DialogTitle>
+            {data ? `Edit ${data.name}` : "Add New Company"}
+          </DialogTitle>
         </DialogHeader>
         <CompanyForm initialData={data} />
       </DialogContent>
