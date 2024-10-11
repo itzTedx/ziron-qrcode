@@ -26,6 +26,7 @@ export interface Company {
   website: string | null;
   address: string | null;
   logo: string | null;
+  persons: Person[];
   createdAt?: Date;
   updatedAt?: Date | null;
 }

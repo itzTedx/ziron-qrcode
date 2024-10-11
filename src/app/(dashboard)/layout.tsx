@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 
+import BreakpointIndicator from "@/components/breakpoint-indicator";
 import ShareModal from "@/components/features/modals/share-modal";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
@@ -36,6 +37,7 @@ export default function RootLayout({
           <Header />
           <ShareModal />
           {children}
+          <BreakpointIndicator />
           <Toaster richColors />
         </div>
       </body>
