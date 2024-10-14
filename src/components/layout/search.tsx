@@ -61,6 +61,7 @@ export function Search({ data }: SearchProps) {
     <>
       <Button
         variant="outline"
+        aria-keyshortcuts="/"
         className={cn(
           "relative h-10 w-full justify-start rounded-[0.5rem] bg-background text-sm font-normal text-muted-foreground shadow-none transition-all sm:w-52 sm:pr-12 md:w-64 lg:w-72"
         )}
@@ -78,7 +79,7 @@ export function Search({ data }: SearchProps) {
           <CommandEmpty>No cards found.</CommandEmpty>
           {data.map((company) => (
             <CommandGroup key={company.id} heading={company.name}>
-              {company.persons.map((person) => (
+              {company.persons!.map((person) => (
                 <CommandItem
                   value={person.slug!}
                   key={person.id}
@@ -90,7 +91,7 @@ export function Search({ data }: SearchProps) {
                   {person.name}
                 </CommandItem>
               ))}
-              {!company.persons.length && (
+              {!company.persons!.length && (
                 <>
                   <CommandItem
                     value={"new"}

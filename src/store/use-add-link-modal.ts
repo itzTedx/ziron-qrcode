@@ -1,15 +1,15 @@
 import { create } from "zustand";
 
-interface ShareModalState {
+interface AddLinkModalProps {
   isOpen: boolean;
-
-  openModal: () => void;
+  index?: number;
+  openModal: (index?: number) => void;
   closeModal: () => void;
 }
 
-export const useAddLinkModal = create<ShareModalState>((set) => ({
+export const useAddLinkModal = create<AddLinkModalProps>((set) => ({
   isOpen: false,
-
-  openModal: () => set({ isOpen: true }),
+  index: 0,
+  openModal: (index) => set({ isOpen: true, index }),
   closeModal: () => set({ isOpen: false }),
 }));

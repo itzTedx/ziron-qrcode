@@ -1,5 +1,3 @@
-import { Icons } from "@/components/assets/icons";
-
 export const card = {
   name: "Sridhun Prakash",
   designation: "Graphic Designer",
@@ -43,7 +41,7 @@ export const LINKS = [
       {
         title: "Custom Link",
         href: "",
-        icon: Icons.www,
+        icon: "/icons/world-www.svg",
       },
     ],
   },
@@ -53,37 +51,37 @@ export const LINKS = [
       {
         title: "Instagram",
         href: "",
-        icon: Icons.instagram,
+        icon: "/icons/instagram.svg",
       },
       {
         title: "Facebook",
         href: "",
-        icon: Icons.facebook,
+        icon: "/icons/fb.svg",
       },
       {
         title: "Whatsapp",
         href: "",
-        icon: Icons.whatsapp,
+        icon: "/icons/whatsapp.svg",
       },
       {
         title: "Twitter",
         href: "",
-        icon: Icons.x,
+        icon: "/icons/x.svg",
       },
       {
         title: "Tiktok",
         href: "",
-        icon: Icons.tiktok,
+        icon: "/icons/tiktok.svg",
       },
       {
         title: "Linkedin",
         href: "",
-        icon: Icons.linkedin,
+        icon: "/icons/linkedin.svg",
       },
       {
         title: "Messenger",
         href: "",
-        icon: Icons.messenger,
+        icon: "/icons/messenger.svg",
       },
     ],
   },

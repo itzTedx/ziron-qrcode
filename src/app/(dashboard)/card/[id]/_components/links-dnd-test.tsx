@@ -1,13 +1,17 @@
 "use client";
 
+import Image from "next/image";
+
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { IconBrandFacebook, IconPlus } from "@tabler/icons-react";
-import { Edit2, MoreVertical, Trash2 } from "lucide-react";
+import { IconGripVertical, IconPlus } from "@tabler/icons-react";
+import { Edit2, Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAddLinkModal } from "@/store/use-add-link-modal";
 import { cardSchema } from "@/types/card-schema";
 
@@ -16,7 +20,7 @@ export default function SocialMediaLinks() {
 
   const openModal = useAddLinkModal((state) => state.openModal);
 
-  const { fields, append, remove, move } = useFieldArray({
+  const { fields, remove, move } = useFieldArray({
     control,
     name: "links",
   });
@@ -44,7 +48,11 @@ export default function SocialMediaLinks() {
               className="space-y-2"
             >
               {fields.map((field, index) => (
-                <Draggable key={field.id} draggableId={field.id} index={index}>
+                <Draggable
+                  key={`Dnd-${field.id}-${index}`}
+                  draggableId={field.id}
+                  index={index}
+                >
                   {(provided, snapshot) => (
                     <li
                       ref={provided.innerRef}
@@ -52,42 +60,67 @@ export default function SocialMediaLinks() {
                       className={`${snapshot.isDragging ? "opacity-50" : ""}`}
                     >
                       <Card>
-                        <CardContent className="flex items-center justify-between p-4">
-                          <div className="flex items-center space-x-4">
-                            <IconBrandFacebook className="size-9 text-blue-600" />
-                            <div className="flex flex-col">
-                              <span className="font-medium">
-                                {field.label || "Unnamed Link"}
-                              </span>
-                              <a
-                                href={field.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm text-muted-foreground hover:underline"
-                              >
-                                {field.href || "No URL set"}
-                              </a>
+                        <CardContent className="flex items-center justify-between gap-6 p-4">
+                          <div className="flex w-full items-center gap-x-4">
+                            <div className="relative size-12 flex-shrink-0">
+                              <Image src={field.icon} fill alt="" />
                             </div>
+
+                            {field.label === "Custom Link" ? (
+                              <div className="flex w-full gap-4">
+                                <Label className="w-full">
+                                  <h5 className="pb-1">
+                                    Title
+                                    <span className="text-red-500">*</span>
+                                  </h5>
+                                  <Input
+                                    name={`links.[${index}].value`}
+                                    placeholder="Enter Link Title"
+                                  />
+                                </Label>
+                                <Label className="w-full">
+                                  <h5 className="pb-1">
+                                    URL <span className="text-red-500">*</span>
+                                  </h5>
+                                  <Input placeholder="https://" />
+                                </Label>
+                              </div>
+                            ) : (
+                              <Label className="flex w-full flex-col">
+                                <h5 className="pb-1 text-xs text-gray-600">
+                                  {field.label}
+                                </h5>
+                                <Input
+                                  placeholder="Username"
+                                  className="w-full"
+                                />
+                              </Label>
+                            )}
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Button variant="ghost" size="icon">
-                              <Edit2 className="h-4 w-4" />
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="smallIcon"
+                              onClick={() => openModal(index)}
+                            >
+                              <Edit2 className="size-4" />
                             </Button>
                             <Button
                               variant="ghost"
-                              size="icon"
+                              size="smallIcon"
                               onClick={() => remove(index)}
                               aria-label="Delete link"
                             >
-                              <Trash2 className="h-4 w-4 text-red-500" />
+                              <Trash2 className="size-4 text-red-500" />
                             </Button>
                             <Button
                               variant="ghost"
+                              className="hover:bg-transparent"
                               size="icon"
                               {...provided.dragHandleProps}
                               aria-label="Drag to reorder"
                             >
-                              <MoreVertical className="h-4 w-4" />
+                              <IconGripVertical className="size-4" />
                             </Button>
                           </div>
                         </CardContent>

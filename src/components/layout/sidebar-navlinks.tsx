@@ -16,7 +16,11 @@ export const LINKS = [
   },
 ];
 
-export default function NavLinks() {
+export default function NavLinks({
+  handleClick,
+}: {
+  handleClick?: () => void;
+}) {
   const pathname = usePathname();
 
   return (
@@ -25,6 +29,7 @@ export default function NavLinks() {
         const active = link.href === pathname;
         return (
           <li
+            onClick={handleClick}
             key={link.label}
             className={cn(
               "flex w-full cursor-pointer border-l-8 font-semibold hover:bg-muted",

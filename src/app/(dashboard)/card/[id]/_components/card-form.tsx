@@ -100,11 +100,13 @@ export default function CardCustomizeForm({
       }
     },
 
-    onError: (error) => {
+    onError: () => {
       toast.error("Something went wrong.");
       setLoading(false);
     },
   });
+
+  // console.log(form.getValues("links"));
 
   function onSubmit(values: z.infer<typeof cardSchema>) {
     execute(values);
@@ -549,7 +551,7 @@ export default function CardCustomizeForm({
                   <div className="absolute -start-[13px] top-[124px] z-50 h-[46px] w-[3px] rounded-s-lg bg-gray-900"></div>
                   <div className="absolute -start-[13px] top-[178px] z-50 h-[46px] w-[3px] rounded-s-lg bg-gray-900"></div>
                   <div className="absolute -end-[13px] top-[142px] z-50 h-[64px] w-[3px] rounded-e-lg bg-gray-900"></div>
-                  <div className="@container h-[572px] w-[272px] overflow-hidden rounded-[2rem] bg-white">
+                  <div className="h-[572px] w-[272px] overflow-hidden rounded-[2rem] bg-white @container">
                     <DefaultTemplate card={cardData!} company={data} />
                   </div>
                 </div>
