@@ -23,9 +23,9 @@ type Link = {
 };
 
 export default function AddLinkModal() {
-  const { control, setValue } = useFormContext<z.infer<typeof cardSchema>>();
+  const { control } = useFormContext<z.infer<typeof cardSchema>>();
 
-  const { fields, append, update } = useFieldArray({
+  const { append, update } = useFieldArray({
     control,
     name: "links",
   });
@@ -48,9 +48,6 @@ export default function AddLinkModal() {
         icon: link.icon,
       });
     }
-
-    // Trigger a re-render by updating the form value
-    setValue("links", [...fields]);
 
     closeModal();
   };
