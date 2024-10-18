@@ -16,7 +16,11 @@ import { getCompanies } from "@/server/actions/get-company";
 import EditCompanyButton from "./_components/edit-company-button";
 import ShareButton from "./_components/share-button";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { default?: string };
+}) {
   const { companies } = await getCompanies();
 
   if (!companies) return "";
@@ -24,7 +28,11 @@ export default async function Home() {
   return (
     <main className="grid gap-8 px-4 py-6 md:px-12">
       {companies.map((company, i) => (
-        <Collapsible key={company.id} className="w-full" defaultOpen={i === 0}>
+        <Collapsible
+          key={company.id}
+          className="w-full"
+          defaultOpen={company.id === Number(searchParams.default) || i === 0}
+        >
           <div className="flex w-full cursor-pointer items-center justify-between border-b pb-3">
             <CollapsibleTrigger asChild>
               <div className="flex w-full items-center gap-3">

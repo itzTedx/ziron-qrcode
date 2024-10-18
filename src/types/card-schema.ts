@@ -9,7 +9,7 @@ export const cardSchema = z.object({
   email: z.string().email().optional(),
   phone: z.string().min(6).max(15).optional(),
   address: z.string().min(6, { message: "Please enter address" }).optional(),
-  bio: z.string().optional().nullish(),
+  bio: z.string().optional(),
 
   companyId: z.number(),
   designation: z.string().optional(),
@@ -22,8 +22,10 @@ export const cardSchema = z.object({
   links: z
     .array(
       z.object({
-        id: z.string(),
-        label: z.string(),
+        id: z.string().optional(),
+        label: z
+          .string()
+          .min(1, { message: "Please enter title for the link" }),
         url: z.string().url({ message: "Please enter a valid URL." }),
         icon: z.string(),
       })

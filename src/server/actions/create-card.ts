@@ -99,6 +99,7 @@ export const createCard = action
           revalidatePath("/");
           return {
             success: `Digital Card: (${newCard[0].name}) has been created`,
+            company: newCard[0].companyId,
           };
         }
       } catch (err) {

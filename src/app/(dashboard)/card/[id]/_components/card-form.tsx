@@ -15,7 +15,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -78,11 +78,26 @@ export default function CardCustomizeForm({
 
   const openModal = useAddLinkModal((state) => state.openModal);
 
-  const defaultValues = initialData ? { ...initialData } : {};
+  const defaultValues = initialData
+    ? {
+        ...initialData,
+        links: initialData.links
+          ? initialData.links.map((link) => ({
+              ...link,
+              id: link.id?.toString(),
+            }))
+          : undefined,
+      }
+    : {};
 
   const form = useForm<z.infer<typeof cardSchema>>({
     resolver: zodResolver(cardSchema),
     defaultValues,
+  });
+
+  // Use useWatch to observe all form values for the preview
+  const formValues = useWatch({
+    control: form.control,
   });
 
   useEffect(() => {
@@ -98,7 +113,7 @@ export default function CardCustomizeForm({
     },
     onSuccess: ({ data }) => {
       if (data?.success) {
-        router.push("/");
+        router.push(`/?default=${data.company}`);
 
         toast.success(data.success);
         setLoading(false);
@@ -115,8 +130,6 @@ export default function CardCustomizeForm({
     execute(values);
   }
 
-  const formValues = form.watch();
-
   const photo = form.getValues("image");
   const name = form.getValues("name");
   const placeholderPhoto = name
@@ -125,21 +138,23 @@ export default function CardCustomizeForm({
   const cover = form.getValues("cover");
 
   const cardData = useMemo(() => {
-    const companyId = form.getValues("companyId");
+    const companyId = formValues.companyId;
     const companyData = data?.find((c) => c.id === companyId);
 
     return {
       ...formValues,
       id: companyId,
-      image: photo || placeholderPhoto,
-
+      name: formValues.name || "", // Ensure name is always a string
+      image: formValues.image || placeholderPhoto,
       company: companyData,
       links: formValues.links?.map((link) => ({
         ...link,
         id: link.id ? parseInt(link.id) : undefined,
       })),
-    };
-  }, [formValues, data, form, photo, placeholderPhoto]);
+    } as Person; // Assert the type as Person
+  }, [formValues, data, placeholderPhoto]);
+
+  console.log(formValues);
 
   return (
     <main className="relative pb-12">
@@ -416,7 +431,7 @@ export default function CardCustomizeForm({
                         <FormLabel>Cover image</FormLabel>
                         <FormControl>
                           {cover ? (
-                            <div className="group relative mt-2 flex h-52 w-full items-center justify-center overflow-hidden rounded-md border transition duration-300 hover:brightness-90">
+                            <div className="group relative mt-2 flex h-60 w-full items-center justify-center overflow-hidden rounded-md border transition duration-300 hover:brightness-90">
                               <Button
                                 className="gap-2 opacity-0 shadow-xl backdrop-blur-lg transition-opacity duration-300 group-hover:opacity-100"
                                 type="button"
@@ -554,7 +569,7 @@ export default function CardCustomizeForm({
                 </div>
               </CardContent>
             </Card>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               Submit
             </Button>
           </div>
