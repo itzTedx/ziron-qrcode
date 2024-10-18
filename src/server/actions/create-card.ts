@@ -9,7 +9,7 @@ import { slugify } from "@/lib/utils";
 import { cardSchema } from "@/types/card-schema";
 
 import { db } from "../db";
-import { persons } from "../schema";
+import { links, persons } from "../schema";
 
 const action = createSafeActionClient();
 
@@ -52,6 +52,7 @@ export const createCard = action
         bio,
         image,
         cover,
+        links: linksData,
       },
     }) => {
       try {
@@ -76,12 +77,25 @@ export const createCard = action
 
               image:
                 image ||
-                `https://ui-avatars.com/api/?background=random&name=${name}`,
+                `https://ui-avatars.com/api/?background=random&name=${name}&size=128`,
               cover: cover || "/images/placeholder-cover.jpg",
 
               slug: uniqueSlug,
             })
             .returning();
+
+          if (linksData) {
+            await db.insert(links).values(
+              linksData.map((link, i) => ({
+                id: link.id ? parseInt(link.id) : undefined,
+                icon: link.icon,
+                label: link.label,
+                url: link.url,
+                personId: newCard[0].id,
+                order: i,
+              }))
+            );
+          }
           revalidatePath("/");
           return {
             success: `Digital Card: (${newCard[0].name}) has been created`,

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 import { IconPlus } from "@tabler/icons-react";
 
@@ -17,21 +18,24 @@ import { useCompanyFormModal } from "@/store/use-company-form-modal";
 
 export function AddAction() {
   const openModal = useCompanyFormModal((state) => state.openModal);
+  const [open, setOpen] = useState(false);
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className="flex-shrink-0">
             <span className="sr-only">Add new company or digital card</span>
             <IconPlus className="size-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="">
           <DropdownMenuLabel>Add new</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={() => openModal()}
+            onClick={() => {
+              openModal();
+            }}
             className="cursor-pointer"
           >
             Company
@@ -41,14 +45,6 @@ export function AddAction() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {/* <Dialog open={open} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl p-0">
-          <DialogHeader className="border-b p-6">
-            <DialogTitle>Add New Company</DialogTitle>
-          </DialogHeader>
-          <CompanyForm />
-        </DialogContent>
-      </Dialog> */}
     </>
   );
 }

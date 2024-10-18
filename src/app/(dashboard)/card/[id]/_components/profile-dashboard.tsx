@@ -1,13 +1,28 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-import { IconArrowRight, IconEdit } from "@tabler/icons-react";
+import { IconArrowRight, IconEdit, IconTrash } from "@tabler/icons-react";
+import { useAction } from "next-safe-action/hooks";
+import { toast } from "sonner";
 
 import { Icons } from "@/components/assets/icons";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { deleteCard } from "@/server/actions/delete-card";
 import { useShareModalStore } from "@/store/use-share-modal";
 import { Person } from "@/types";
 
@@ -15,12 +30,27 @@ import Share from "./share";
 
 interface ProfileDashboardProps {
   data: Person;
+  loading: boolean;
 }
 
-export default function ProfileDashboard({ data }: ProfileDashboardProps) {
+export default function ProfileDashboard({
+  data,
+  loading,
+}: ProfileDashboardProps) {
+  const router = useRouter();
   const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/id/${data.slug}`;
 
   const openModal = useShareModalStore((state) => state.openModal);
+
+  const { execute: deleteExistingCard } = useAction(deleteCard, {
+    onSuccess: ({ data: existingCard }) => {
+      if (existingCard?.success) {
+        router.push("/");
+        toast.success(existingCard.success);
+      }
+      if (existingCard?.error) toast.error(existingCard.error);
+    },
+  });
 
   return (
     <div className="-mt-20">
@@ -28,6 +58,7 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
         <Image
           src={data.cover!}
           fill
+          sizes="100vw"
           alt="cover image"
           title="Cover Image"
           className="object-cover"
@@ -40,6 +71,7 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
             <Image
               src={data.image!}
               fill
+              sizes="100vw"
               alt="Profile Image"
               quality={25}
               className="object-cover"
@@ -85,13 +117,55 @@ export default function ProfileDashboard({ data }: ProfileDashboardProps) {
         </div>
 
         <div className="col-span-2 hidden flex-col gap-3 px-6 md:flex">
-          <Button
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="border-destructive text-destructive"
+              >
+                <IconTrash className="mr-1 size-4" />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the
+                  card.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className={buttonVariants({ variant: "destructive" })}
+                  onClick={() => {
+                    if (data.id) {
+                      deleteExistingCard({ id: data.id });
+                    }
+                  }}
+                >
+                  Yes, I&apos;m sure
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          {/* <Button
             variant="outline"
             className="border-destructive text-destructive"
+            onClick={(e) => {
+              e.preventDefault();
+              if (data.id) {
+                deleteExistingCard({ id: data.id });
+              }
+            }}
           >
             Delete
+          </Button> */}
+
+          <Button type="submit" disabled={loading}>
+            Save Changes
           </Button>
-          <Button>Save Changes</Button>
         </div>
       </div>
     </div>

@@ -64,6 +64,20 @@
       "when": 1728565893154,
       "tag": "0008_groovy_bromley",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1729253106272,
+      "tag": "0009_married_hairball",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1729254169977,
+      "tag": "0010_light_gauntlet",
+      "breakpoints": true
     }
   ]
 }

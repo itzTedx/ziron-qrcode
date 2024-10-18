@@ -39,8 +39,8 @@ export const LINKS = [
     label: "General",
     links: [
       {
-        title: "Custom Link",
-        href: "",
+        label: "Custom Link",
+        url: "",
         icon: "/icons/world-www.svg",
       },
     ],
@@ -49,38 +49,38 @@ export const LINKS = [
     label: "Socials",
     links: [
       {
-        title: "Instagram",
-        href: "",
+        label: "Instagram",
+        url: "https://www.instagram.com/",
         icon: "/icons/instagram.svg",
       },
       {
-        title: "Facebook",
-        href: "",
+        label: "Facebook",
+        url: "https://www.facebook.com/",
         icon: "/icons/fb.svg",
       },
       {
-        title: "Whatsapp",
-        href: "",
+        label: "Whatsapp",
+        url: "https://wa.me/",
         icon: "/icons/whatsapp.svg",
       },
       {
-        title: "Twitter",
-        href: "",
+        label: "Twitter",
+        url: "https://twitter.com/",
         icon: "/icons/x.svg",
       },
       {
-        title: "Tiktok",
-        href: "",
+        label: "Tiktok",
+        url: "https://www.tiktok.com/@",
         icon: "/icons/tiktok.svg",
       },
       {
-        title: "Linkedin",
-        href: "",
+        label: "Linkedin",
+        url: "https://www.linkedin.com/in/",
         icon: "/icons/linkedin.svg",
       },
       {
-        title: "Messenger",
-        href: "",
+        label: "Messenger",
+        url: "https://m.me/",
         icon: "/icons/messenger.svg",
       },
     ],

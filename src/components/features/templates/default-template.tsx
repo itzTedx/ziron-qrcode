@@ -22,13 +22,13 @@ export default function DefaultTemplate({ card, company }: TemplateProps) {
 
   if (!card) return null;
   return (
-    <div className="relative flex h-full w-full flex-col justify-between">
-      <div className="no-scrollbar md:overflow-y-scroll">
+    <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
+      <div className="no-scrollbar md:overflow-y-auto">
         <header className="w-full">
           <div className="relative">
             <div className="absolute h-32 w-full bg-gradient-to-b from-background/30 to-transparent" />
             <div
-              className="@sm:h-32 flex h-24 w-full items-start justify-center bg-cover bg-center bg-no-repeat pt-4"
+              className="flex h-24 w-full items-start justify-center bg-cover bg-center bg-no-repeat pt-4 @sm:h-32"
               style={{
                 backgroundImage: `url(${card.cover ? card.cover : "/images/placeholder-cover.jpg"})`,
               }}
@@ -44,7 +44,7 @@ export default function DefaultTemplate({ card, company }: TemplateProps) {
               )}
             </div>
             {card.image && (
-              <div className="@sm:size-32 absolute left-1/2 top-1/2 size-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-background bg-gray-100">
+              <div className="absolute left-1/2 top-1/2 size-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-background bg-gray-100 @sm:size-32">
                 <Image src={card.image} fill alt="" className="object-cover" />
               </div>
             )}
@@ -52,72 +52,86 @@ export default function DefaultTemplate({ card, company }: TemplateProps) {
           <section
             className={cn(
               "space-y-0.5 px-8 py-4 text-center",
-              card.image ? "@sm:mt-12 mt-8" : ""
+              card.image ? "mt-8 @sm:mt-12" : ""
             )}
           >
             {card.name && (
-              <h1 className="@sm:text-2xl text-xl font-bold">{card.name}</h1>
+              <h1 className="text-xl font-bold @sm:text-2xl">{card.name}</h1>
             )}
             {card.designation && (
-              <h2 className="@sm:text-sm text-xs">{card.designation}</h2>
+              <h2 className="text-xs @sm:text-sm">{card.designation}</h2>
             )}
             {card.bio && (
-              <p className="@sm:text-xs text-balance text-[10px]">{card.bio}</p>
+              <p className="text-balance text-[10px] @sm:text-xs">{card.bio}</p>
             )}
           </section>
         </header>
+
         {card.company || card.email || card.phone || card.address ? (
-          <section className="@sm:px-6 @sm:py-4 border-y px-4 py-3">
-            <h2 className="@sm:text-sm pb-3 text-xs font-medium text-gray-600">
+          <section className="border-y px-4 py-3 @sm:px-6 @sm:py-4">
+            <h2 className="pb-3 text-xs font-medium text-gray-600 @sm:text-sm">
               Contact Info
             </h2>
 
-            <div className="@sm:space-y-6 space-y-3">
+            <div className="space-y-3 @sm:space-y-6">
               {card.company || companyData ? (
                 <Link
                   href={`https://www.google.com/maps/place/${companyData?.name || card.company?.name}`}
-                  className="@sm:text-base flex items-center gap-2 text-sm"
+                  className="flex items-center gap-2 text-sm @sm:text-base"
                 >
-                  <IconBuildingSkyscraper className="@sm:size-5 size-4 flex-shrink-0 stroke-[1.5]" />
+                  <IconBuildingSkyscraper className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
                   {companyData?.name || card.company?.name}
                 </Link>
               ) : null}
               {card.email && (
                 <Link
                   href={`mailto:${card.email}`}
-                  className="@sm:text-base flex items-center gap-2 text-sm"
+                  className="flex items-center gap-2 text-sm @sm:text-base"
                 >
-                  <IconMail className="@sm:size-5 size-4 flex-shrink-0 stroke-[1.5]" />
+                  <IconMail className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
                   {card.email}
                 </Link>
               )}
               {card.phone && (
                 <Link
                   href={`tel:${card.phone}`}
-                  className="@sm:text-base flex items-center gap-2 text-sm"
+                  className="flex items-center gap-2 text-sm @sm:text-base"
                 >
-                  <IconPhone className="@sm:size-5 size-4 flex-shrink-0 stroke-[1.5]" />
+                  <IconPhone className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
                   {card.phone}
                 </Link>
               )}
               {card.address && (
                 <Link
                   href={`https://www.google.com/maps/place/${card.address}`}
-                  className="@sm:text-base flex items-start gap-2 text-sm"
+                  className="flex items-start gap-2 text-sm @sm:text-base"
                 >
-                  <IconPinned className="@sm:size-5 mt-1.5 size-4 flex-shrink-0 stroke-[1.5]" />
+                  <IconPinned className="mt-1.5 size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
                   {card.address}
                 </Link>
               )}
             </div>
           </section>
         ) : null}
-        {/* {card.links && (
-          <section className="@sm:space-y-4 @sm:px-8 space-y-3 px-4">
+        {card.links && card.links.length > 0 && (
+          <section className="space-y-3 px-4 @sm:space-y-4 @sm:px-8">
             <h2 className="pt-3 text-sm font-medium text-gray-600">Links</h2>
-            <LinkCard />
+            <div className="space-y-4">
+              {card.links.map((link, index) => (
+                <Link
+                  key={index}
+                  href={link.url || "#"}
+                  className="flex items-center gap-2 rounded-md border p-3 text-sm @sm:text-base"
+                >
+                  <div className="relative size-8 flex-shrink-0">
+                    <Image src={link.icon} fill alt="" sizes="100vw" />
+                  </div>
+                  <h5 className="font-semibold">{link.label}</h5>
+                </Link>
+              ))}
+            </div>
           </section>
-        )} */}
+        )}
       </div>
       <div className="sticky bottom-0 mt-auto h-20 w-full max-w-screen-sm bg-background p-4">
         <SaveContactButton data={card} />

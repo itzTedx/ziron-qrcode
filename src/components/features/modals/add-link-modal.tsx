@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { IconPlus } from "@tabler/icons-react";
+import { IconExchange, IconPlus } from "@tabler/icons-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
@@ -17,32 +17,40 @@ import { useAddLinkModal } from "@/store/use-add-link-modal";
 import { cardSchema } from "@/types/card-schema";
 
 type Link = {
-  title: string;
-  href: string;
+  label: string;
+  url: string;
   icon: string;
 };
 
 export default function AddLinkModal() {
-  const { control } = useFormContext<z.infer<typeof cardSchema>>();
+  const { control, setValue } = useFormContext<z.infer<typeof cardSchema>>();
 
-  const { append } = useFieldArray({
+  const { fields, append, update } = useFieldArray({
     control,
     name: "links",
   });
 
   const { isOpen, closeModal, index } = useAddLinkModal();
-  console.log("edit-mode", index);
 
   const handleLinkAdd = (link: Link) => {
-    if (index && index > 0) {
-      console.log("edit-mode", index);
+    if (typeof index === "number") {
+      update(index, {
+        id: Date.now().toString(),
+        label: link.label,
+        url: link.url,
+        icon: link.icon,
+      });
+    } else {
+      append({
+        id: Date.now().toString(),
+        label: link.label,
+        url: link.url,
+        icon: link.icon,
+      });
     }
-    append({
-      id: Date.now().toString(),
-      label: link.title,
-      href: link.href,
-      icon: link.icon,
-    });
+
+    // Trigger a re-render by updating the form value
+    setValue("links", [...fields]);
 
     closeModal();
   };
@@ -51,7 +59,9 @@ export default function AddLinkModal() {
     <Dialog open={isOpen} onOpenChange={closeModal}>
       <DialogContent className="max-w-2xl p-0">
         <DialogHeader className="border-b p-6">
-          <DialogTitle>Add Link</DialogTitle>
+          <DialogTitle>
+            {typeof index === "number" ? "Edit Link" : "Add Link"}
+          </DialogTitle>
           <DialogDescription className="sr-only">
             Add Social or custom links to digital card
           </DialogDescription>
@@ -67,21 +77,26 @@ export default function AddLinkModal() {
                 {item.links.map((link, i) => (
                   <div
                     className="flex items-center justify-between border-b py-3"
-                    key={`addLink-${i}-${link.title}`}
+                    key={`addLink-${i}-${link.label}`}
                   >
                     <div className="flex items-center gap-4 font-medium">
                       <div className="relative size-8">
-                        <Image src={link.icon} fill alt="" />
+                        <Image src={link.icon} fill alt="" sizes="100vw" />
                       </div>
                       {/* <span className="size-8 bg-red-500" /> */}
-                      <p>{link.title}</p>
+                      <p>{link.label}</p>
                     </div>
                     <Button
                       variant="ghost"
                       onClick={() => handleLinkAdd(link)}
                       className="h-8 gap-2 px-2 font-semibold text-primary hover:text-blue-800"
                     >
-                      <IconPlus className="size-3 stroke-[2.5]" /> Add
+                      {typeof index === "number" ? (
+                        <IconExchange className="size-3 stroke-[2.5]" />
+                      ) : (
+                        <IconPlus className="size-3 stroke-[2.5]" />
+                      )}{" "}
+                      {typeof index === "number" ? "Change" : "Add"}
                     </Button>
                   </div>
                 ))}

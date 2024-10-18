@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -51,10 +51,11 @@ import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
 import { useAddLinkModal } from "@/store/use-add-link-modal";
+import { useCompanyFormModal } from "@/store/use-company-form-modal";
 import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
 
-import LinksDND from "./links-dnd-test";
+import LinksDND from "./links-dnd";
 import ProfileDashboard from "./profile-dashboard";
 
 interface CardCustomizeProps {
@@ -69,6 +70,8 @@ export default function CardCustomizeForm({
   initialData,
 }: CardCustomizeProps) {
   const [loading, setLoading] = useState(false);
+  const [openPopover, setOpenPopover] = useState(false);
+  const openCompanyModal = useCompanyFormModal((state) => state.openModal);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -82,10 +85,12 @@ export default function CardCustomizeForm({
     defaultValues,
   });
 
-  const companyIdParams = searchParams.get("company");
-  if (companyIdParams) {
-    form.setValue("companyId", parseInt(companyIdParams));
-  }
+  useEffect(() => {
+    const companyIdParams = searchParams.get("company");
+    if (companyIdParams) {
+      form.setValue("companyId", parseInt(companyIdParams));
+    }
+  }, [searchParams, form]);
 
   const { execute } = useAction(createCard, {
     onExecute: () => {
@@ -106,24 +111,35 @@ export default function CardCustomizeForm({
     },
   });
 
-  // console.log(form.getValues("links"));
-
   function onSubmit(values: z.infer<typeof cardSchema>) {
     execute(values);
   }
 
-  const formValues = form.getValues();
+  const formValues = form.watch();
 
   const photo = form.getValues("image");
+  const name = form.getValues("name");
+  const placeholderPhoto = name
+    ? `https://ui-avatars.com/api/?background=random&name=${name}&size=128`
+    : null;
   const cover = form.getValues("cover");
-  const companyId = form.getValues("companyId");
-  const companyData = data?.find((c) => c.id === companyId);
 
-  const cardData = {
-    ...formValues,
-    id: companyId,
-    company: companyData,
-  };
+  const cardData = useMemo(() => {
+    const companyId = form.getValues("companyId");
+    const companyData = data?.find((c) => c.id === companyId);
+
+    return {
+      ...formValues,
+      id: companyId,
+      image: photo || placeholderPhoto,
+
+      company: companyData,
+      links: formValues.links?.map((link) => ({
+        ...link,
+        id: link.id ? parseInt(link.id) : undefined,
+      })),
+    };
+  }, [formValues, data, form, photo, placeholderPhoto]);
 
   return (
     <main className="relative pb-12">
@@ -132,7 +148,9 @@ export default function CardCustomizeForm({
           onSubmit={form.handleSubmit(onSubmit)}
           className={cn(isEditMode && "mt-4")}
         >
-          {isEditMode && initialData && <ProfileDashboard data={initialData} />}
+          {isEditMode && initialData && (
+            <ProfileDashboard data={initialData} loading={loading} />
+          )}
           <div className="container grid max-w-6xl gap-8 pt-3 md:grid-cols-12 md:pt-9">
             <Tabs
               defaultValue="information"
@@ -162,6 +180,7 @@ export default function CardCustomizeForm({
                                   src={photo}
                                   alt=""
                                   fill
+                                  sizes="100vw"
                                   className="object-cover"
                                 />
                               ) : (
@@ -289,7 +308,7 @@ export default function CardCustomizeForm({
                     <FormItem className="">
                       <FormLabel>Company</FormLabel>
 
-                      <Popover>
+                      <Popover open={openPopover} onOpenChange={setOpenPopover}>
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
@@ -316,7 +335,7 @@ export default function CardCustomizeForm({
                             <CommandInput placeholder="Search Category..." />
                             <CommandEmpty>Company not found</CommandEmpty>
                             <CommandList className="p-1">
-                              <CommandGroup>
+                              <CommandGroup heading="Companies">
                                 {data.map((cat) => (
                                   <CommandItem
                                     value={cat.name}
@@ -324,11 +343,24 @@ export default function CardCustomizeForm({
                                     key={cat.id}
                                     onSelect={() => {
                                       form.setValue("companyId", cat.id!);
+                                      setOpenPopover(false);
                                     }}
                                   >
                                     {cat.name}
                                   </CommandItem>
                                 ))}
+                              </CommandGroup>
+                              <CommandGroup heading="New Company?">
+                                <CommandItem
+                                  className="cursor-pointer px-4 py-2.5 font-medium"
+                                  onSelect={() => {
+                                    setOpenPopover(false);
+                                    openCompanyModal();
+                                  }}
+                                >
+                                  {/* <IconPlus className="mr-2 size-3" /> */}
+                                  Add new
+                                </CommandItem>
                               </CommandGroup>
                             </CommandList>
                           </Command>
@@ -364,7 +396,11 @@ export default function CardCustomizeForm({
                     <FormItem className="col-span-2">
                       <FormLabel>Bio</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Sales & Marketing" {...field} />
+                        <Textarea
+                          placeholder="Sales & Marketing"
+                          {...field}
+                          value={field.value ?? ""}
+                        />
                       </FormControl>
 
                       <FormMessage />
@@ -391,6 +427,7 @@ export default function CardCustomizeForm({
                                 src={cover}
                                 fill
                                 alt=""
+                                sizes="100vw"
                                 className="-z-10 object-cover"
                               />
                             </div>
@@ -425,27 +462,8 @@ export default function CardCustomizeForm({
               </TabsContent>
               <TabsContent value="links" className="flex flex-col gap-8">
                 <div className="w-full space-y-4">
-                  {/* {fields.map((field, index) => (
-                    <FormField
-                      control={form.control}
-                      key={field.id}
-                      name={`links.${index}.href`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base font-normal">
-                            Links
-                          </FormLabel>
-
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  ))} */}
-
-                  <FormField
+                  <LinksDND />
+                  {/* <FormField
                     control={form.control}
                     name={`links`}
                     render={({}) => (
@@ -455,23 +473,12 @@ export default function CardCustomizeForm({
                         </FormLabel>
 
                         <FormControl>
-                          <LinksDND />
+                          
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
-
-                  {/* <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-12 w-full gap-1.5"
-                    onClick={() => append({ value: "" })}
-                  >
-                    <IconPlus className="size-4" />
-                    Add Link
-                  </Button> */}
+                  /> */}
                 </div>
                 <AddLinkModal />
                 <section>
@@ -481,17 +488,7 @@ export default function CardCustomizeForm({
                       View All
                     </Button>
                   </div>
-                  <div className="grid grid-cols-[repeat(auto-fill,minmax(6.2rem,1fr))] gap-3">
-                    {/* {LINKS.map((link, i) => (
-                      <div
-                        className="flex flex-col items-center rounded-md border bg-background p-3"
-                        key={i}
-                      >
-                        <link.icon className="size-12 stroke-1" />
-                        <p className="text-xs font-medium">{link.name}</p>
-                      </div>
-                    ))} */}
-                  </div>
+                  <div className="grid grid-cols-[repeat(auto-fill,minmax(6.2rem,1fr))] gap-3"></div>
                 </section>
                 <FormField
                   control={form.control}
@@ -538,21 +535,21 @@ export default function CardCustomizeForm({
               </TabsContent>
             </Tabs>
 
-            <Card className="col-span-4 hidden rounded-lg bg-background md:block">
+            <Card className="sticky top-24 col-span-4 hidden h-fit rounded-lg bg-background md:block">
               <CardHeader className="flex-row items-center justify-between border-b py-4">
                 <h5>Preview</h5>
                 <IconDots />
               </CardHeader>
               <CardContent className="relative py-5">
                 <div className="relative mx-auto h-full w-[290px] rounded-[2.5rem] border-[10px] border-gray-900 bg-gray-900 shadow-xl">
-                  <div className="absolute left-1/2 top-1.5 z-50 flex h-[1.5rem] w-[80px] -translate-x-1/2 items-center justify-end rounded-full bg-gray-900 px-2">
+                  <div className="absolute left-1/2 top-1.5 z-40 flex h-[1.5rem] w-[80px] -translate-x-1/2 items-center justify-end rounded-full bg-gray-900 px-2">
                     <div className="size-3 rounded-full border-2 border-gray-600 bg-gray-900"></div>
                   </div>
-                  <div className="absolute -start-[13px] top-[124px] z-50 h-[46px] w-[3px] rounded-s-lg bg-gray-900"></div>
-                  <div className="absolute -start-[13px] top-[178px] z-50 h-[46px] w-[3px] rounded-s-lg bg-gray-900"></div>
-                  <div className="absolute -end-[13px] top-[142px] z-50 h-[64px] w-[3px] rounded-e-lg bg-gray-900"></div>
+                  <div className="absolute -start-[13px] top-[124px] z-40 h-[46px] w-[3px] rounded-s-lg bg-gray-900"></div>
+                  <div className="absolute -start-[13px] top-[178px] z-40 h-[46px] w-[3px] rounded-s-lg bg-gray-900"></div>
+                  <div className="absolute -end-[13px] top-[142px] z-40 h-[64px] w-[3px] rounded-e-lg bg-gray-900"></div>
                   <div className="h-[572px] w-[272px] overflow-hidden rounded-[2rem] bg-white @container">
-                    <DefaultTemplate card={cardData!} company={data} />
+                    <DefaultTemplate card={cardData} company={data} />
                   </div>
                 </div>
               </CardContent>

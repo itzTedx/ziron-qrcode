@@ -11,6 +11,7 @@ export async function getCardById(id: string) {
       where: eq(persons.id, parseInt(id)),
       with: {
         company: true,
+        links: true,
       },
     });
 

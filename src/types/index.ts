@@ -1,7 +1,7 @@
 export interface Person {
   name: string;
   email?: string | null;
-  phone: string;
+  phone?: string | null;
   address?: string | null;
   bio?: string | null;
   companyId: number;
@@ -28,6 +28,7 @@ export interface Company {
 
 export interface Link {
   label: string;
-  href: string;
-  id?: string | undefined;
+  url: string;
+  icon: string;
+  id?: number | undefined;
 }

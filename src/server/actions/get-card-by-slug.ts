@@ -11,6 +11,7 @@ export async function getCardBySlug(slug: string) {
       where: eq(persons.slug, slug),
       with: {
         company: true,
+        links: true,
       },
     });
 

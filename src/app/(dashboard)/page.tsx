@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { IconEdit, IconPlus } from "@tabler/icons-react";
 
-import CompanyFormModal from "@/components/features/modals/company-form-modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -114,7 +113,6 @@ export default async function Home() {
           </CollapsibleContent>
         </Collapsible>
       ))}
-      <CompanyFormModal />
     </main>
   );
 }

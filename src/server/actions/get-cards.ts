@@ -7,6 +7,7 @@ export async function getCards() {
     const cards = await db.query.persons.findMany({
       with: {
         company: true,
+        links: true,
       },
     });
 

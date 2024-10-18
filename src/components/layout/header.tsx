@@ -9,7 +9,7 @@ export default async function Header() {
   const { companies } = await getCompanies();
 
   return (
-    <div className="sticky top-0 z-[99999999] flex h-16 w-full items-center justify-between gap-3 border-b bg-background/80 px-4 backdrop-blur-lg md:h-20 md:px-4 lg:px-12">
+    <div className="sticky top-0 z-50 flex h-16 w-full items-center justify-between gap-3 border-b bg-background/80 px-4 backdrop-blur-lg md:px-4 lg:px-12">
       <div className="flex items-center gap-4">
         <MobileSidebar />
         <HeaderTitle />
