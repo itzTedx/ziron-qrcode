@@ -27,8 +27,9 @@ export interface Company {
 }
 
 export interface Link {
+  id: number;
   label: string;
   url: string;
   icon: string;
-  id?: number | undefined;
+  category?: string;
 }

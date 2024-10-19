@@ -28,6 +28,7 @@ export const cardSchema = z.object({
           .min(1, { message: "Please enter title for the link" }),
         url: z.string().url({ message: "Please enter a valid URL." }),
         icon: z.string(),
+        category: z.string().optional(),
       })
     )
     .optional(),

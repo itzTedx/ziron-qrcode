@@ -1,35 +1,43 @@
 "use client";
 
-import Image from "next/image";
-import { useCallback } from "react";
+import { useState } from "react";
 
 import {
-  DragDropContext,
-  Draggable,
-  DropResult,
-  Droppable,
-} from "@hello-pangea/dnd";
-import { IconGripVertical, IconPlus } from "@tabler/icons-react";
-import { Edit2, Trash2 } from "lucide-react";
-import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { IconPlus } from "@tabler/icons-react";
+import { useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useAddLinkModal } from "@/store/use-add-link-modal";
+import { Link } from "@/types";
 import { cardSchema } from "@/types/card-schema";
 
+import SortableLinkCard from "./sortable-link";
+
 export default function SocialMediaLinks() {
-  const { control, register } = useFormContext<z.infer<typeof cardSchema>>();
+  const [items, setItems] = useState<Link[]>([]);
 
-  const openModal = useAddLinkModal((state) => state.openModal);
+  const { control } = useFormContext<z.infer<typeof cardSchema>>();
 
-  const { remove, move } = useFieldArray({
-    control,
-    name: "links",
-  });
+  const { openModal, setData, data } = useAddLinkModal();
 
   // Use useWatch to observe changes in the links array
   const links = useWatch({
@@ -37,137 +45,63 @@ export default function SocialMediaLinks() {
     name: "links",
   });
 
-  const onDragEnd = useCallback(
-    (result: DropResult) => {
-      if (!result.destination) return;
-
-      move(result.source.index, result.destination.index);
-    },
-    [move]
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
   );
 
-  const handleAddLink = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      setItems((prevItems) => {
+        const oldIndex = prevItems.findIndex((item) => item.id === active.id);
+        const newIndex = over
+          ? prevItems.findIndex((item) => item.id === over.id)
+          : oldIndex;
+
+        return arrayMove(prevItems, oldIndex, newIndex);
+      });
+    }
+  }
+
+  function handleDelete(idToDelete: number) {
+    setItems((prevItems) => prevItems.filter((item) => item.id !== idToDelete));
+  }
+
+  const handleAddLink = () => {
     openModal();
+
+    setItems((prevItems) => [...prevItems, data[0] as Link]); // Ensure data is treated as a single Link
+
+    console.log("data from modal", data);
   };
 
   return (
-    <div className="w-full">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="list">
-          {(provided) => (
-            <ul
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="space-y-2"
-            >
-              {links &&
-                links.map((link, index) => (
-                  <Draggable
-                    key={link.id}
-                    draggableId={link.id || index.toString()}
-                    index={index}
-                  >
-                    {(provided, snapshot) => (
-                      <li
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        className={`${snapshot.isDragging ? "opacity-50" : ""}`}
-                      >
-                        <Card>
-                          <CardContent className="flex items-center justify-between gap-6 p-4">
-                            <div className="flex w-full items-center gap-x-4">
-                              <div className="relative size-12 flex-shrink-0">
-                                <Image
-                                  src={link.icon}
-                                  fill
-                                  alt=""
-                                  sizes="100vw"
-                                />
-                              </div>
-
-                              {link.label === "Custom Link" ? (
-                                <div className="flex w-full gap-4">
-                                  <Label className="">
-                                    <h5 className="pb-1">
-                                      Title
-                                      <span className="text-red-500">*</span>
-                                    </h5>
-                                    <Input
-                                      {...register(`links.${index}.label`)}
-                                      name={`links.[${index}].label`}
-                                      placeholder="Enter Link Title"
-                                    />
-                                  </Label>
-                                  <Label className="w-full">
-                                    <h5 className="pb-1">
-                                      URL{" "}
-                                      <span className="text-red-500">*</span>
-                                    </h5>
-                                    <Input
-                                      placeholder="https://"
-                                      type="url"
-                                      {...register(`links.${index}.url`)}
-                                      name={`links.[${index}].value`}
-                                    />
-                                  </Label>
-                                </div>
-                              ) : (
-                                <Label className="flex w-full flex-col">
-                                  <h5 className="pb-1 text-xs text-gray-600">
-                                    {link.label}
-                                  </h5>
-                                  <Input
-                                    {...register(`links.${index}.url`)}
-                                    name={`links.[${index}].value`}
-                                    placeholder="Username"
-                                    className="w-full"
-                                  />
-                                </Label>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Button
-                                variant="ghost"
-                                size="smallIcon"
-                                tabIndex={-1}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  openModal(index);
-                                }}
-                              >
-                                <Edit2 className="size-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="smallIcon"
-                                tabIndex={-1}
-                                onClick={() => remove(index)}
-                                aria-label="Delete link"
-                              >
-                                <Trash2 className="size-4 text-red-500" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                className="hover:bg-transparent"
-                                size="icon"
-                                {...provided.dragHandleProps}
-                                aria-label="Drag to reorder"
-                              >
-                                <IconGripVertical className="size-4" />
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </li>
-                    )}
-                  </Draggable>
-                ))}
-              {provided.placeholder}
-            </ul>
-          )}
-        </Droppable>
-      </DragDropContext>
+    <div className="w-full space-y-3">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+      >
+        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+          {links &&
+            links.map((item) => {
+              const data = { ...item, id: parseInt(item.id!) };
+              return (
+                <SortableLinkCard
+                  key={item.id}
+                  id={parseInt(item.id!)}
+                  onDelete={handleDelete}
+                  data={data}
+                />
+              );
+            })}
+        </SortableContext>
+      </DndContext>
 
       <Button
         onClick={handleAddLink}

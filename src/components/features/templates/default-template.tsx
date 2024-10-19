@@ -39,7 +39,7 @@ export default function DefaultTemplate({ card, company }: TemplateProps) {
                   height={100}
                   width={100}
                   alt="cover"
-                  className="z-30 h-5"
+                  className="z-30 h-5 object-contain"
                 />
               )}
             </div>

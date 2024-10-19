@@ -22,11 +22,12 @@ import { useAddLinkModal } from "@/store/use-add-link-modal";
 import { cardSchema } from "@/types/card-schema";
 
 export default function SocialMediaLinks() {
-  const { control, register } = useFormContext<z.infer<typeof cardSchema>>();
+  const { control, register, watch } =
+    useFormContext<z.infer<typeof cardSchema>>();
 
   const openModal = useAddLinkModal((state) => state.openModal);
 
-  const { remove, move } = useFieldArray({
+  const { remove, move, fields } = useFieldArray({
     control,
     name: "links",
   });
@@ -50,6 +51,8 @@ export default function SocialMediaLinks() {
     e.preventDefault();
     openModal();
   };
+
+  console.log(links);
 
   return (
     <div className="w-full">
@@ -86,7 +89,7 @@ export default function SocialMediaLinks() {
                                 />
                               </div>
 
-                              {link.label === "Custom Link" ? (
+                              {link.category === "General" ? (
                                 <div className="flex w-full gap-4">
                                   <Label className="">
                                     <h5 className="pb-1">
