@@ -53,8 +53,6 @@ export const createCard = action.schema(cardSchema).action(
               image ||
               `https://ui-avatars.com/api/?background=random&name=${name}&size=128`,
             cover: cover || "/images/placeholder-cover.jpg",
-
-            slug: uniqueSlug,
           })
           .where(eq(persons.id, id))
           .returning();

@@ -5,20 +5,13 @@ import { Person } from "@/types";
 
 interface SaveContactButtonProps {
   data: Person;
+  imageBase64?: string;
 }
 
-export const phone = `BEGIN:VCARD
-VERSION:3.0
-N:(itzTedx);Melwin;Af
-ORG:
-TITLE:
-TEL;MEDIATYPE=WORK:+9715881012324
-TEL;MEDIATYPE=WORK:+423432
-EMAIL:melwinaf.abi@gmail.com
-ADR:dsdg3 424 
-END:VCARD`;
-
-export default function SaveContactButton({ data }: SaveContactButtonProps) {
+export default function SaveContactButton({
+  data,
+  imageBase64,
+}: SaveContactButtonProps) {
   const generateVCard = () => {
     const vCardData = `BEGIN:VCARD
 VERSION:3.0
@@ -28,6 +21,7 @@ TITLE:${data.designation && data.designation}
 TEL;MEDIATYPE=WORK:${data.phone && data.phone.replace(/\s+/g, "")}
 EMAIL:${data.email && data.email}
 ADR:${data.address && data.address}
+PHOTO:${imageBase64}
 END:VCARD`;
     return vCardData;
   };
