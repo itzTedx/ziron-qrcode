@@ -24,6 +24,7 @@ export default async function CardPage({ params }: CardProps) {
       data={companies}
       isEditMode={isEditMode}
       initialData={card}
+      id={params.id}
     />
   );
 }

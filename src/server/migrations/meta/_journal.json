@@ -78,6 +78,13 @@
       "when": 1729254169977,
       "tag": "0010_light_gauntlet",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1730373965699,
+      "tag": "0011_closed_runaways",
+      "breakpoints": true
     }
   ]
 }

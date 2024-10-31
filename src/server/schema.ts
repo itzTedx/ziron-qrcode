@@ -34,6 +34,7 @@ export const persons = pgTable("persons", {
   bio: text("bio"),
 
   companyId: integer("companyId").notNull(),
+  // attachmentId: integer("attachmentId").notNull(),
   designation: text("designation"),
 
   image: text("logo").notNull(),
@@ -61,16 +62,30 @@ export const links = pgTable("links", {
     .$onUpdate(() => new Date()),
 });
 
+// export const attachments = pgTable("attachments", {
+//   id: serial("id").primaryKey().notNull(),
+//   label: text("title").notNull(),
+//   url: text("url").notNull(),
+
+//   personId: integer("personId").notNull().unique(),
+
+//   createdAt: timestamp("createdAt").defaultNow().notNull(),
+//   updatedAt: timestamp("updated_at")
+//     .defaultNow()
+//     .$onUpdate(() => new Date()),
+// });
+
 export const personsRelations = relations(persons, ({ one, many }) => ({
   company: one(companies, {
     fields: [persons.companyId],
     references: [companies.id],
   }),
   links: many(links),
+  // attachments: one(attachments),
 }));
 
 export const personLinksRelations = relations(links, ({ one }) => ({
-  product: one(persons, {
+  person: one(persons, {
     fields: [links.personId],
     references: [persons.id],
     relationName: "personLinks",

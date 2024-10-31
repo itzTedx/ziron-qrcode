@@ -13,9 +13,9 @@ import {
   IconDots,
   IconEdit,
   IconPlus,
+  IconTrash,
   IconUpload,
   IconUser,
-  IconX,
 } from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
@@ -72,12 +72,14 @@ interface CardCustomizeProps {
   data: Company[];
   isEditMode: boolean;
   initialData?: Person;
+  id: string;
 }
 
 export default function CardCustomizeForm({
   data,
   isEditMode,
   initialData,
+  id,
 }: CardCustomizeProps) {
   const [loading, setLoading] = useState(false);
   const [openPopover, setOpenPopover] = useState(false);
@@ -88,12 +90,11 @@ export default function CardCustomizeForm({
 
   const defaultTab = searchParams.get("tab") || "information";
 
-  // const openModal = useAddLinkModal((state) => state.openModal);
-
   const defaultValues = initialData
     ? {
         ...initialData,
-        bio: initialData.bio || "",
+        id: parseInt(id),
+        bio: initialData.bio || undefined,
         links: initialData.links
           ? initialData.links.map((link) => ({
               ...link,
@@ -106,6 +107,7 @@ export default function CardCustomizeForm({
   const form = useForm<z.infer<typeof cardSchema>>({
     resolver: zodResolver(cardSchema),
     defaultValues,
+    mode: "onBlur",
   });
 
   // Use useWatch to observe all form values for the preview
@@ -127,12 +129,14 @@ export default function CardCustomizeForm({
 
   const { execute } = useAction(createCard, {
     onExecute: () => {
+      toast.loading("Loading");
       setLoading(true);
     },
     onSuccess: ({ data }) => {
       if (data?.success) {
         router.push(`/?default=${data.company}`);
 
+        toast.dismiss();
         toast.success(data.success);
         setLoading(false);
       }
@@ -147,8 +151,6 @@ export default function CardCustomizeForm({
   function onSubmit(values: z.infer<typeof cardSchema>) {
     execute(values);
   }
-
-  // console.log("Form Values from main form: ", formValues);
 
   const photo = form.getValues("image");
   const name = form.getValues("name");
@@ -517,71 +519,111 @@ export default function CardCustomizeForm({
               <TabsContent value="links" className="flex flex-col gap-8">
                 <div className="w-full space-y-4">
                   {/* <SocialLinks />*/}
-                  {fields.map((field, index) => (
-                    <div key={field.id}>
-                      <FormField
-                        control={form.control}
-                        name={`links.${index}.label`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <div className="flex">
-                                <Input
-                                  {...field}
-                                  disabled={loading}
-                                  placeholder="New Subcategory"
-                                  className={cn("rounded-e-none rounded-s-md")}
-                                />
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  className={cn(
-                                    "h-auto rounded-e-md rounded-s-none"
-                                  )}
-                                  onClick={() => remove(index)}
-                                >
-                                  <IconX size={16} />
-                                </Button>
-                              </div>
-                            </FormControl>
 
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        key={field.id}
-                        name={`links.${index}.url`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <div className="flex">
-                                <Textarea
-                                  {...field}
-                                  disabled={loading}
-                                  placeholder="Description"
-                                  className={cn("rounded-e-none rounded-s-md")}
+                  {fields.map((data, index) =>
+                    data.category === "General" ? (
+                      <Card
+                        key={data.id}
+                        className="flex items-center justify-between gap-6 p-4"
+                      >
+                        <div className="grid grid-cols-5 items-center gap-4">
+                          <FormField
+                            control={form.control}
+                            name={`links.${index}.label`}
+                            render={({ field }) => (
+                              <FormItem className="col-span-2 flex gap-3 space-y-0">
+                                <Image
+                                  src={data.icon}
+                                  height={40}
+                                  width={40}
+                                  alt=""
+                                  className="flex-shrink-0"
                                 />
-                              </div>
-                            </FormControl>
+                                <FormControl>
+                                  <Input
+                                    className="space-y-0"
+                                    {...field}
+                                    disabled={loading}
+                                    placeholder={`${data.label} Title`}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            key={data.id}
+                            name={`links.${index}.url`}
+                            render={({ field }) => (
+                              <FormItem className="col-span-3">
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    disabled={loading}
+                                    placeholder={`${data.label} Url`}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => remove(index)}
+                        >
+                          <IconTrash size={16} />
+                        </Button>
+                      </Card>
+                    ) : (
+                      <Card
+                        key={data.id}
+                        className="flex items-center justify-between gap-6 p-4"
+                      >
+                        <div className="flex flex-1 gap-3">
+                          <Image
+                            src={data.icon}
+                            height={40}
+                            width={40}
+                            alt=""
+                          />
+                          <FormField
+                            control={form.control}
+                            key={data.id}
+                            name={`links.${index}.url`}
+                            render={({ field }) => (
+                              <FormItem className="w-full">
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    disabled={loading}
+                                    placeholder={`${data.label} url`}
+                                  />
+                                </FormControl>
 
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  ))}
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => remove(index)}
+                        >
+                          <IconTrash size={16} />
+                        </Button>
+                      </Card>
+                    )
+                  )}
                 </div>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="mt-2"
-                    >
+                    <Button type="button" variant="outline">
                       <IconPlus size={16} className="mr-2" /> Add
                     </Button>
                   </DialogTrigger>
@@ -614,7 +656,7 @@ export default function CardCustomizeForm({
                                       sizes="10vw"
                                     />
                                   </div>
-                                  {/* <span className="size-8 bg-red-500" /> */}
+
                                   <p>{link.label}</p>
                                 </div>
                                 <DialogClose asChild>
@@ -622,6 +664,7 @@ export default function CardCustomizeForm({
                                     variant="ghost"
                                     onClick={() =>
                                       append({
+                                        category: item.label,
                                         label: link.label,
                                         url: link.url,
                                         icon: link.icon,
@@ -716,7 +759,10 @@ export default function CardCustomizeForm({
                 </div>
               </CardContent>
             </Card>
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button
+              type="submit"
+              disabled={form.formState.isSubmitting || loading}
+            >
               Submit
             </Button>
           </div>

@@ -45,7 +45,13 @@ export default function DefaultTemplate({ card, company }: TemplateProps) {
             </div>
             {card.image && (
               <div className="absolute left-1/2 top-1/2 size-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-background bg-gray-100 @sm:size-32">
-                <Image src={card.image} fill alt="" className="object-cover" />
+                <Image
+                  src={card.image}
+                  fill
+                  alt=""
+                  sizes="20vw"
+                  className="object-cover"
+                />
               </div>
             )}
           </div>
@@ -129,6 +135,30 @@ export default function DefaultTemplate({ card, company }: TemplateProps) {
                   <h5 className="font-semibold">{link.label}</h5>
                 </Link>
               ))}
+            </div>
+          </section>
+        )}
+        {card.attachments && (
+          <section className="space-y-3 px-4 @sm:space-y-4 @sm:px-8">
+            <h2 className="pt-3 text-sm font-medium text-gray-600">
+              Attachment
+            </h2>
+            <div className="space-y-4">
+              <Link
+                href={card.attachments}
+                download
+                className="flex items-center gap-2 rounded-md border p-3 text-sm @sm:text-base"
+              >
+                <div className="relative size-8 flex-shrink-0">
+                  <Image
+                    src={"/icons/world-www.svg"}
+                    fill
+                    alt=""
+                    sizes="10vw"
+                  />
+                </div>
+                <h5 className="font-semibold">Attachment</h5>
+              </Link>
             </div>
           </section>
         )}

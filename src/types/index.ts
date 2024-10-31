@@ -10,6 +10,7 @@ export interface Person {
   image?: string | null;
   cover?: string | null;
   links?: Link[];
+  attachments?: string;
   slug?: string | null;
   id?: number | null;
 }

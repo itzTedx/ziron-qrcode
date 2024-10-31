@@ -62,6 +62,7 @@ export default function ProfileDashboard({
         <Image
           src={data.cover!}
           fill
+          priority
           sizes="100vw"
           alt="cover image"
           title="Cover Image"
@@ -75,7 +76,7 @@ export default function ProfileDashboard({
             <Image
               src={data.image!}
               fill
-              sizes="100vw"
+              sizes="10vw"
               alt="Profile Image"
               quality={25}
               className="object-cover"
