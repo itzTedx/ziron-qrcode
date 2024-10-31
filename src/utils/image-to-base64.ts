@@ -1,15 +1,7 @@
 // Function to convert image URL to Base64
-export function imageToBase64(src: string): Promise<string> {
-  return fetch(src)
-    .then((response) => response.blob())
-    .then((blob) => {
-      return new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          resolve(reader.result as string);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    });
+export async function imageToBase64(src: string): Promise<string> {
+  const response = await fetch(src);
+  const arrayBuffer = await response.arrayBuffer();
+  const base64 = Buffer.from(arrayBuffer).toString("base64");
+  return base64;
 }

@@ -21,7 +21,7 @@ TITLE:${data.designation && data.designation}
 TEL;MEDIATYPE=WORK:${data.phone && data.phone.replace(/\s+/g, "")}
 EMAIL:${data.email && data.email}
 ADR:${data.address && data.address}
-PHOTO:${imageBase64}
+PHOTO;ENCODING=BASE64;JPEG:${imageBase64}
 END:VCARD`;
     return vCardData;
   };
