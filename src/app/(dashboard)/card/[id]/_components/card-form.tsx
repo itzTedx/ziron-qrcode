@@ -152,7 +152,11 @@ export default function CardCustomizeForm({
     execute(values);
   }
 
-  const photo = form.getValues("image");
+  // console.log("existing formValues", formValues);
+
+  const photo = formValues.image;
+
+  console.log("Photo from getValues", photo);
   const name = form.getValues("name");
   const placeholderPhoto = name
     ? `https://ui-avatars.com/api/?background=random&name=${name}&size=128`
@@ -190,7 +194,7 @@ export default function CardCustomizeForm({
           className={cn(isEditMode && "mt-4")}
         >
           {isEditMode && initialData && (
-            <ProfileDashboard data={initialData} loading={loading} />
+            <ProfileDashboard data={cardData} loading={loading} />
           )}
           <div className="container grid max-w-6xl gap-8 pt-3 md:grid-cols-12 md:pt-9">
             <Tabs

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import DefaultTemplate from "@/components/features/templates/default-template";
 import { getCardBySlug } from "@/server/actions/get-card-by-slug";
-import { imageToBase64 } from "@/utils/image-to-base64";
+import { imageToBase64 } from "@/utils/get-image-to-base64";
 
 export default async function PreviewPage({
   params,

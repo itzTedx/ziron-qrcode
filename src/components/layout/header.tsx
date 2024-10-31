@@ -1,17 +1,18 @@
 import { getCompanies } from "@/server/actions/get-company";
 
+import { SidebarTrigger } from "../ui/sidebar";
 import { AddAction } from "./add-actions";
 import HeaderTitle from "./header-title";
-import MobileSidebar from "./mobile-sidebar";
 import { Search } from "./search";
 
 export default async function Header() {
   const { companies } = await getCompanies();
 
   return (
-    <div className="sticky top-0 z-50 flex h-16 w-full items-center justify-between gap-3 border-b bg-background/80 px-4 backdrop-blur-lg md:px-4 lg:px-12">
+    <div className="sticky top-0 z-50 flex h-16 w-full items-center justify-between gap-3 border-b bg-background/80 px-4 backdrop-blur-lg">
       <div className="flex items-center gap-4">
-        <MobileSidebar />
+        <SidebarTrigger />
+        {/* <MobileSidebar /> */}
         <HeaderTitle />
       </div>
       <div className="flex gap-3">

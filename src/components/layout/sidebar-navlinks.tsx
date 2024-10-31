@@ -10,10 +10,10 @@ export const LINKS = [
     label: "Digital Cards",
     href: "/",
   },
-  {
-    label: "Customize",
-    href: "/card",
-  },
+  // {
+  //   label: "Customize",
+  //   href: "/card",
+  // },
 ];
 
 export default function NavLinks({

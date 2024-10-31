@@ -6,8 +6,9 @@ import { extractRouterConfig } from "uploadthing/server";
 import BreakpointIndicator from "@/components/breakpoint-indicator";
 import CompanyFormModal from "@/components/features/modals/company-form-modal";
 import ShareModal from "@/components/features/modals/share-modal";
+import { AppSidebar } from "@/components/layout/app-sidebar";
 import Header from "@/components/layout/header";
-import Sidebar from "@/components/layout/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { plusJakarta } from "@/fonts";
 import { cn } from "@/lib/utils";
@@ -32,16 +33,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn("flex w-full antialiased", plusJakarta.className)}>
-        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-        <Sidebar />
-        <div className="relative flex-1 overflow-hidden">
-          <Header />
-          <ShareModal />
-          {children}
-          <CompanyFormModal />
-          <BreakpointIndicator />
-          <Toaster richColors />
-        </div>
+        <SidebarProvider>
+          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+          {/* <Sidebar /> */}
+          <AppSidebar />
+          <div className="relative flex-1 overflow-hidden">
+            <Header />
+
+            <ShareModal />
+            {children}
+            <CompanyFormModal />
+            <BreakpointIndicator />
+            <Toaster richColors />
+          </div>
+        </SidebarProvider>
       </body>
     </html>
   );

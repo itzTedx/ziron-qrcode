@@ -2,11 +2,11 @@ import { SVGProps } from "react";
 
 const SvgComponent = (props: SVGProps<SVGSVGElement>) => (
   <svg
+    {...props}
     xmlns="http://www.w3.org/2000/svg"
     width={182}
     height={30}
     fill="none"
-    {...props}
   >
     <path
       fill="#4A3AFF"
