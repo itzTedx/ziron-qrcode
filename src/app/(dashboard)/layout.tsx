@@ -34,7 +34,7 @@ export default function RootLayout({
       <body className={cn("flex w-full antialiased", plusJakarta.className)}>
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <Sidebar />
-        <div className="relative flex-1">
+        <div className="relative flex-1 overflow-hidden">
           <Header />
           <ShareModal />
           {children}

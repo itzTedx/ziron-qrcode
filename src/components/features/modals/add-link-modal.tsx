@@ -32,16 +32,30 @@ export default function AddLinkModal() {
     name: "links",
   });
 
-  const { isOpen, closeModal, index, setData, setCategory, data } =
-    useAddLinkModal();
+  const { isOpen, closeModal, index } = useAddLinkModal();
 
   const handleLinkAdd = (link: Link, category: string) => {
-    setData(link);
-    setCategory(category);
+    if (typeof index === "number") {
+      update(index, {
+        id: link.id.toString(),
+        label: link.label,
+        url: link.url,
+        icon: link.icon,
+        category: category,
+      });
+    } else {
+      append({
+        id: link.id.toString(),
+        label: link.label,
+        url: link.url,
+        icon: link.icon,
+        category: category,
+      });
+    }
+    watch("links");
+
     closeModal();
   };
-
-  console.log(data);
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>

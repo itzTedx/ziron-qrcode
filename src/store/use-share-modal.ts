@@ -2,17 +2,23 @@ import { create } from "zustand";
 
 interface ShareModalState {
   isOpen: boolean;
-  url: string;
-  name: string;
-  openModal: (url: string, title?: string) => void;
+  data: { url: string; name: string; logo?: string };
+
+  // name: string;
+  openModal: (
+    data: { url: string; name: string; logo?: string },
+    title?: string
+  ) => void;
   closeModal: () => void;
 }
 
 export const useShareModalStore = create<ShareModalState>((set) => ({
   isOpen: false,
-  url: "",
-  name: "Share Card",
-  openModal: (url: string, name: string = "Share Card") =>
-    set({ isOpen: true, url, name }),
+  data: { url: "", name: "", logo: "" },
+  // name: "Share Card",
+  openModal: (
+    data: { url: string; name: string; logo?: string }
+    // name: string = "Share Card"
+  ) => set({ isOpen: true, data }),
   closeModal: () => set({ isOpen: false }),
 }));

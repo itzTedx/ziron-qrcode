@@ -26,8 +26,6 @@ import { deleteCard } from "@/server/actions/delete-card";
 import { useShareModalStore } from "@/store/use-share-modal";
 import { Person } from "@/types";
 
-import Share from "./share";
-
 interface ProfileDashboardProps {
   data: Person;
   loading: boolean;
@@ -41,6 +39,12 @@ export default function ProfileDashboard({
   const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/id/${data.slug}`;
 
   const openModal = useShareModalStore((state) => state.openModal);
+
+  const shareData = {
+    url: shareLink,
+    name: data.name,
+    logo: data.company?.logo || undefined,
+  };
 
   const { execute: deleteExistingCard } = useAction(deleteCard, {
     onSuccess: ({ data: existingCard }) => {
@@ -82,7 +86,7 @@ export default function ProfileDashboard({
               <Badge variant="secondary">{data.company?.name}</Badge>
               <span className="flex gap-3 text-primary md:hidden">
                 <IconEdit />
-                <Share />
+                {/* <Share /> */}
               </span>
             </div>
             <h2 className="text-lg font-semibold lg:text-2xl">{data.name}</h2>
@@ -104,7 +108,7 @@ export default function ProfileDashboard({
               Customize url <IconArrowRight className="size-3 md:size-4" />
             </div>
             <Button
-              onClick={() => openModal(shareLink, data.name)}
+              onClick={() => openModal(shareData, data.name)}
               variant="secondary"
               className="hidden items-center gap-1.5 md:flex"
             >

@@ -124,7 +124,7 @@ export default function DefaultTemplate({ card, company }: TemplateProps) {
                   className="flex items-center gap-2 rounded-md border p-3 text-sm @sm:text-base"
                 >
                   <div className="relative size-8 flex-shrink-0">
-                    <Image src={link.icon} fill alt="" sizes="100vw" />
+                    <Image src={link.icon} fill alt="" sizes="10vw" />
                   </div>
                   <h5 className="font-semibold">{link.label}</h5>
                 </Link>

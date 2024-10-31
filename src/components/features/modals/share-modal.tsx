@@ -23,11 +23,11 @@ export default function ShareModal() {
   const [step, setStep] = useState(1);
   const [copied, setCopied] = useState(false);
 
-  const { isOpen, url, name, closeModal } = useShareModalStore();
+  const { isOpen, data, closeModal } = useShareModalStore();
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(data.url);
       toast.success("Link Copied!");
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -63,7 +63,7 @@ export default function ShareModal() {
                   <h5 className="font-semibold">
                     {copied ? "Link Copied!" : "Copy Link"}
                   </h5>
-                  <p className="line-clamp-1 text-sm">{url}</p>
+                  <p className="line-clamp-1 text-sm">{data.url}</p>
                 </div>
               </div>
               <Button
@@ -98,7 +98,7 @@ export default function ShareModal() {
               </Button>
             </div>
             <Link
-              href={url}
+              href={data.url}
               target="_blank"
               className="flex items-center justify-between gap-6 pb-3 pt-6"
             >
@@ -124,8 +124,9 @@ export default function ShareModal() {
           </div>
         ) : (
           <QRCodeDownload
-            shareLink={url}
-            cardName={name}
+            data={data}
+            shareLink={data.url}
+            cardName={data.name}
             onBack={() => setStep(1)}
           />
         )}

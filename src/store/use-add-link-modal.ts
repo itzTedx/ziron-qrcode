@@ -10,7 +10,7 @@ interface AddLinkModalProps {
   data: Link[];
   category: string;
   setCategory: (category: string) => void;
-  setData: (data: any) => void;
+  setData: (data: Link[]) => void;
 }
 
 export const useAddLinkModal = create<AddLinkModalProps>((set) => ({
@@ -21,5 +21,5 @@ export const useAddLinkModal = create<AddLinkModalProps>((set) => ({
   openModal: (index) => set({ isOpen: true, index }),
   closeModal: () => set({ isOpen: false }),
   setCategory: (category) => set({ category }),
-  setData: (data) => set({ data: { ...data } }),
+  setData: (newData) => set((state) => ({ data: [...state.data, ...newData] })), // Append new data
 }));

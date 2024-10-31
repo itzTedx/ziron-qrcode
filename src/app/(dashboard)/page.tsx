@@ -113,7 +113,13 @@ export default async function Home({
                         <IconEdit className="size-4" /> Edit
                       </Link>
                     </Button>
-                    <ShareButton name={person.name} slug={person.slug!} />
+                    <ShareButton
+                      data={{
+                        url: person.slug!,
+                        name: person.name,
+                        logo: company.logo,
+                      }}
+                    />
                   </div>
                 </CardContent>
               </Card>

@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import AddLinkModal from "@/components/features/modals/add-link-modal";
+import SocialLinks from "@/components/features/social-links/social-links";
 import DefaultTemplate from "@/components/features/templates/default-template";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -50,12 +51,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
-import { useAddLinkModal } from "@/store/use-add-link-modal";
 import { useCompanyFormModal } from "@/store/use-company-form-modal";
 import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
 
-import LinksDND from "./links-dnd";
 import ProfileDashboard from "./profile-dashboard";
 
 interface CardCustomizeProps {
@@ -76,11 +75,14 @@ export default function CardCustomizeForm({
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const openModal = useAddLinkModal((state) => state.openModal);
+  const defaultTab = searchParams.get("tab") || "information";
+
+  // const openModal = useAddLinkModal((state) => state.openModal);
 
   const defaultValues = initialData
     ? {
         ...initialData,
+        bio: initialData.bio || "",
         links: initialData.links
           ? initialData.links.map((link) => ({
               ...link,
@@ -154,7 +156,11 @@ export default function CardCustomizeForm({
     } as Person; // Assert the type as Person
   }, [formValues, data, placeholderPhoto]);
 
-  console.log(formValues);
+  const handleTabClick = (tab: string) => {
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set("tab", tab);
+    router.push(`?${newSearchParams.toString()}`);
+  };
 
   return (
     <main className="relative pb-12">
@@ -168,13 +174,28 @@ export default function CardCustomizeForm({
           )}
           <div className="container grid max-w-6xl gap-8 pt-3 md:grid-cols-12 md:pt-9">
             <Tabs
-              defaultValue="information"
+              defaultValue={defaultTab}
               className="col-span-8 w-full items-start"
             >
               <TabsList className="w-full">
-                <TabsTrigger value="information">Information</TabsTrigger>
-                <TabsTrigger value="links">Links</TabsTrigger>
-                <TabsTrigger value="template">Template</TabsTrigger>
+                <TabsTrigger
+                  value="information"
+                  onClick={() => handleTabClick("information")}
+                >
+                  Information
+                </TabsTrigger>
+                <TabsTrigger
+                  value="links"
+                  onClick={() => handleTabClick("links")}
+                >
+                  Links
+                </TabsTrigger>
+                <TabsTrigger
+                  value="template"
+                  onClick={() => handleTabClick("template")}
+                >
+                  Template
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent
@@ -412,7 +433,7 @@ export default function CardCustomizeForm({
                       <FormLabel>Bio</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Sales & Marketing"
+                          placeholder="More about the person"
                           {...field}
                           value={field.value ?? ""}
                         />
@@ -477,26 +498,11 @@ export default function CardCustomizeForm({
               </TabsContent>
               <TabsContent value="links" className="flex flex-col gap-8">
                 <div className="w-full space-y-4">
-                  <LinksDND />
-                  {/* <FormField
-                    control={form.control}
-                    name={`links`}
-                    render={({}) => (
-                      <FormItem>
-                        <FormLabel className="text-base font-normal">
-                          Links
-                        </FormLabel>
-
-                        <FormControl>
-                          
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
+                  <SocialLinks />
                 </div>
                 <AddLinkModal />
-                <section>
+                {/* <AddLinkModalDnd /> */}
+                {/* <section>
                   <div className="flex items-center justify-between">
                     <h3>Suggestions</h3>
                     <Button variant="link" onClick={() => openModal()}>
@@ -504,7 +510,7 @@ export default function CardCustomizeForm({
                     </Button>
                   </div>
                   <div className="grid grid-cols-[repeat(auto-fill,minmax(6.2rem,1fr))] gap-3"></div>
-                </section>
+                </section> */}
                 <FormField
                   control={form.control}
                   name="cover"
