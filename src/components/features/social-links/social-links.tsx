@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -32,10 +32,6 @@ export default function SocialLinks() {
   const { remove, fields } = useFieldArray({
     control,
     name: "links",
-  });
-
-  const { links } = useWatch({
-    control,
   });
 
   //   const { links } = useWatch<z.infer<typeof cardSchema>>();
