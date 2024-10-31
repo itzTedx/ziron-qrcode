@@ -11,20 +11,19 @@ import {
 import SaveContactButton from "@/components/save-contact-button";
 import { cn } from "@/lib/utils";
 import { Company, Person } from "@/types";
-import { imageToBase64 } from "@/utils/image-to-base64";
 
 interface TemplateProps {
   card?: Person;
   company?: Company[];
+  imageBase64URI?: string;
 }
 
-export default async function DefaultTemplate({
+export default function DefaultTemplate({
   card,
   company,
+  imageBase64URI,
 }: TemplateProps) {
   if (!card) return null;
-
-  const imageURI = card.image ? await imageToBase64(card.image) : undefined;
 
   const companyData = company?.find((c) => c.id === card.companyId);
   return (
@@ -170,7 +169,7 @@ export default async function DefaultTemplate({
         )}
       </div>
       <div className="sticky bottom-0 mt-auto h-20 w-full max-w-screen-sm bg-background p-4">
-        <SaveContactButton data={card} imageBase64={imageURI} />
+        <SaveContactButton data={card} imageBase64={imageBase64URI} />
       </div>
     </div>
   );
