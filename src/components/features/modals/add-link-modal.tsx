@@ -25,34 +25,47 @@ type Link = {
 };
 
 export default function AddLinkModal() {
-  const { control, watch } = useFormContext<z.infer<typeof cardSchema>>();
+  const { control } = useFormContext<z.infer<typeof cardSchema>>();
 
-  const { append, update } = useFieldArray({
+  const { append } = useFieldArray({
     control,
     name: "links",
   });
 
   const { isOpen, closeModal, index } = useAddLinkModal();
 
+  // const handleLinkAdd = (link: Link, category: string) => {
+  //   if (typeof index === "number") {
+  //     update(index, {
+  //       id: link.id.toString(),
+  //       label: link.label,
+  //       url: link.url,
+  //       icon: link.icon,
+  //       category: category,
+  //     });
+  //   } else {
+  //     append({
+  //       id: link.id.toString(),
+  //       label: link.label,
+  //       url: link.url,
+  //       icon: link.icon,
+  //       category: category,
+  //     });
+  //   }
+  //   watch("links");
+
+  //   closeModal();
+  // };
   const handleLinkAdd = (link: Link, category: string) => {
-    if (typeof index === "number") {
-      update(index, {
-        id: link.id.toString(),
-        label: link.label,
-        url: link.url,
-        icon: link.icon,
-        category: category,
-      });
-    } else {
-      append({
-        id: link.id.toString(),
-        label: link.label,
-        url: link.url,
-        icon: link.icon,
-        category: category,
-      });
-    }
-    watch("links");
+    append({
+      id: link.id.toString(),
+      label: link.label,
+      url: link.url,
+      icon: link.icon,
+      category: category,
+    });
+
+    // watch("links");
 
     closeModal();
   };

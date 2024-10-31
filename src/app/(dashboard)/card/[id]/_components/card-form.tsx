@@ -6,21 +6,23 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 import {
   IconArrowRight,
   IconCaretUpDownFilled,
   IconDots,
   IconEdit,
+  IconPlus,
   IconUpload,
   IconUser,
+  IconX,
 } from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
-import { useForm, useWatch } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 import AddLinkModal from "@/components/features/modals/add-link-modal";
-import SocialLinks from "@/components/features/social-links/social-links";
 import DefaultTemplate from "@/components/features/templates/default-template";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -32,6 +34,14 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -48,6 +58,7 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { LINKS } from "@/constants";
 import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
@@ -102,6 +113,11 @@ export default function CardCustomizeForm({
     control: form.control,
   });
 
+  const { fields, append, remove } = useFieldArray({
+    name: "links",
+    control: form.control,
+  });
+
   useEffect(() => {
     const companyIdParams = searchParams.get("company");
     if (companyIdParams) {
@@ -131,6 +147,8 @@ export default function CardCustomizeForm({
   function onSubmit(values: z.infer<typeof cardSchema>) {
     execute(values);
   }
+
+  // console.log("Form Values from main form: ", formValues);
 
   const photo = form.getValues("image");
   const name = form.getValues("name");
@@ -498,8 +516,131 @@ export default function CardCustomizeForm({
               </TabsContent>
               <TabsContent value="links" className="flex flex-col gap-8">
                 <div className="w-full space-y-4">
-                  <SocialLinks />
+                  {/* <SocialLinks />*/}
+                  {fields.map((field, index) => (
+                    <div key={field.id}>
+                      <FormField
+                        control={form.control}
+                        name={`links.${index}.label`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <div className="flex">
+                                <Input
+                                  {...field}
+                                  disabled={loading}
+                                  placeholder="New Subcategory"
+                                  className={cn("rounded-e-none rounded-s-md")}
+                                />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  className={cn(
+                                    "h-auto rounded-e-md rounded-s-none"
+                                  )}
+                                  onClick={() => remove(index)}
+                                >
+                                  <IconX size={16} />
+                                </Button>
+                              </div>
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        key={field.id}
+                        name={`links.${index}.url`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <div className="flex">
+                                <Textarea
+                                  {...field}
+                                  disabled={loading}
+                                  placeholder="Description"
+                                  className={cn("rounded-e-none rounded-s-md")}
+                                />
+                              </div>
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  ))}
                 </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-2"
+                    >
+                      <IconPlus size={16} className="mr-2" /> Add
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl p-0">
+                    <DialogHeader className="border-b p-6">
+                      <DialogTitle>Add Link</DialogTitle>
+                      <DialogDescription className="sr-only">
+                        Add Social or custom links to digital card
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="p-6 pb-6 pt-0">
+                      {LINKS.map((item, i) => (
+                        <div key={i} className="py-3">
+                          <h4 className="pb-2 text-sm font-medium text-gray-700">
+                            {item.label}
+                          </h4>
+
+                          <div className="grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-x-6">
+                            {item.links.map((link, i) => (
+                              <div
+                                className="flex items-center justify-between border-b py-3"
+                                key={`addLink-${i}-${link.label}`}
+                              >
+                                <div className="flex items-center gap-4 font-medium">
+                                  <div className="relative size-8">
+                                    <Image
+                                      src={link.icon}
+                                      fill
+                                      alt=""
+                                      sizes="10vw"
+                                    />
+                                  </div>
+                                  {/* <span className="size-8 bg-red-500" /> */}
+                                  <p>{link.label}</p>
+                                </div>
+                                <DialogClose asChild>
+                                  <Button
+                                    variant="ghost"
+                                    onClick={() =>
+                                      append({
+                                        label: link.label,
+                                        url: link.url,
+                                        icon: link.icon,
+                                      })
+                                    }
+                                    className="h-8 gap-2 px-2 font-semibold text-primary hover:text-blue-800"
+                                  >
+                                    <IconPlus className="size-3 stroke-[2.5]" />
+                                    Add
+                                  </Button>
+                                </DialogClose>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </DialogContent>
+                </Dialog>
                 <AddLinkModal />
                 {/* <AddLinkModalDnd /> */}
                 {/* <section>
