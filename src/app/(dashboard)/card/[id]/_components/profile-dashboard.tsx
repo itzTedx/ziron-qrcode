@@ -109,7 +109,10 @@ export default function ProfileDashboard({
               Customize url <IconArrowRight className="size-3 md:size-4" />
             </div>
             <Button
-              onClick={() => openModal(shareData, data.name)}
+              onClick={(e) => {
+                e.preventDefault();
+                openModal(shareData, data.name);
+              }}
               variant="secondary"
               className="hidden items-center gap-1.5 md:flex"
             >

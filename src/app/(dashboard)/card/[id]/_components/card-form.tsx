@@ -22,7 +22,6 @@ import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import AddLinkModal from "@/components/features/modals/add-link-modal";
 import DefaultTemplate from "@/components/features/templates/default-template";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -82,6 +81,7 @@ export default function CardCustomizeForm({
   id,
 }: CardCustomizeProps) {
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const [openPopover, setOpenPopover] = useState(false);
   const openCompanyModal = useCompanyFormModal((state) => state.openModal);
 
@@ -519,7 +519,6 @@ export default function CardCustomizeForm({
               <TabsContent value="links" className="flex flex-col gap-8">
                 <div className="w-full space-y-4">
                   {/* <SocialLinks />*/}
-
                   {fields.map((data, index) =>
                     data.category === "General" ? (
                       <Card
@@ -620,81 +619,116 @@ export default function CardCustomizeForm({
                       </Card>
                     )
                   )}
-                </div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button type="button" variant="outline">
-                      <IconPlus size={16} className="mr-2" /> Add
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl p-0">
-                    <DialogHeader className="border-b p-6">
-                      <DialogTitle>Add Link</DialogTitle>
-                      <DialogDescription className="sr-only">
-                        Add Social or custom links to digital card
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="p-6 pb-6 pt-0">
-                      {LINKS.map((item, i) => (
-                        <div key={i} className="py-3">
-                          <h4 className="pb-2 text-sm font-medium text-gray-700">
-                            {item.label}
-                          </h4>
+                  <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-12 w-full"
+                      >
+                        <IconPlus size={16} className="mr-2" /> Add
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl p-0">
+                      <DialogHeader className="border-b p-6">
+                        <DialogTitle>Add Link</DialogTitle>
+                        <DialogDescription className="sr-only">
+                          Add Social or custom links to digital card
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="p-6 pb-6 pt-0">
+                        {LINKS.map((item, i) => (
+                          <div key={i} className="py-3">
+                            <h4 className="pb-2 text-sm font-medium text-gray-700">
+                              {item.label}
+                            </h4>
 
-                          <div className="grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-x-6">
-                            {item.links.map((link, i) => (
-                              <div
-                                className="flex items-center justify-between border-b py-3"
-                                key={`addLink-${i}-${link.label}`}
-                              >
-                                <div className="flex items-center gap-4 font-medium">
-                                  <div className="relative size-8">
-                                    <Image
-                                      src={link.icon}
-                                      fill
-                                      alt=""
-                                      sizes="10vw"
-                                    />
+                            <div className="grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-x-6">
+                              {item.links.map((link, i) => (
+                                <div
+                                  className="flex items-center justify-between border-b py-3"
+                                  key={`addLink-${i}-${link.label}`}
+                                >
+                                  <div className="flex items-center gap-4 font-medium">
+                                    <div className="relative size-8">
+                                      <Image
+                                        src={link.icon}
+                                        fill
+                                        alt=""
+                                        sizes="10vw"
+                                      />
+                                    </div>
+
+                                    <p>{link.label}</p>
                                   </div>
-
-                                  <p>{link.label}</p>
+                                  <DialogClose asChild>
+                                    <Button
+                                      variant="ghost"
+                                      onClick={() =>
+                                        append({
+                                          category: item.label,
+                                          label: link.label,
+                                          url: link.url,
+                                          icon: link.icon,
+                                        })
+                                      }
+                                      className="h-8 gap-2 px-2 font-semibold text-primary hover:text-blue-800"
+                                    >
+                                      <IconPlus className="size-3 stroke-[2.5]" />
+                                      Add
+                                    </Button>
+                                  </DialogClose>
                                 </div>
-                                <DialogClose asChild>
-                                  <Button
-                                    variant="ghost"
-                                    onClick={() =>
-                                      append({
-                                        category: item.label,
-                                        label: link.label,
-                                        url: link.url,
-                                        icon: link.icon,
-                                      })
-                                    }
-                                    className="h-8 gap-2 px-2 font-semibold text-primary hover:text-blue-800"
-                                  >
-                                    <IconPlus className="size-3 stroke-[2.5]" />
-                                    Add
-                                  </Button>
-                                </DialogClose>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                <AddLinkModal />
-                {/* <AddLinkModalDnd /> */}
-                {/* <section>
+                        ))}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                <section>
                   <div className="flex items-center justify-between">
                     <h3>Suggestions</h3>
-                    <Button variant="link" onClick={() => openModal()}>
+                    <Button
+                      variant="link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setOpen(true);
+                      }}
+                    >
                       View All
                     </Button>
                   </div>
-                  <div className="grid grid-cols-[repeat(auto-fill,minmax(6.2rem,1fr))] gap-3"></div>
-                </section> */}
+                  <div className="grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-3">
+                    {LINKS.map((item) =>
+                      item.links.slice(1, 6).map((link) => (
+                        <Card
+                          key={link.id}
+                          onClick={() =>
+                            append({
+                              category: item.label,
+                              label: link.label,
+                              url: link.url,
+                              icon: link.icon,
+                            })
+                          }
+                          className="flex flex-col items-center justify-between p-6 transition-colors hover:border-primary hover:bg-muted/20"
+                          role="button"
+                        >
+                          <Image
+                            src={link.icon}
+                            height={40}
+                            width={40}
+                            alt=""
+                          />
+                          <p>{link.label}</p>
+                        </Card>
+                      ))
+                    )}
+                  </div>
+                </section>
                 <FormField
                   control={form.control}
                   name="cover"

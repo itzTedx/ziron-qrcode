@@ -77,7 +77,7 @@ export function Search({ data }: SearchProps) {
         <CommandInput placeholder="Search Cards or Company..." />
         <CommandList>
           <CommandEmpty>No cards found.</CommandEmpty>
-          {data.map((company) => (
+          {data?.map((company) => (
             <CommandGroup key={company.id} heading={company.name}>
               {company.persons!.map((person) => (
                 <CommandItem
