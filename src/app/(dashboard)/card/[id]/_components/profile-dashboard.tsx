@@ -55,7 +55,8 @@ export default function ProfileDashboard({
   data,
   loading,
 }: ProfileDashboardProps) {
-  const [open, setOpen] = useState(false);
+  const [openPhoto, setOpenPhoto] = useState(false);
+  const [openCover, setOpenCover] = useState(false);
   const router = useRouter();
   const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/id/${data.slug}`;
 
@@ -93,6 +94,56 @@ export default function ProfileDashboard({
           className="object-cover transition-[filter] group-hover:brightness-90"
           quality={60}
         />
+        <Dialog open={openCover} onOpenChange={setOpenCover}>
+          <DialogTrigger asChild>
+            <Button
+              className="absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-2 rounded-full"
+              variant="outline"
+            >
+              <IconCamera className="size-5" /> Change Cover
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader className="sr-only">
+              <DialogTitle>Update Cover Image</DialogTitle>
+              <DialogDescription>
+                Upload some best headshot of the person
+              </DialogDescription>
+            </DialogHeader>
+            <FormField
+              control={control}
+              name="image"
+              render={({}) => (
+                <FormItem>
+                  <FormLabel>Change Cover Image</FormLabel>
+                  <FormControl>
+                    <UploadDropzone
+                      endpoint="cover"
+                      onUploadBegin={() => {
+                        toast.loading("Uploading profile picture...");
+                      }}
+                      onUploadError={(error) => {
+                        setError("cover", {
+                          type: "validate",
+                          message: error.message,
+                        });
+                      }}
+                      onClientUploadComplete={(res) => {
+                        setValue("cover", res[0].url);
+
+                        toast.dismiss();
+                        toast.success("Profile picture uploaded");
+                        setOpenCover(false);
+                      }}
+                      config={{ mode: "auto" }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="container relative -mt-16 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-4 shadow-lg shadow-muted/30 md:divide-x">
         <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
@@ -105,7 +156,7 @@ export default function ProfileDashboard({
               quality={25}
               className="overflow-clip rounded-full border-4 border-background object-cover transition-[filter] group-hover:brightness-90"
             />
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={openPhoto} onOpenChange={setOpenPhoto}>
               <DialogTrigger asChild>
                 <Button
                   className="absolute bottom-1 right-1 z-10 flex items-center justify-center rounded-full"
@@ -145,7 +196,7 @@ export default function ProfileDashboard({
 
                             toast.dismiss();
                             toast.success("Profile picture uploaded");
-                            setOpen(false);
+                            setOpenPhoto(false);
                           }}
                           config={{ mode: "auto" }}
                         />

@@ -53,7 +53,7 @@ export default function RootLayout({
               {children}
               <CompanyFormModal />
               <BreakpointIndicator />
-              <Toaster richColors closeButton theme="light" />
+              <Toaster richColors closeButton />
             </div>
           </SidebarProvider>{" "}
         </ThemeProvider>
