@@ -9,13 +9,13 @@ export default async function Header() {
   const { companies } = await getCompanies();
 
   return (
-    <div className="sticky top-0 z-50 flex h-16 w-full items-center justify-between gap-3 border-b bg-background/80 px-4 backdrop-blur-lg">
+    <div className="sticky top-0 z-50 flex h-16 w-full items-center justify-between gap-3 border-b bg-background/80 px-2 backdrop-blur-lg sm:px-4">
       <div className="flex items-center gap-4">
         <SidebarTrigger />
         {/* <MobileSidebar /> */}
         <HeaderTitle />
       </div>
-      <div className="flex gap-3">
+      <div className="flex gap-2 sm:gap-3">
         <Search data={companies!} />
         <AddAction />
       </div>

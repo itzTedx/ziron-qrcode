@@ -59,7 +59,7 @@ export default function ProfileDashboard({
   const router = useRouter();
   const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/id/${data.slug}`;
 
-  const { setValue, control, setError, getValues } =
+  const { setValue, control, setError } =
     useFormContext<z.infer<typeof cardSchema>>();
 
   const openModal = useShareModalStore((state) => state.openModal);
@@ -143,12 +143,6 @@ export default function ProfileDashboard({
                           onClientUploadComplete={(res) => {
                             setValue("image", res[0].url);
 
-                            console.log("Uploaded Url", res[0].url);
-
-                            console.log(
-                              "Form Value after upload",
-                              getValues("image")
-                            );
                             toast.dismiss();
                             toast.success("Profile picture uploaded");
                             setOpen(false);

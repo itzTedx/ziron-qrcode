@@ -57,13 +57,9 @@ export const createCard = action.schema(cardSchema).action(
           .where(eq(persons.id, id))
           .returning();
 
-        console.log(
-          `Updated Exiting Card; Proceed to delete Links attached to the card${editedCard[0].name}`
-        );
-
         //Delete Existing Links and update with new one
         await db.delete(links).where(eq(links.personId, editedCard[0].id));
-        console.log("Deleted Existing links; Proceed to add new links");
+
         if (linksData) {
           await db.insert(links).values(
             linksData.map((link, i) => ({

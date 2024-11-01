@@ -152,11 +152,8 @@ export default function CardCustomizeForm({
     execute(values);
   }
 
-  // console.log("existing formValues", formValues);
-
   const photo = formValues.image;
 
-  console.log("Photo from getValues", photo);
   const name = form.getValues("name");
   const placeholderPhoto = name
     ? `https://ui-avatars.com/api/?background=random&name=${name}&size=128`
@@ -797,12 +794,15 @@ export default function CardCustomizeForm({
                 </div>
               </CardContent>
             </Card>
-            <Button
-              type="submit"
-              disabled={form.formState.isSubmitting || loading}
-            >
-              Submit
-            </Button>
+            {!isEditMode && (
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={form.formState.isSubmitting || loading}
+              >
+                Create Card
+              </Button>
+            )}
           </div>
         </form>
       </Form>

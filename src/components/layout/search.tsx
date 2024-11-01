@@ -63,12 +63,12 @@ export function Search({ data }: SearchProps) {
         variant="outline"
         aria-keyshortcuts="/"
         className={cn(
-          "relative h-10 w-full justify-start rounded-[0.5rem] bg-background text-sm font-normal text-muted-foreground shadow-none transition-all sm:w-52 sm:pr-12 md:w-64 lg:w-72"
+          "relative h-10 w-10 justify-start rounded-[0.5rem] bg-background text-sm font-normal text-muted-foreground shadow-none transition-all max-sm:px-2.5 sm:w-52 sm:pr-12 md:w-64 lg:w-72"
         )}
         onClick={() => setOpen(true)}
       >
-        <IconSearch className="mr-2.5 size-4 text-muted-foreground/60" />
-        <span className="inline-flex">Search...</span>
+        <IconSearch className="size-4 flex-shrink-0 sm:mr-2.5 sm:text-muted-foreground/60" />
+        <span className="hidden sm:inline-flex">Search...</span>
         <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden h-5 -translate-y-1/2 select-none items-center justify-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
           <span className="text-[10px]">⌘</span>K
         </kbd>
