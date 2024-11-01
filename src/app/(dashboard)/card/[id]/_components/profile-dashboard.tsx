@@ -127,7 +127,7 @@ export default function ProfileDashboard({
                   name="image"
                   render={({}) => (
                     <FormItem>
-                      <FormLabel>Profile Picture</FormLabel>
+                      <FormLabel>Change Profile Picture</FormLabel>
                       <FormControl>
                         <UploadDropzone
                           endpoint="photo"
@@ -185,7 +185,7 @@ export default function ProfileDashboard({
                   openModal(shareData, data.name);
                 }}
                 variant="secondary"
-                className="hidden items-center gap-1.5 md:flex"
+                className="hidden items-center gap-1.5 text-white md:flex"
               >
                 <Icons.share className="size-4 stroke-[1.5]" />
                 <span>
