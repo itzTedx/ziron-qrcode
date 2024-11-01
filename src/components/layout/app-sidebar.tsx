@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import {
@@ -26,12 +27,14 @@ const items = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter();
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenuButton
           size="lg"
           className="bp data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          onClick={() => router.push("/")}
         >
           <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
             <Icons.zironLogo className="size-6" />

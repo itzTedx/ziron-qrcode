@@ -82,7 +82,7 @@ export default function ProfileDashboard({
 
   return (
     <div className="-mt-20">
-      <div className="group relative h-52 bg-secondary md:h-60">
+      <div className="group relative h-60 bg-secondary">
         <Image
           src={data.cover!}
           fill
@@ -96,7 +96,7 @@ export default function ProfileDashboard({
       </div>
       <div className="container relative -mt-16 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-4 shadow-lg shadow-muted/30 md:divide-x">
         <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
-          <div className="group absolute -top-[60%] left-5 size-28 translate-y-20 md:size-36 md:translate-y-1/3">
+          <div className="group absolute left-1/2 size-28 -translate-y-20 max-md:-translate-x-1/2 md:-top-[60%] md:left-5 md:size-36 md:translate-y-1/3">
             <Image
               src={data.image!}
               fill
