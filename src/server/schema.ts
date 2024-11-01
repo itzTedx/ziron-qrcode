@@ -28,8 +28,8 @@ export const companyRelations = relations(companies, ({ many }) => ({
 export const persons = pgTable("persons", {
   id: serial("id").primaryKey().notNull(),
   name: text("name").notNull(),
-  email: text("email"),
-  phone: text("phone"),
+  // email: text("email"),
+  // phone: text("phone"),
   address: text("address"),
   bio: text("bio"),
 
@@ -42,6 +42,30 @@ export const persons = pgTable("persons", {
   cover: text("cover").notNull(),
 
   slug: text("slug").unique(),
+
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const phones = pgTable("phones", {
+  id: serial("id").primaryKey().notNull(),
+  phone: text("phone"),
+  personId: integer("personId").notNull(),
+  order: real("order").notNull(),
+
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const emails = pgTable("emails", {
+  id: serial("id").primaryKey().notNull(),
+  email: text("email"),
+  personId: integer("personId").notNull(),
+  order: real("order").notNull(),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -63,25 +87,14 @@ export const links = pgTable("links", {
     .$onUpdate(() => new Date()),
 });
 
-// export const attachments = pgTable("attachments", {
-//   id: serial("id").primaryKey().notNull(),
-//   label: text("title").notNull(),
-//   url: text("url").notNull(),
-
-//   personId: integer("personId").notNull().unique(),
-
-//   createdAt: timestamp("createdAt").defaultNow().notNull(),
-//   updatedAt: timestamp("updated_at")
-//     .defaultNow()
-//     .$onUpdate(() => new Date()),
-// });
-
 export const personsRelations = relations(persons, ({ one, many }) => ({
   company: one(companies, {
     fields: [persons.companyId],
     references: [companies.id],
   }),
   links: many(links),
+  emails: many(emails),
+  phones: many(phones),
   // attachments: one(attachments),
 }));
 
@@ -90,5 +103,19 @@ export const personLinksRelations = relations(links, ({ one }) => ({
     fields: [links.personId],
     references: [persons.id],
     relationName: "personLinks",
+  }),
+}));
+export const personPhonesRelations = relations(phones, ({ one }) => ({
+  person: one(persons, {
+    fields: [phones.personId],
+    references: [persons.id],
+    relationName: "personPhones",
+  }),
+}));
+export const personEmailsRelations = relations(emails, ({ one }) => ({
+  person: one(persons, {
+    fields: [emails.personId],
+    references: [persons.id],
+    relationName: "personEmails",
   }),
 }));

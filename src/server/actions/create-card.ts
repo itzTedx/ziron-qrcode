@@ -9,7 +9,7 @@ import { cardSchema } from "@/types/card-schema";
 import { generateUniqueSlug } from "@/utils/generate-unique-slug";
 
 import { db } from "../db";
-import { links, persons } from "../schema";
+import { emails, links, persons, phones } from "../schema";
 
 const action = createSafeActionClient();
 
@@ -18,8 +18,8 @@ export const createCard = action.schema(cardSchema).action(
     parsedInput: {
       id,
       name,
-      phone,
-      email,
+      phones: phonesData,
+      emails: emailsData,
       address,
       companyId,
       designation,
@@ -45,8 +45,6 @@ export const createCard = action.schema(cardSchema).action(
           .update(persons)
           .set({
             name,
-            email,
-            phone,
             address,
             bio,
             attachmentFileName,
@@ -63,6 +61,8 @@ export const createCard = action.schema(cardSchema).action(
 
         //Delete Existing Links and update with new one
         await db.delete(links).where(eq(links.personId, editedCard[0].id));
+        await db.delete(phones).where(eq(phones.personId, editedCard[0].id));
+        await db.delete(emails).where(eq(emails.personId, editedCard[0].id));
 
         if (linksData) {
           await db.insert(links).values(
@@ -70,6 +70,26 @@ export const createCard = action.schema(cardSchema).action(
               icon: link.icon,
               label: link.label,
               url: link.url,
+              personId: editedCard[0].id,
+              order: i,
+            }))
+          );
+        }
+        if (phonesData) {
+          await db.insert(phones).values(
+            phonesData.map((phone, i) => ({
+              phone: phone.phone,
+
+              personId: editedCard[0].id,
+              order: i,
+            }))
+          );
+        }
+        if (emailsData) {
+          await db.insert(emails).values(
+            emailsData.map((email, i) => ({
+              email: email.email,
+
               personId: editedCard[0].id,
               order: i,
             }))
@@ -88,14 +108,10 @@ export const createCard = action.schema(cardSchema).action(
           .insert(persons)
           .values({
             name,
-            email,
-            phone,
             address,
             bio,
-
             companyId,
             designation,
-
             image:
               image ||
               `https://ui-avatars.com/api/?background=random&name=${name}&size=128`,
@@ -111,6 +127,26 @@ export const createCard = action.schema(cardSchema).action(
               icon: link.icon,
               label: link.label,
               url: link.url,
+              personId: newCard[0].id,
+              order: i,
+            }))
+          );
+        }
+        if (phonesData) {
+          await db.insert(phones).values(
+            phonesData.map((phone, i) => ({
+              phone: phone.phone,
+
+              personId: newCard[0].id,
+              order: i,
+            }))
+          );
+        }
+        if (emailsData) {
+          await db.insert(emails).values(
+            emailsData.map((email, i) => ({
+              email: email.email,
+
               personId: newCard[0].id,
               order: i,
             }))

@@ -12,6 +12,8 @@ export async function getCardById(id: string) {
       with: {
         company: true,
         links: true,
+        phones: true,
+        emails: true,
       },
     });
 

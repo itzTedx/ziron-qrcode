@@ -100,6 +100,19 @@ export default function CardCustomizeForm({
     ? {
         ...initialData,
         id: parseInt(id),
+        phones: initialData.phones
+          ? initialData.phones.map((phone) => ({
+              ...phone,
+              id: phone.id.toString(),
+              phone: phone.phone?.toString(),
+            }))
+          : undefined,
+        emails: initialData.emails
+          ? initialData.emails.map((email) => ({
+              ...email,
+              id: email.id.toString(),
+            }))
+          : undefined,
         bio: initialData.bio || undefined,
         links: initialData.links
           ? initialData.links.map((link) => ({
@@ -108,10 +121,14 @@ export default function CardCustomizeForm({
             }))
           : undefined,
       }
-    : {};
+    : {
+        emails: [{ email: "" }],
+        phones: [{ phone: "" }],
+      };
 
   const form = useForm<z.infer<typeof cardSchema>>({
     resolver: zodResolver(cardSchema),
+    // @ts-ignore
     defaultValues,
     mode: "onBlur",
   });
@@ -123,6 +140,23 @@ export default function CardCustomizeForm({
 
   const { fields, append, remove } = useFieldArray({
     name: "links",
+    control: form.control,
+  });
+
+  const {
+    fields: emailFields,
+    append: appendEmail,
+    remove: removeEmail,
+  } = useFieldArray({
+    name: "emails",
+    control: form.control,
+  });
+  const {
+    fields: phoneFields,
+    append: appendPhone,
+    remove: removePhone,
+  } = useFieldArray({
+    name: "phones",
     control: form.control,
   });
 
@@ -299,7 +333,6 @@ export default function CardCustomizeForm({
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="name"
@@ -314,42 +347,123 @@ export default function CardCustomizeForm({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="name@company.com"
-                          {...field}
-                          type="email"
-                        />
-                      </FormControl>
+                <div className="">
+                  {emailFields.map((field, index) => (
+                    <FormField
+                      control={form.control}
+                      key={field.id}
+                      name={`emails.${index}.email`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={cn(index !== 0 && "sr-only")}>
+                            Email
+                          </FormLabel>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="+971 98 765 4321"
-                          {...field}
-                          type="tel"
-                        />
-                      </FormControl>
+                          <FormControl>
+                            <div className="flex">
+                              <Input
+                                type="email"
+                                {...field}
+                                placeholder="name@company.com"
+                                className={cn(
+                                  emailFields.length > 1
+                                    ? "rounded-e-none border-r-0"
+                                    : "rounded-md"
+                                )}
+                              />
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  removeEmail(index);
+                                }}
+                                className={cn(
+                                  emailFields.length > 1
+                                    ? "flex rounded-s-none"
+                                    : "hidden"
+                                )}
+                              >
+                                <IconX className="size-4 text-muted-foreground" />
+                              </Button>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ))}
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    className="px-0"
+                    onClick={() => appendEmail({ email: "" })}
+                  >
+                    <IconPlus className="mr-2 size-4" />
+                    Add work or personal email
+                  </Button>
+                </div>
+                <div className="">
+                  {phoneFields.map((field, index) => (
+                    <FormField
+                      control={form.control}
+                      key={field.id}
+                      name={`phones.${index}.phone`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={cn(index !== 0 && "sr-only")}>
+                            Phone
+                          </FormLabel>
+
+                          <FormControl>
+                            <div className="flex">
+                              <Input
+                                type="tel"
+                                {...field}
+                                placeholder="+971 98 765 4321"
+                                className={cn(
+                                  phoneFields.length > 1
+                                    ? "rounded-e-none border-r-0"
+                                    : "rounded-md"
+                                )}
+                              />
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  removePhone(index);
+                                }}
+                                className={cn(
+                                  phoneFields.length > 1
+                                    ? "flex rounded-s-none"
+                                    : "hidden"
+                                )}
+                              >
+                                <IconX className="size-4 text-muted-foreground" />
+                              </Button>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ))}
+
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    className="px-0"
+                    onClick={() => appendPhone({ phone: "" })}
+                  >
+                    <IconPlus className="mr-2 size-4" />
+                    Add another number
+                  </Button>
+                </div>
+
                 <FormField
                   control={form.control}
                   name="address"

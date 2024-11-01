@@ -80,7 +80,7 @@ export default function DefaultTemplate({
           </section>
         </header>
 
-        {card.company || card.email || card.phone || card.address ? (
+        {card.company || card.emails || card.phones || card.address ? (
           <section className="border-y px-4 py-3 @sm:px-6 @sm:py-4">
             <h2 className="pb-3 text-xs font-medium text-gray-600 @sm:text-sm">
               Contact Info
@@ -96,24 +96,29 @@ export default function DefaultTemplate({
                   {companyData?.name || card.company?.name}
                 </Link>
               ) : null}
-              {card.email && (
-                <Link
-                  href={`mailto:${card.email}`}
-                  className="flex items-center gap-2 text-sm @sm:text-base"
-                >
-                  <IconMail className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
-                  {card.email}
-                </Link>
-              )}
-              {card.phone && (
-                <Link
-                  href={`tel:${card.phone}`}
-                  className="flex items-center gap-2 text-sm @sm:text-base"
-                >
-                  <IconPhone className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
-                  {card.phone}
-                </Link>
-              )}
+              {card.emails &&
+                card.emails.map((email) => (
+                  <Link
+                    key={email.id}
+                    href={`mailto:${email.email}`}
+                    className="flex items-center gap-2 text-sm @sm:text-base"
+                  >
+                    <IconMail className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
+                    {email.email}
+                  </Link>
+                ))}
+              {card.phones &&
+                card.phones.map((phone) => (
+                  <Link
+                    key={phone.id}
+                    href={`tel:${phone.phone}`}
+                    className="flex items-center gap-2 text-sm @sm:text-base"
+                  >
+                    <IconPhone className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
+                    {phone.phone}
+                  </Link>
+                ))}
+
               {card.address && (
                 <Link
                   href={`#`}

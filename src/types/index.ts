@@ -1,7 +1,7 @@
 export interface Person {
   name: string;
-  email?: string | null;
-  phone?: string | null;
+  emails?: Email[];
+  phones?: Phone[];
   address?: string | null;
   bio?: string | null;
   companyId: number;
@@ -34,4 +34,15 @@ export interface Link {
   url: string;
   icon: string;
   category?: string;
+}
+
+export interface Phone {
+  id: number;
+  phone?: string | null;
+  category?: string | null;
+}
+export interface Email {
+  id: number;
+  email?: string | null;
+  category?: string | null;
 }

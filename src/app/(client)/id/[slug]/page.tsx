@@ -15,6 +15,8 @@ export default async function PreviewPage({
 
   const imageURI = card.image ? await imageToBase64(card.image) : undefined;
 
+  console.log("data: ", card);
+
   return (
     <>
       <DefaultTemplate card={card} imageBase64URI={imageURI} />

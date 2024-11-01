@@ -6,12 +6,27 @@ export const cardSchema = z.object({
     .string()
     .min(2, { message: "Please enter full name" })
     .max(100, { message: "Seriously this much long?" }),
-  email: z.string().email().optional(),
-  phone: z
-    .string({ message: "Invalid Phone number" })
-    .min(6, { message: "Invalid Phone number" })
-    .max(15)
+  phones: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        phone: z
+          .string({ message: "Invalid Phone number" })
+          .min(6, { message: "Invalid Phone number" })
+          .max(20)
+          .optional(),
+      })
+    )
     .optional(),
+  emails: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        email: z.string().email().optional(),
+      })
+    )
+    .optional(),
+
   address: z.string().min(6, { message: "Please enter address" }).optional(),
   bio: z.string().optional(),
 
@@ -40,3 +55,5 @@ export const cardSchema = z.object({
     )
     .optional(),
 });
+
+export type zCardSchema = z.infer<typeof cardSchema>;
