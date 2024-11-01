@@ -84,7 +84,7 @@ export function Search({ data }: SearchProps) {
                   value={person.slug!}
                   key={person.id}
                   onSelect={() => {
-                    runCommand(() => router.push("/"));
+                    runCommand(() => router.push(`/card/${person.id}`));
                   }}
                 >
                   <IconUser className="mr-2 size-4 text-muted-foreground" />{" "}
@@ -94,7 +94,7 @@ export function Search({ data }: SearchProps) {
               {!company.persons!.length && (
                 <>
                   <CommandItem
-                    value={"new"}
+                    value={`new-${company.name}`}
                     className="justify-between"
                     onSelect={() => {
                       runCommand(() =>
