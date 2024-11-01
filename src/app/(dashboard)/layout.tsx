@@ -35,16 +35,15 @@ export default function RootLayout({
       <body className={cn("flex w-full antialiased", plusJakarta.className)}>
         <SidebarProvider>
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-          {/* <Sidebar /> */}
+
           <AppSidebar />
           <div className="relative flex-1 overflow-hidden">
             <Header />
-
             <ShareModal />
             {children}
             <CompanyFormModal />
             <BreakpointIndicator />
-            <Toaster richColors />
+            <Toaster richColors closeButton theme="light" />
           </div>
         </SidebarProvider>
       </body>

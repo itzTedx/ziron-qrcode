@@ -34,8 +34,9 @@ export const persons = pgTable("persons", {
   bio: text("bio"),
 
   companyId: integer("companyId").notNull(),
-  // attachmentId: integer("attachmentId").notNull(),
   designation: text("designation"),
+  attachmentUrl: text("attachmentUrl"),
+  attachmentFileName: text("attachmentFileName"),
 
   image: text("logo").notNull(),
   cover: text("cover").notNull(),

@@ -12,16 +12,19 @@ import {
   IconCaretUpDownFilled,
   IconDots,
   IconEdit,
+  IconExternalLink,
   IconPlus,
   IconTrash,
   IconUpload,
   IconUser,
+  IconX,
 } from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { Icons } from "@/components/assets/icons";
 import DefaultTemplate from "@/components/features/templates/default-template";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -64,6 +67,7 @@ import { createCard } from "@/server/actions/create-card";
 import { useCompanyFormModal } from "@/store/use-company-form-modal";
 import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
+import { removeExtension } from "@/utils/remove-extension";
 
 import ProfileDashboard from "./profile-dashboard";
 
@@ -188,12 +192,12 @@ export default function CardCustomizeForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className={cn(isEditMode && "mt-4")}
+          className={cn(isEditMode && "mt-4", "relative")}
         >
           {isEditMode && initialData && (
             <ProfileDashboard data={cardData} loading={loading} />
           )}
-          <div className="container grid max-w-6xl gap-8 pt-3 md:grid-cols-12 md:pt-9">
+          <div className="container grid max-w-6xl gap-8 py-3 pb-9 md:grid-cols-12 md:py-9">
             <Tabs
               defaultValue={defaultTab}
               className="col-span-8 w-full items-start"
@@ -704,7 +708,7 @@ export default function CardCustomizeForm({
                   </div>
                   <div className="grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-3">
                     {LINKS.map((item) =>
-                      item.links.slice(1, 6).map((link) => (
+                      item.links.slice(0, 4).map((link) => (
                         <Card
                           key={link.id}
                           onClick={() =>
@@ -724,7 +728,9 @@ export default function CardCustomizeForm({
                             width={40}
                             alt=""
                           />
-                          <p>{link.label}</p>
+                          <p className="mt-1 whitespace-nowrap text-sm font-medium">
+                            {link.label}
+                          </p>
                         </Card>
                       ))
                     )}
@@ -754,14 +760,15 @@ export default function CardCustomizeForm({
                             toast.loading("Uploading attachment file...");
                           }}
                           onUploadError={(error) => {
-                            form.setError("attachments", {
+                            form.setError("attachmentUrl", {
                               type: "validate",
                               message: error.message,
                             });
                           }}
                           onClientUploadComplete={(res) => {
                             setLoading(false);
-                            form.setValue("attachments", res[0].url);
+                            form.setValue("attachmentUrl", res[0].url);
+                            form.setValue("attachmentFileName", res[0].name);
                             toast.dismiss();
                             toast.success("Attachment uploaded");
                           }}
@@ -769,6 +776,38 @@ export default function CardCustomizeForm({
                         />
                       </FormControl>
                       <FormMessage />
+                      {formValues.attachmentFileName &&
+                      formValues.attachmentUrl ? (
+                        <Card className="flex justify-between gap-3 p-3">
+                          <Link
+                            href={formValues.attachmentUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5"
+                          >
+                            <Icons.pdf className="h-6" />
+                            <p className="line-clamp-1 text-sm font-medium">
+                              {removeExtension(
+                                form.getValues("attachmentFileName")
+                              )}
+                            </p>{" "}
+                            <IconExternalLink className="size-4 stroke-1 text-muted-foreground" />
+                          </Link>
+
+                          <Button
+                            variant={"outline"}
+                            size="icon"
+                            className="hover:bg-red-600 hover:text-red-100"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              form.setValue("attachmentFileName", undefined);
+                              form.setValue("attachmentUrl", undefined);
+                            }}
+                          >
+                            <IconX className="size-5" />
+                          </Button>
+                        </Card>
+                      ) : null}
                     </FormItem>
                   )}
                 />
@@ -795,6 +834,36 @@ export default function CardCustomizeForm({
               </CardContent>
             </Card>
             {!isEditMode && (
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={form.formState.isSubmitting || loading}
+              >
+                Create Card
+              </Button>
+            )}
+          </div>
+          <div className="fixed bottom-0 w-full bg-background/50 px-6 py-4 backdrop-blur-md md:hidden">
+            {isEditMode ? (
+              <div className="flex gap-3">
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting || loading}
+                >
+                  Save Changes
+                </Button>
+                <Button
+                  type="submit"
+                  variant="destructive"
+                  className="flex-shrink-0"
+                  size="icon"
+                  disabled={form.formState.isSubmitting || loading}
+                >
+                  <IconTrash className="size-4" />
+                </Button>
+              </div>
+            ) : (
               <Button
                 type="submit"
                 className="w-full"

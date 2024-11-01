@@ -24,6 +24,8 @@ export const createCard = action.schema(cardSchema).action(
       companyId,
       designation,
       // attachments: attachment,
+      attachmentFileName,
+      attachmentUrl,
       bio,
       image,
       cover,
@@ -47,6 +49,8 @@ export const createCard = action.schema(cardSchema).action(
             phone,
             address,
             bio,
+            attachmentFileName,
+            attachmentUrl,
             companyId,
             designation,
             image:

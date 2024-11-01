@@ -18,6 +18,9 @@ export const cardSchema = z.object({
   companyId: z.number(),
   designation: z.string().optional(),
 
+  attachmentUrl: z.string().optional(),
+  attachmentFileName: z.string().optional(),
+
   image: z.string().optional(),
   cover: z.string().optional(),
 
@@ -36,6 +39,4 @@ export const cardSchema = z.object({
       })
     )
     .optional(),
-
-  attachments: z.string().optional(),
 });

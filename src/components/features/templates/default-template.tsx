@@ -28,7 +28,7 @@ export default function DefaultTemplate({
   const companyData = company?.find((c) => c.id === card.companyId);
   return (
     <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
-      <div className="no-scrollbar md:overflow-y-auto">
+      <div className="no-scrollbar md:overflow-y-scroll">
         <header className="w-full">
           <div className="relative">
             <div className="absolute h-32 w-full bg-gradient-to-b from-background/30 to-transparent" />
@@ -87,7 +87,7 @@ export default function DefaultTemplate({
             <div className="space-y-3 @sm:space-y-6">
               {card.company || companyData ? (
                 <Link
-                  href={`https://www.google.com/maps/place/${companyData?.name || card.company?.name}`}
+                  href={`#`}
                   className="flex items-center gap-2 text-sm @sm:text-base"
                 >
                   <IconBuildingSkyscraper className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
@@ -114,7 +114,7 @@ export default function DefaultTemplate({
               )}
               {card.address && (
                 <Link
-                  href={`https://www.google.com/maps/place/${card.address}`}
+                  href={`#`}
                   className="flex items-start gap-2 text-sm @sm:text-base"
                 >
                   <IconPinned className="mt-1.5 size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
