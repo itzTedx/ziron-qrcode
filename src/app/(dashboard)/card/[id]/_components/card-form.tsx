@@ -26,6 +26,8 @@ import { z } from "zod";
 
 import { Icons } from "@/components/assets/icons";
 import DefaultTemplate from "@/components/features/templates/default-template";
+import ModernTemplate from "@/components/features/templates/modern-template";
+import PhoneMockup from "@/components/phone-mockup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -812,6 +814,38 @@ export default function CardCustomizeForm({
                   )}
                 />
               </TabsContent>
+              <TabsContent
+                value="template"
+                className="flex flex-col gap-4 overflow-hidden"
+              >
+                Themes
+                <section className="flex gap-8 overflow-x-scroll px-3 pb-9">
+                  <PhoneMockup className="scale-75">
+                    <DefaultTemplate card={cardData} company={data} />
+                  </PhoneMockup>
+                  <PhoneMockup className="scale-75">
+                    <ModernTemplate card={cardData} company={data} />
+                  </PhoneMockup>
+                  <PhoneMockup className="scale-75">
+                    <DefaultTemplate card={cardData} company={data} />
+                  </PhoneMockup>
+                  <PhoneMockup className="scale-75">
+                    <ModernTemplate card={cardData} company={data} />
+                  </PhoneMockup>
+                </section>
+                <section>
+                  <h5>Customize Theme</h5>
+                </section>
+              </TabsContent>
+              {!isEditMode && (
+                <Button
+                  type="submit"
+                  className="mt-4 hidden h-12 w-full md:flex"
+                  disabled={form.formState.isSubmitting || loading}
+                >
+                  Create Card
+                </Button>
+              )}
             </Tabs>
 
             <Card className="sticky top-24 col-span-4 hidden h-fit rounded-lg bg-background md:block">
@@ -833,15 +867,6 @@ export default function CardCustomizeForm({
                 </div>
               </CardContent>
             </Card>
-            {!isEditMode && (
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={form.formState.isSubmitting || loading}
-              >
-                Create Card
-              </Button>
-            )}
           </div>
           <div className="fixed bottom-0 w-full bg-background/50 px-6 py-4 backdrop-blur-md md:hidden">
             {isEditMode ? (

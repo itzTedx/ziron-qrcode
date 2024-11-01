@@ -15,5 +15,10 @@ export default async function PreviewPage({
 
   const imageURI = card.image ? await imageToBase64(card.image) : undefined;
 
-  return <DefaultTemplate card={card} imageBase64URI={imageURI} />;
+  return (
+    <>
+      <DefaultTemplate card={card} imageBase64URI={imageURI} />
+      {/* <ModernTemplate card={card} imageBase64URI={imageURI} /> */}
+    </>
+  );
 }

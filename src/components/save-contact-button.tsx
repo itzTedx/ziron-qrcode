@@ -1,16 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Person } from "@/types";
 
 interface SaveContactButtonProps {
   data: Person;
   imageBase64?: string;
+  className?: string;
 }
 
 export default function SaveContactButton({
   data,
   imageBase64,
+  className,
 }: SaveContactButtonProps) {
   const generateVCard = () => {
     const vCardData = `BEGIN:VCARD
@@ -41,7 +44,7 @@ END:VCARD`;
   };
 
   return (
-    <Button className="w-full" onClick={downloadVCard}>
+    <Button className={cn("w-full", className)} onClick={downloadVCard}>
       Add Contact
     </Button>
   );

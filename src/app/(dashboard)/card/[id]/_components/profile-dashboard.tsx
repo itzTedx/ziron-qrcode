@@ -157,8 +157,8 @@ export default function ProfileDashboard({
               </DialogContent>
             </Dialog>
           </div>
-          <div className="w-full max-md:mt-9 md:ml-32">
-            <div className="flex justify-between gap-3">
+          <div className="w-full max-md:mt-3 md:ml-32">
+            <div className="flex items-center justify-between gap-3">
               <Badge variant="secondary">{data.company?.name}</Badge>
               <span className="flex gap-3 text-primary md:hidden">
                 <IconEdit />

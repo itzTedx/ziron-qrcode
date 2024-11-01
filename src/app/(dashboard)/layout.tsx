@@ -37,7 +37,7 @@ export default function RootLayout({
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
 
           <AppSidebar />
-          <div className="relative flex-1 overflow-hidden">
+          <div className="flex-1">
             <Header />
             <ShareModal />
             {children}

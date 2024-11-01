@@ -8,9 +8,11 @@ import {
   IconPinned,
 } from "@tabler/icons-react";
 
+import { Icons } from "@/components/assets/icons";
 import SaveContactButton from "@/components/save-contact-button";
 import { cn } from "@/lib/utils";
 import { Company, Person } from "@/types";
+import { removeExtension } from "@/utils/remove-extension";
 
 interface TemplateProps {
   card?: Person;
@@ -28,7 +30,7 @@ export default function DefaultTemplate({
   const companyData = company?.find((c) => c.id === card.companyId);
   return (
     <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
-      <div className="no-scrollbar md:overflow-y-scroll">
+      <div className="no-scrollbar pb-40 md:overflow-y-scroll">
         <header className="w-full">
           <div className="relative">
             <div className="absolute h-32 w-full bg-gradient-to-b from-background/30 to-transparent" />
@@ -143,26 +145,23 @@ export default function DefaultTemplate({
             </div>
           </section>
         )}
-        {card.attachments && (
+        {card.attachmentUrl && card.attachmentFileName && (
           <section className="space-y-3 px-4 @sm:space-y-4 @sm:px-8">
             <h2 className="pt-3 text-sm font-medium text-gray-600">
               Attachment
             </h2>
             <div className="space-y-4">
               <Link
-                href={card.attachments}
+                href={card.attachmentUrl}
                 download
                 className="flex items-center gap-2 rounded-md border p-3 text-sm @sm:text-base"
               >
                 <div className="relative size-8 flex-shrink-0">
-                  <Image
-                    src={"/icons/world-www.svg"}
-                    fill
-                    alt=""
-                    sizes="10vw"
-                  />
+                  <Icons.pdf />
                 </div>
-                <h5 className="font-semibold">Attachment</h5>
+                <h5 className="font-semibold">
+                  {removeExtension(card.attachmentFileName)}
+                </h5>
               </Link>
             </div>
           </section>

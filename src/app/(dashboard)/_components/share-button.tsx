@@ -26,10 +26,11 @@ export default function ShareButton({ data }: ShareButtonProps) {
 
   return (
     <Button
-      className="w-full gap-1.5 text-sm"
+      className="gap-1.5 text-sm sm:w-full"
       onClick={() => openModal(shareData)}
     >
-      <IconShare className="size-4" /> Share
+      <IconShare className="size-4" />{" "}
+      <span className="hidden sm:block">Share</span>
     </Button>
   );
 }
