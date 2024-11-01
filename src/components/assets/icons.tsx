@@ -209,16 +209,23 @@ export const Icons = {
     </svg>
   ),
   x: (props: LucideProps) => (
-    <svg width="30" height="31" viewBox="0 0 30 31" fill="none" {...props}>
+    <svg
+      width="30"
+      height="31"
+      viewBox="0 0 30 31"
+      fill="none"
+      {...props}
+      className="text-foreground"
+    >
       <g clipPath="url(#clip0_927_2455)">
         <path
           d="M17.857 12.715L29.027 0H26.381L16.678 11.038L8.934 0H0L11.713 16.693L0 30.025H2.646L12.886 18.366L21.066 30.025H30M3.601 1.954H7.666L26.379 28.167H22.313"
-          fill="black"
+          fill="currentColor"
         />
       </g>
       <defs>
         <clipPath id="clip0_927_2455">
-          <rect width="30" height="30.0251" fill="white" />
+          <rect width="30" height="30.0251" fill="currentColor" />
         </clipPath>
       </defs>
     </svg>
@@ -306,12 +313,12 @@ export const Icons = {
       <g clipPath="url(#clip0_660_2055)">
         <path
           d="M0 0.993C0.00183004 0.730378 0.1069 0.479017 0.292513 0.293218C0.478126 0.107418 0.72938 0.00209465 0.992 0H19.008C19.556 0 20 0.445 20 0.993V17.007C19.9982 17.2696 19.8931 17.521 19.7075 17.7068C19.5219 17.8926 19.2706 17.9979 19.008 18H0.992C0.728813 17.9997 0.476497 17.895 0.290489 17.7088C0.104482 17.5226 -1.33455e-07 17.2702 0 17.007V0.993ZM2 2V16H18V2H2ZM4 4H10V10H4V4ZM6 6V8H8V6H6ZM4 12H16V14H4V12ZM12 4H16V6H12V4ZM12 8H16V10H12V8Z"
-          fill="black"
+          fill="currentColor"
         />
       </g>
       <defs>
         <clipPath id="clip0_660_2055">
-          <rect width="20" height="18" fill="white" />
+          <rect width="20" height="18" fill="currentColor" />
         </clipPath>
       </defs>
     </svg>

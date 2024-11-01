@@ -65,7 +65,7 @@ export default async function Home({
             )}
           >
             {!company.persons.length && (
-              <div className="col-span-full flex w-full flex-col items-center justify-center gap-3 rounded-md border bg-white py-9">
+              <div className="col-span-full flex w-full flex-col items-center justify-center gap-3 rounded-md border bg-background py-9">
                 <Image
                   src="/not-available.svg"
                   height={200}

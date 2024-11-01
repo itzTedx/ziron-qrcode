@@ -29,7 +29,7 @@ export default function DefaultTemplate({
 
   const companyData = company?.find((c) => c.id === card.companyId);
   return (
-    <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
+    <div className="elative flex h-full w-full flex-col justify-between @sm:h-dvh">
       <div className="no-scrollbar pb-40 md:overflow-y-scroll">
         <header className="w-full">
           <div className="relative">

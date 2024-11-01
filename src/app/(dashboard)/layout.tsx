@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
@@ -12,6 +13,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { plusJakarta } from "@/fonts";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/providers/theme-provider";
 import "@/styles/globals.css";
 
 import { ourFileRouter } from "../api/uploadthing/core";
@@ -30,22 +32,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = cookies();
+  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
   return (
     <html lang="en">
       <body className={cn("flex w-full antialiased", plusJakarta.className)}>
-        <SidebarProvider>
-          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider defaultOpen={defaultOpen}>
+            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
 
-          <AppSidebar />
-          <div className="flex-1">
-            <Header />
-            <ShareModal />
-            {children}
-            <CompanyFormModal />
-            <BreakpointIndicator />
-            <Toaster richColors closeButton theme="light" />
-          </div>
-        </SidebarProvider>
+            <AppSidebar collapsible="icon" />
+            <div className="flex-1">
+              <Header />
+              <ShareModal />
+              {children}
+              <CompanyFormModal />
+              <BreakpointIndicator />
+              <Toaster richColors closeButton theme="light" />
+            </div>
+          </SidebarProvider>{" "}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -17,6 +17,7 @@ export default async function Header() {
       </div>
       <div className="flex gap-2 sm:gap-3">
         <Search data={companies!} />
+        {/* <ThemeToggle /> */}
         <AddAction />
       </div>
     </div>
