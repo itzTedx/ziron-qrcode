@@ -127,6 +127,7 @@ export default function CardCustomizeForm({
         emails: [{ email: "" }],
         phones: [{ phone: "" }],
         links: undefined,
+        template: "default",
       };
 
   const form = useForm<z.infer<typeof cardSchema>>({

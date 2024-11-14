@@ -104,7 +104,8 @@ export default async function Home({
               </div>
             )}
             {company.persons.map(async (person) => {
-              const placeholder = await getPlaceholder(person.image);
+              const placeholderImage = await getPlaceholder(person.image);
+              const placeholderCover = await getPlaceholder(person.image);
               return (
                 <Card
                   className="relative overflow-hidden p-4 transition-colors duration-500 hover:border-primary"
@@ -116,6 +117,8 @@ export default async function Home({
                       width={120}
                       height={80}
                       alt=""
+                      placeholder="blur"
+                      blurDataURL={placeholderCover}
                       className="absolute top-0 h-20 w-full object-cover"
                     />
                     <div className="z-10 flex flex-col items-center text-center">
@@ -124,7 +127,7 @@ export default async function Home({
                         height={112}
                         width={112}
                         placeholder="blur"
-                        blurDataURL={placeholder}
+                        blurDataURL={placeholderImage}
                         alt={`${person.name}'s Photo`}
                         title={`${person.name}'s Photo`}
                         className="size-28 rounded-full border-4 border-background object-cover"

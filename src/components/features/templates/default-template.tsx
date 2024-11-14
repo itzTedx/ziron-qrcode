@@ -29,8 +29,8 @@ export default function DefaultTemplate({
 
   const companyData = company?.find((c) => c.id === card.companyId);
   return (
-    <div className="elative flex h-full w-full flex-col justify-between @sm:h-dvh">
-      <div className="no-scrollbar pb-40 md:overflow-y-scroll">
+    <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
+      <div className="no-scrollbar">
         <header className="w-full">
           <div className="relative">
             <div className="absolute h-32 w-full bg-gradient-to-b from-background/30 to-transparent" />
