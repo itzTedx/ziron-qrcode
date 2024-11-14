@@ -1,4 +1,3 @@
-import { revalidateTag } from "next/cache";
 import { notFound } from "next/navigation";
 
 import DefaultTemplate from "@/components/features/templates/default-template";
@@ -7,7 +6,7 @@ import { getCardBySlug } from "@/server/actions/get-card-by-slug";
 import { getCards } from "@/server/actions/get-cards";
 import { imageToBase64 } from "@/utils/get-image-to-base64";
 
-// export const revalidate = 60;
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   const { cards } = await getCards();
@@ -27,8 +26,6 @@ export default async function PreviewPage({
   if (!card) notFound();
 
   const imageURI = card.image ? await imageToBase64(card.image) : undefined;
-
-  revalidateTag(`card-${params.slug}`);
 
   const template = card.template;
 
