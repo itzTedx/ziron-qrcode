@@ -10,7 +10,6 @@ import { DialogTrigger } from "@radix-ui/react-dialog";
 import {
   IconArrowRight,
   IconCaretUpDownFilled,
-  IconDots,
   IconEdit,
   IconExternalLink,
   IconGripVertical,
@@ -1097,7 +1096,7 @@ export default function CardCustomizeForm({
             <Card className="sticky top-24 col-span-4 hidden h-fit rounded-lg bg-background @container md:block">
               <CardHeader className="flex-row items-center justify-between border-b py-4">
                 <h5>Preview</h5>
-                <IconDots />
+                {/* <IconDots /> */}
               </CardHeader>
               <CardContent className="relative py-5">
                 <PhoneMockup>
