@@ -28,8 +28,7 @@ export const companyRelations = relations(companies, ({ many }) => ({
 export const persons = pgTable("persons", {
   id: serial("id").primaryKey().notNull(),
   name: text("name").notNull(),
-  // email: text("email"),
-  // phone: text("phone"),
+
   address: text("address"),
   bio: text("bio"),
 
@@ -81,7 +80,7 @@ export const links = pgTable("links", {
   url: text("url").notNull(),
   icon: text("icon").notNull(),
   personId: integer("personId").notNull(),
-  // category: text("category").notNull(),
+  category: text("category"),
   order: real("order").notNull(),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),

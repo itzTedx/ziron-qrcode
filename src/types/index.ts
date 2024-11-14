@@ -33,7 +33,7 @@ export interface Link {
   label: string;
   url: string;
   icon: string;
-  category?: string;
+  category?: string | null;
 }
 
 export interface Phone {

@@ -6,6 +6,7 @@ import { db } from "../db";
 import { persons } from "../schema";
 
 export async function getCardById(id: string) {
+  console.log("Param ID", id);
   try {
     const card = await db.query.persons.findFirst({
       where: eq(persons.id, parseInt(id)),
@@ -16,6 +17,8 @@ export async function getCardById(id: string) {
         emails: true,
       },
     });
+
+    console.log("Card Found", card);
 
     if (!card) throw new Error("Card not found");
 

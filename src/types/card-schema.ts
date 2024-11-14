@@ -55,7 +55,7 @@ export const cardSchema = z.object({
     )
     .optional(),
 
-  // template: z.string().optional().default("default"),
+  template: z.string().optional().default("default"),
 });
 
 export type zCardSchema = z.infer<typeof cardSchema>;

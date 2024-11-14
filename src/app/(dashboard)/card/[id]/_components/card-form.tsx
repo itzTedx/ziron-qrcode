@@ -28,6 +28,7 @@ import { Icons } from "@/components/assets/icons";
 import DefaultTemplate from "@/components/features/templates/default-template";
 import ModernTemplate from "@/components/features/templates/modern-template";
 import PhoneMockup from "@/components/phone-mockup";
+import ColorsInput from "@/components/test/colors-input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -60,6 +61,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { LINKS } from "@/constants";
@@ -124,6 +126,7 @@ export default function CardCustomizeForm({
     : {
         emails: [{ email: "" }],
         phones: [{ phone: "" }],
+        links: undefined,
       };
 
   const form = useForm<z.infer<typeof cardSchema>>({
@@ -168,13 +171,18 @@ export default function CardCustomizeForm({
     }
   }, [searchParams, form]);
 
+  // Set focus on the name field when the component mounts
+  useEffect(() => {
+    form.setFocus("name"); // Set focus on the name field
+  }, [form]);
+
   const { execute } = useAction(createCard, {
     onExecute: () => {
       toast.loading("Loading");
       setLoading(true);
     },
     onSuccess: ({ data }) => {
-      console.log("Data from on success", data);
+      console.log("On success data", data);
       if (data?.success) {
         router.push(`/?default=${data.company}`);
 
@@ -192,7 +200,10 @@ export default function CardCustomizeForm({
 
   function onSubmit(values: z.infer<typeof cardSchema>) {
     const validation = cardSchema.safeParse(values);
-    console.log("Validation", validation);
+
+    console.log("validate", validation);
+
+    console.log("Form Data", values);
 
     execute(values);
   }
@@ -937,23 +948,80 @@ export default function CardCustomizeForm({
                 value="template"
                 className="flex flex-col gap-4 overflow-hidden"
               >
-                Themes
-                <section className="flex gap-8 overflow-x-scroll px-3 pb-9">
-                  <PhoneMockup className="scale-75">
-                    <DefaultTemplate card={cardData} company={data} />
-                  </PhoneMockup>
-                  <PhoneMockup className="scale-75">
-                    <ModernTemplate card={cardData} company={data} />
-                  </PhoneMockup>
-                  <PhoneMockup className="scale-75">
-                    <DefaultTemplate card={cardData} company={data} />
-                  </PhoneMockup>
-                  <PhoneMockup className="scale-75">
-                    <ModernTemplate card={cardData} company={data} />
-                  </PhoneMockup>
+                <section className="flex gap-8 overflow-x-auto px-3 pb-9">
+                  <FormField
+                    control={form.control}
+                    name="template"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel> Select Theme</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="flex gap-9"
+                          >
+                            <FormItem className="flex flex-col items-center space-y-3">
+                              <PhoneMockup className="">
+                                <DefaultTemplate
+                                  card={cardData}
+                                  company={data}
+                                />
+                              </PhoneMockup>
+                              <div className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem
+                                    value="default"
+                                    id="default"
+                                    aria-label="Default Template"
+                                    className="size-5 border-primary shadow-none data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                                  />
+                                </FormControl>
+                                <FormLabel
+                                  className="font-normal"
+                                  htmlFor="default"
+                                >
+                                  Default
+                                </FormLabel>
+                              </div>
+                            </FormItem>
+                            <FormItem className="flex flex-col items-center space-y-3">
+                              <PhoneMockup className="">
+                                <ModernTemplate
+                                  card={cardData}
+                                  company={data}
+                                />
+                              </PhoneMockup>
+                              <div className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem
+                                    value="modern"
+                                    id="modern"
+                                    aria-label="Modern template"
+                                    className="size-5 border-primary shadow-none data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                                  />
+                                </FormControl>
+                                <FormLabel
+                                  className="font-normal"
+                                  htmlFor="modern"
+                                >
+                                  Modern
+                                </FormLabel>
+                              </div>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </section>
                 <section>
                   <h5>Customize Theme</h5>
+                  <div className="flex gap-3">
+                    <h6>Button Color</h6>
+                    <ColorsInput />
+                  </div>
                 </section>
               </TabsContent>
               {!isEditMode && (

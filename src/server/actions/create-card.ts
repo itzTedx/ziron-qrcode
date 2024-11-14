@@ -29,6 +29,7 @@ export const createCard = action
         attachmentUrl,
         bio,
         image,
+        template,
         cover,
         links: linksData,
       },
@@ -55,6 +56,7 @@ export const createCard = action
               attachmentUrl,
               companyId,
               designation,
+              template,
               image: image || placeholderImage,
               cover: cover || placeholderCover,
             })
@@ -66,13 +68,13 @@ export const createCard = action
           await db.delete(phones).where(eq(phones.personId, editedCard[0].id));
           await db.delete(emails).where(eq(emails.personId, editedCard[0].id));
 
-          if (linksData) {
+          if (linksData && linksData.length) {
             await db.insert(links).values(
               linksData.map((link, i) => ({
                 icon: link.icon,
                 label: link.label,
                 url: link.url,
-                // category: link.category,
+                category: link.category,
                 personId: editedCard[0].id,
                 order: i,
               }))
@@ -119,27 +121,12 @@ export const createCard = action
               designation,
               image: image || placeholderImage,
               cover: cover || placeholderCover,
-
+              template,
               slug: uniqueSlug,
             })
             .returning();
           console.log("Person added");
 
-          console.log("Checking for links");
-          if (linksData) {
-            console.log("Links found");
-            await db.insert(links).values(
-              linksData.map((link, i) => ({
-                icon: link.icon,
-                label: link.label,
-                url: link.url,
-                // category: link.category,
-                personId: newCard[0].id,
-                order: i,
-              }))
-            );
-            console.log("Links added");
-          }
           console.log("Checking for Phones");
           if (phonesData) {
             console.log("Phone found");
@@ -165,6 +152,21 @@ export const createCard = action
               }))
             );
             console.log("Emails added");
+          }
+          console.log("Checking for links");
+          if (linksData && linksData.length) {
+            console.log("Links found");
+            await db.insert(links).values(
+              linksData.map((link, i) => ({
+                icon: link.icon,
+                label: link.label,
+                url: link.url,
+                category: link.category,
+                personId: newCard[0].id,
+                order: i,
+              }))
+            );
+            console.log("Links added");
           }
 
           console.log("Revalidating Path");
