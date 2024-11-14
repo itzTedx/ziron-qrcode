@@ -62,6 +62,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { LINKS } from "@/constants";
@@ -963,10 +964,12 @@ export default function CardCustomizeForm({
                           >
                             <FormItem className="flex flex-col items-center space-y-3">
                               <PhoneMockup className="@container">
-                                <DefaultTemplate
-                                  card={cardData}
-                                  company={data}
-                                />
+                                <ScrollArea className="h-full">
+                                  <DefaultTemplate
+                                    card={cardData}
+                                    company={data}
+                                  />
+                                </ScrollArea>
                               </PhoneMockup>
                               <div className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
@@ -987,10 +990,12 @@ export default function CardCustomizeForm({
                             </FormItem>
                             <FormItem className="flex flex-col items-center space-y-3">
                               <PhoneMockup className="@container">
-                                <ModernTemplate
-                                  card={cardData}
-                                  company={data}
-                                />
+                                <ScrollArea className="h-full">
+                                  <ModernTemplate
+                                    card={cardData}
+                                    company={data}
+                                  />
+                                </ScrollArea>
                               </PhoneMockup>
                               <div className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
@@ -1042,12 +1047,13 @@ export default function CardCustomizeForm({
               </CardHeader>
               <CardContent className="relative py-5">
                 <PhoneMockup>
-                  {form.watch("template") === "default" ? (
-                    <DefaultTemplate card={cardData} company={data} />
-                  ) : (
-                    <ModernTemplate card={cardData} company={data} />
-                  )}
-                  <DefaultTemplate card={cardData} company={data} />
+                  <ScrollArea className="h-full">
+                    {form.watch("template") === "default" ? (
+                      <DefaultTemplate card={cardData} company={data} />
+                    ) : (
+                      <ModernTemplate card={cardData} company={data} />
+                    )}
+                  </ScrollArea>
                 </PhoneMockup>
               </CardContent>
             </Card>
