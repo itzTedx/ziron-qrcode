@@ -19,6 +19,8 @@ export default async function CardPage({ params }: CardProps) {
   // If the card doesn't exist, treat it as a new card
   const isEditMode = !!card; // If card exists, it is in edit mode
 
+  console.log(card);
+
   return (
     <CardCustomizeForm
       data={companies}

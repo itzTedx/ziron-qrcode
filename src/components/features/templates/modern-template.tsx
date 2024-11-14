@@ -57,10 +57,10 @@ export default function ModernTemplate({
               {card.cover && (
                 <Image
                   src={card.cover}
-                  height={412}
-                  width={230}
+                  height={218}
+                  width={445}
                   alt="cover"
-                  className="w-full"
+                  className="h-full w-full object-cover"
                 />
               )}
             </section>
@@ -94,12 +94,14 @@ export default function ModernTemplate({
             )}
           </section>
           <section className="mt-4 flex w-full flex-col space-y-3 px-8">
-            <Link
-              href={`tel:${card.phone}`}
-              className="flex h-10 w-full items-center justify-center rounded-full border-2 border-primary px-6 text-center font-semibold text-primary @sm:h-12"
-            >
-              Call me now!
-            </Link>
+            {card.phones && (
+              <Link
+                href={`tel:${card.phones[0].phone}`}
+                className="flex h-10 w-full items-center justify-center rounded-full border-2 border-primary px-6 text-center font-semibold text-primary @sm:h-12"
+              >
+                Call me now!
+              </Link>
+            )}
 
             <SaveContactButton
               data={card}
@@ -109,29 +111,33 @@ export default function ModernTemplate({
           </section>
         </header>
 
-        {card.company || card.email || card.phone || card.address ? (
+        {card.company || card.emails || card.phones || card.address ? (
           <section className="space-y-3 px-4 @sm:space-y-4 @sm:px-8">
             <h2 className="sr-only">Contact Info</h2>
 
             <div className="grid grid-cols-3 gap-4">
-              {card.email && (
-                <Link
-                  href={`mailto:${card.email}`}
-                  className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-3 text-sm @sm:p-5 @sm:text-base"
-                >
-                  <IconMail className="size-9 flex-shrink-0 stroke-[1.5] @sm:size-16" />
-                  <p className="sr-only">{card.email}</p>
-                </Link>
-              )}
-              {card.phone && (
-                <Link
-                  href={`tel:${card.phone}`}
-                  className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-3 text-sm @sm:p-5 @sm:text-base"
-                >
-                  <IconPhone className="size-9 flex-shrink-0 stroke-[1.5] @sm:size-16" />
-                  <p className="sr-only"> {card.phone}</p>
-                </Link>
-              )}
+              {card.emails &&
+                card.emails.map((e, i) => (
+                  <Link
+                    key={`${e.id}-${i}-${e.email}`}
+                    href={`mailto:${e.email}`}
+                    className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-3 text-sm @sm:p-5 @sm:text-base"
+                  >
+                    <IconMail className="size-9 flex-shrink-0 stroke-[1.5] @sm:size-16" />
+                    <p className="sr-only">{e.email}</p>
+                  </Link>
+                ))}
+              {card.phones &&
+                card.phones.map((ph, i) => (
+                  <Link
+                    key={`${ph.id}-${i}-${ph.phone}`}
+                    href={`tel:${ph.phone}`}
+                    className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-3 text-sm @sm:p-5 @sm:text-base"
+                  >
+                    <IconPhone className="size-9 flex-shrink-0 stroke-[1.5] @sm:size-16" />
+                    <p className="sr-only"> {ph.phone}</p>
+                  </Link>
+                ))}
               {card.address && (
                 <Link
                   href={`#`}
@@ -151,7 +157,7 @@ export default function ModernTemplate({
             <div className="grid grid-cols-3 gap-4">
               {card.links.map((link, index) => (
                 <Link
-                  key={index}
+                  key={`${index}-${link.label}-${link.url}`}
                   href={link.url || "#"}
                   className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-3 text-sm @sm:p-5 @sm:text-base"
                 >

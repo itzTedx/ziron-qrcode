@@ -119,7 +119,7 @@ export default function CompanyForm({ initialData }: CompanyFormProps) {
                   <div className="mt-2 flex flex-col items-center gap-2">
                     <div className="grid size-28 place-items-center rounded-md border bg-gray-50">
                       {uploading && (
-                        <IconLoader className="absolute animate-spin text-muted-foreground/50" />
+                        <IconLoader className="animate-spin absolute text-muted-foreground/50" />
                       )}
                       {!uploading && logo ? (
                         <Image
@@ -154,9 +154,12 @@ export default function CompanyForm({ initialData }: CompanyFormProps) {
                               return (
                                 <div className="text-sm">Uploading...</div>
                               );
+
                           return (
                             <div className="text-nowrap text-sm">
-                              Upload Logo
+                              {form.getValues("logo")
+                                ? "Change Logo"
+                                : "Upload Logo"}
                             </div>
                           );
                         },
@@ -167,10 +170,6 @@ export default function CompanyForm({ initialData }: CompanyFormProps) {
                         },
                       }}
                     />
-
-                    {/* <Button variant="ghost" size="sm">
-                      Upload Logo
-                    </Button> */}
                   </div>
                 </FormControl>
 

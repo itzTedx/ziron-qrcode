@@ -43,6 +43,8 @@ export const persons = pgTable("persons", {
 
   slug: text("slug").unique(),
 
+  template: text("template").default("default"),
+
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -79,6 +81,7 @@ export const links = pgTable("links", {
   url: text("url").notNull(),
   icon: text("icon").notNull(),
   personId: integer("personId").notNull(),
+  // category: text("category").notNull(),
   order: real("order").notNull(),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),

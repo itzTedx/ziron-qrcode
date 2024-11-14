@@ -77,7 +77,7 @@ export function Search({ data }: SearchProps) {
         <CommandInput placeholder="Search Cards or Company..." />
         <CommandList>
           <CommandEmpty>No cards found.</CommandEmpty>
-          {data.map((company) => (
+          {data?.map((company) => (
             <CommandGroup key={company.id} heading={company.name}>
               {company.persons!.map((person) => (
                 <CommandItem
@@ -91,7 +91,7 @@ export function Search({ data }: SearchProps) {
                   {person.name}
                 </CommandItem>
               ))}
-              {!company.persons!.length && (
+              {company?.persons!.length && (
                 <>
                   <CommandItem
                     value={`new-${company.name}`}
@@ -115,7 +115,7 @@ export function Search({ data }: SearchProps) {
             </CommandGroup>
           ))}
           <CommandGroup heading="Companies">
-            {data.map((company) => (
+            {data?.map((company) => (
               <CommandItem
                 key={company.id}
                 value={company.name}

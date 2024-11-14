@@ -10,7 +10,6 @@ export async function getCompanies() {
       },
     });
 
-    if (!companies) throw new Error("Company not found");
 
     return { companies };
   } catch (error) {

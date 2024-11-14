@@ -35,7 +35,7 @@ export default function RootLayout({
   const cookieStore = cookies();
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={cn("flex w-full antialiased", plusJakarta.className)}>
         <ThemeProvider
           attribute="class"

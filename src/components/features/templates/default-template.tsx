@@ -97,9 +97,9 @@ export default function DefaultTemplate({
                 </Link>
               ) : null}
               {card.emails &&
-                card.emails.map((email) => (
+                card.emails.map((email, i) => (
                   <Link
-                    key={email.id}
+                    key={`${i + 1}-${email.email}`}
                     href={`mailto:${email.email}`}
                     className="flex items-center gap-2 text-sm @sm:text-base"
                   >
@@ -108,9 +108,9 @@ export default function DefaultTemplate({
                   </Link>
                 ))}
               {card.phones &&
-                card.phones.map((phone) => (
+                card.phones.map((phone, i) => (
                   <Link
-                    key={phone.id}
+                    key={`${i + 1}-${phone.phone}`}
                     href={`tel:${phone.phone}`}
                     className="flex items-center gap-2 text-sm @sm:text-base"
                   >
@@ -137,7 +137,7 @@ export default function DefaultTemplate({
             <div className="space-y-4">
               {card.links.map((link, index) => (
                 <Link
-                  key={index}
+                  key={`${index}-${link.url}`}
                   href={link.url || "#"}
                   className="flex items-center gap-2 rounded-md border p-3 text-sm @sm:text-base"
                 >

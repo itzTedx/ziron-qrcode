@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
-import { plusJakarta } from "@/fonts";
-import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
+
+import Footer from "../_components/footer";
 
 export const metadata: Metadata = {
   title: "Preview",
@@ -18,15 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={cn(
-          "flex min-h-dvh md:items-center md:justify-center",
-          plusJakarta.className
-        )}
-      >
+    <>
+      <main className="container relative h-[700px] max-w-screen-sm bg-background px-0 @container md:overflow-hidden md:rounded-xl md:shadow-xl">
         {children}
-      </body>
-    </html>
+      </main>
+      <Footer />
+    </>
   );
 }
