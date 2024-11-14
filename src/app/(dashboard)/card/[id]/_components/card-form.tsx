@@ -655,7 +655,6 @@ export default function CardCustomizeForm({
               </TabsContent>
               <TabsContent value="links" className="flex flex-col gap-8">
                 <div className="w-full space-y-4">
-                  {/* <SocialLinks />*/}
                   {fields.map((data, index) =>
                     data.category === "General" ? (
                       <Card
@@ -962,7 +961,7 @@ export default function CardCustomizeForm({
                             className="flex gap-9"
                           >
                             <FormItem className="flex flex-col items-center space-y-3">
-                              <PhoneMockup className="">
+                              <PhoneMockup className="@container">
                                 <DefaultTemplate
                                   card={cardData}
                                   company={data}
@@ -986,7 +985,7 @@ export default function CardCustomizeForm({
                               </div>
                             </FormItem>
                             <FormItem className="flex flex-col items-center space-y-3">
-                              <PhoneMockup className="">
+                              <PhoneMockup className="@container">
                                 <ModernTemplate
                                   card={cardData}
                                   company={data}
@@ -1035,13 +1034,18 @@ export default function CardCustomizeForm({
               )}
             </Tabs>
 
-            <Card className="sticky top-24 col-span-4 hidden h-fit rounded-lg bg-background md:block">
+            <Card className="sticky top-24 col-span-4 hidden h-fit rounded-lg bg-background @container md:block">
               <CardHeader className="flex-row items-center justify-between border-b py-4">
                 <h5>Preview</h5>
                 <IconDots />
               </CardHeader>
               <CardContent className="relative py-5">
                 <PhoneMockup>
+                  {form.watch("template") === "default" ? (
+                    <DefaultTemplate card={cardData} company={data} />
+                  ) : (
+                    <ModernTemplate card={cardData} company={data} />
+                  )}
                   <DefaultTemplate card={cardData} company={data} />
                 </PhoneMockup>
               </CardContent>

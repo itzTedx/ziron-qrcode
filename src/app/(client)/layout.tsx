@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "flex min-h-dvh md:items-center md:justify-center",
+          "flex min-h-dvh @container md:items-center md:justify-center",
           plusJakarta.className
         )}
       >

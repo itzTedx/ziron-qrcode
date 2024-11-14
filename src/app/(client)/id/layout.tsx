@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
 import "@/styles/globals.css";
 
 import Footer from "../_components/footer";
@@ -19,9 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <main className="container relative h-[700px] max-w-screen-sm bg-background px-0 @container md:overflow-hidden md:rounded-xl md:shadow-xl">
-        {children}
-      </main>
+      <ScrollArea className="h-[700px] max-w-md md:overflow-hidden md:rounded-xl md:shadow-xl">
+        <main className="relative">{children}</main>
+      </ScrollArea>
       <Footer />
     </>
   );

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { getCompanies } from "@/server/actions/get-company";
+import { getPlaceholder } from "@/utils/get-placeholder";
 
 import EditCompanyButton from "./_components/edit-company-button";
 import ShareButton from "./_components/share-button";
@@ -87,55 +88,60 @@ export default async function Home({
                     </Button>
                   </div>
                 )}
-                {company.persons.map((person) => (
-                  <Card
-                    className="relative overflow-hidden p-4 transition-colors duration-500 hover:border-primary"
-                    key={person.id}
-                  >
-                    <CardContent className="flex flex-col items-center justify-between p-0">
-                      <Image
-                        src={person.cover}
-                        width={320}
-                        height={120}
-                        alt=""
-                        className="absolute top-0 h-20 w-full object-cover"
-                      />
-                      <div className="z-10 flex flex-col items-center text-center">
+                {company.persons.map(async (person) => {
+                  const placeholder = await getPlaceholder(person.image);
+                  return (
+                    <Card
+                      className="relative overflow-hidden p-4 transition-colors duration-500 hover:border-primary"
+                      key={person.id}
+                    >
+                      <CardContent className="flex flex-col items-center justify-between p-0">
                         <Image
-                          src={person.image}
-                          height={120}
+                          src={person.cover}
                           width={120}
-                          alt={`${person.name}'s Photo`}
-                          title={`${person.name}'s Photo`}
-                          className="size-28 rounded-full border-4 border-background object-cover"
+                          height={80}
+                          alt=""
+                          className="absolute top-0 h-20 w-full object-cover"
                         />
-                        <h3 className="mt-2 font-semibold">{person.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {person.designation}
-                        </p>
-                      </div>
-                      <div className="flex w-full gap-2 pt-4">
-                        <Button
-                          className="w-full gap-1.5 text-sm"
-                          variant="outline"
-                          asChild
-                        >
-                          <Link href={`card/${person.id}`}>
-                            <IconEdit className="size-4" />
-                            Edit
-                          </Link>
-                        </Button>
-                        <ShareButton
-                          data={{
-                            url: person.slug!,
-                            name: person.name,
-                            logo: company.logo,
-                          }}
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                        <div className="z-10 flex flex-col items-center text-center">
+                          <Image
+                            src={person.image}
+                            height={112}
+                            width={112}
+                            placeholder="blur"
+                            blurDataURL={placeholder}
+                            alt={`${person.name}'s Photo`}
+                            title={`${person.name}'s Photo`}
+                            className="size-28 rounded-full border-4 border-background object-cover"
+                          />
+                          <h3 className="mt-2 font-semibold">{person.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {person.designation}
+                          </p>
+                        </div>
+                        <div className="flex w-full gap-2 pt-4">
+                          <Button
+                            className="w-full gap-1.5 text-sm"
+                            variant="outline"
+                            asChild
+                          >
+                            <Link href={`card/${person.id}`}>
+                              <IconEdit className="size-4" />
+                              Edit
+                            </Link>
+                          </Button>
+                          <ShareButton
+                            data={{
+                              url: person.slug!,
+                              name: person.name,
+                              logo: company.logo,
+                            }}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </CollapsibleContent>
             </Collapsible>
           ))
