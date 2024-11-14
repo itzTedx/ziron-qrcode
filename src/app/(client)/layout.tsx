@@ -1,8 +1,11 @@
 import { Metadata } from "next";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { plusJakarta } from "@/fonts";
 import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
+
+import Footer from "./_components/footer";
 
 export const metadata: Metadata = {
   title: "Preview",
@@ -25,7 +28,10 @@ export default function RootLayout({
           plusJakarta.className
         )}
       >
-        {children}
+        <ScrollArea className="h-[700px] max-w-md md:overflow-hidden md:rounded-xl md:shadow-xl">
+          <main className="relative">{children}</main>
+        </ScrollArea>
+        <Footer />
       </body>
     </html>
   );

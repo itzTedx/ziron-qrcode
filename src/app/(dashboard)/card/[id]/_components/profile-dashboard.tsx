@@ -58,7 +58,7 @@ export default function ProfileDashboard({
   const [openPhoto, setOpenPhoto] = useState(false);
   const [openCover, setOpenCover] = useState(false);
   const router = useRouter();
-  const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/id/${data.slug}`;
+  const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/${data.slug}`;
 
   const { setValue, control, setError } =
     useFormContext<z.infer<typeof cardSchema>>();

@@ -14,7 +14,7 @@ interface ShareButtonProps {
 }
 
 export default function ShareButton({ data }: ShareButtonProps) {
-  const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/id/${data.url}`;
+  const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/${data.url}`;
 
   const shareData = {
     url: shareLink,
