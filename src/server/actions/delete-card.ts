@@ -7,7 +7,7 @@ import { createSafeActionClient } from "next-safe-action";
 import { z } from "zod";
 
 import { db } from "../db";
-import { links, persons } from "../schema";
+import { emails, links, persons, phones } from "../schema";
 
 const action = createSafeActionClient();
 
@@ -21,6 +21,8 @@ export const deleteCard = action
         .returning();
 
       await db.delete(links).where(eq(links.personId, id));
+      await db.delete(phones).where(eq(phones.id, id));
+      await db.delete(emails).where(eq(emails.id, id));
 
       revalidatePath("/");
 
