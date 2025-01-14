@@ -4,13 +4,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { IconCamera, IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconCamera, IconEdit } from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 import { Icons } from "@/components/assets/icons";
+import { DeleteIcon } from "@/components/assets/trash-icon";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -257,9 +258,9 @@ export default function ProfileDashboard({
             <AlertDialogTrigger asChild>
               <Button
                 variant="outline"
-                className="border-destructive text-destructive"
+                className="border-destructive text-destructive hover:text-destructive"
               >
-                <IconTrash className="mr-1 size-4" />
+                <DeleteIcon className="size-4" />
                 Delete
               </Button>
             </AlertDialogTrigger>
