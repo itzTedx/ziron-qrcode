@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/sidebar";
 
 import { Icons } from "../assets/icons";
-import { Logo } from "../assets/logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,13 +53,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
             <Icons.zironLogo className="size-6" />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <Logo className="h-6" />
-          </div>
+          <p className="grid flex-1 text-left font-bold leading-tight">
+            Ziron Media
+          </p>
         </SidebarMenuButton>
         {/* <Logo /> */}
       </SidebarHeader>
-      <SidebarContent className="border-t">
+      <SidebarContent className="border-t px-2.5">
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>

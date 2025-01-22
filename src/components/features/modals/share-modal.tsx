@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { IconChevronRight, IconCopy } from "@tabler/icons-react";
+import { IconCheck, IconChevronRight, IconCopy } from "@tabler/icons-react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -71,7 +71,7 @@ export default function ShareModal() {
                 size="icon"
                 variant="ghost"
               >
-                <IconCopy />
+                {copied ? <IconCheck /> : <IconCopy />}
               </Button>
             </div>
             <div

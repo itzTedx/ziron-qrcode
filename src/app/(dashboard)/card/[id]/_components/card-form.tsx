@@ -21,6 +21,7 @@ import {
 } from "@tabler/icons-react";
 import { Reorder } from "framer-motion";
 import { useAction } from "next-safe-action/hooks";
+import { useQueryState } from "nuqs";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -94,13 +95,14 @@ export default function CardCustomizeForm({
   const [open, setOpen] = useState(false);
   const [openPopover, setOpenPopover] = useState(false);
   const [active, setActive] = useState(0);
+  const [tab, setTab] = useQueryState("tab");
 
   const openCompanyModal = useCompanyFormModal((state) => state.openModal);
 
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const defaultTab = searchParams.get("tab") || "information";
+  const defaultTab = tab || "information";
 
   const defaultValues = initialData
     ? {
@@ -204,11 +206,7 @@ export default function CardCustomizeForm({
   });
 
   function onSubmit(values: z.infer<typeof cardSchema>) {
-    const validation = cardSchema.safeParse(values);
-
-    console.log("validate", validation);
-
-    console.log("Form Data", values);
+    // const validation = cardSchema.safeParse(values);
 
     execute(values);
   }
@@ -239,9 +237,10 @@ export default function CardCustomizeForm({
   }, [formValues, data, placeholderPhoto]);
 
   const handleTabClick = (tab: string) => {
-    const newSearchParams = new URLSearchParams(searchParams.toString());
-    newSearchParams.set("tab", tab);
-    router.push(`?${newSearchParams.toString()}`);
+    // const newSearchParams = new URLSearchParams(searchParams.toString());
+    // newSearchParams.set("tab", tab);
+    // router.push(`?${newSearchParams.toString()}`);
+    setTab(tab);
   };
 
   return (

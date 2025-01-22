@@ -12,6 +12,7 @@ import { z } from "zod";
 
 import { Icons } from "@/components/assets/icons";
 import { DeleteIcon } from "@/components/assets/trash-icon";
+import CopyButton from "@/components/copy-button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,7 +41,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { deleteCard } from "@/server/actions/delete-card";
 import { useShareModalStore } from "@/store/use-share-modal";
@@ -225,12 +225,13 @@ export default function ProfileDashboard({
         <div className="col-span-10 flex items-center justify-between gap-4 md:col-span-4 md:px-3 lg:px-6">
           <div className="w-full space-y-2 max-md:hidden">
             <h3 className="max-md:text-xs">Link</h3>
-            <div className="flex items-center justify-between gap-2">
-              <Input
+            <div className="inline-flex items-center gap-2">
+              {/* <Input
                 readOnly
                 className="w-full bg-gray-50"
                 defaultValue={shareLink}
-              />
+              /> */}
+              <CopyButton link={shareLink} />
               <Button
                 onClick={(e) => {
                   e.preventDefault();

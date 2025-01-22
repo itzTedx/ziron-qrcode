@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { extractRouterConfig } from "uploadthing/server";
 
 import BreakpointIndicator from "@/components/breakpoint-indicator";
@@ -37,26 +38,30 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn("flex w-full antialiased", plusJakarta.className)}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SidebarProvider defaultOpen={defaultOpen}>
-            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+        <NuqsAdapter>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SidebarProvider defaultOpen={defaultOpen}>
+              <NextSSRPlugin
+                routerConfig={extractRouterConfig(ourFileRouter)}
+              />
 
-            <AppSidebar collapsible="icon" />
-            <div className="flex-1">
-              <Header />
-              <ShareModal />
-              {children}
-              <CompanyFormModal />
-              <BreakpointIndicator />
-              <Toaster richColors closeButton />
-            </div>
-          </SidebarProvider>{" "}
-        </ThemeProvider>
+              <AppSidebar collapsible="icon" />
+              <div className="flex-1">
+                <Header />
+                <ShareModal />
+                {children}
+                <CompanyFormModal />
+                <BreakpointIndicator />
+                <Toaster richColors closeButton />
+              </div>
+            </SidebarProvider>
+          </ThemeProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

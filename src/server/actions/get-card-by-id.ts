@@ -17,8 +17,6 @@ export async function getCardById(id: string) {
       },
     });
 
-    console.log("Card Found", card);
-
     if (!card) throw new Error("Card not found");
 
     return { card };
