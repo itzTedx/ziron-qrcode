@@ -259,7 +259,7 @@ export default function ProfileDashboard({
             <AlertDialogTrigger asChild>
               <Button
                 variant="outline"
-                className="border-destructive text-destructive hover:text-destructive"
+                className="border-destructive bg-destructive/30 text-foreground hover:text-destructive"
               >
                 <DeleteIcon className="size-4" />
                 Delete
