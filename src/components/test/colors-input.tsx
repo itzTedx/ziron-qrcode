@@ -48,16 +48,11 @@ export default function ColorsInput({
   onChange,
 }: {
   value: string;
-  onChange: () => void;
+  onChange: (newValue: string) => void;
 }) {
   return (
     <fieldset className="flex items-center gap-5">
-      <RadioGroup
-        className="flex gap-2"
-        defaultValue="#3b82f6"
-        value={value}
-        onValueChange={onChange}
-      >
+      <RadioGroup className="flex gap-2" value={value} onValueChange={onChange}>
         {HEX_VALUES.map((value) => (
           <RadioGroupItem
             key={value.color}
@@ -68,7 +63,6 @@ export default function ColorsInput({
               borderColor: value.value,
               backgroundColor: value.value,
             }}
-            // className="data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500"
           />
         ))}
       </RadioGroup>
@@ -101,55 +95,10 @@ export default function ColorsInput({
             if (!newValue.startsWith("#")) {
               newValue = `#${newValue.replace("#", "")}`;
             }
-            onChange();
+            onChange(newValue);
           }}
         />
       </div>
     </fieldset>
   );
-}
-
-{
-  /* <RadioGroupItem
-          value="blue"
-          id="radio-07-blue"
-          aria-label="Blue"
-          className="border-blue-500 bg-blue-500 data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500"
-        />
-        <RadioGroupItem
-          value="indigo"
-          id="radio-07-indigo"
-          aria-label="Indigo"
-          className="border-indigo-500 bg-indigo-500 data-[state=checked]:border-indigo-500 data-[state=checked]:bg-indigo-500"
-        />
-        <RadioGroupItem
-          value="pink"
-          id="radio-07-pink"
-          aria-label="Pink"
-          className="border-pink-500 bg-pink-500 data-[state=checked]:border-pink-500 data-[state=checked]:bg-pink-500"
-        />
-        <RadioGroupItem
-          value="red"
-          id="radio-07-red"
-          aria-label="Red"
-          className="border-red-500 bg-red-500 data-[state=checked]:border-red-500 data-[state=checked]:bg-red-500"
-        />
-        <RadioGroupItem
-          value="orange"
-          id="radio-07-orange"
-          aria-label="orange"
-          className="border-orange-500 bg-orange-500 data-[state=checked]:border-orange-500 data-[state=checked]:bg-orange-500"
-        />
-        <RadioGroupItem
-          value="yellow"
-          id="radio-07-yellow"
-          aria-label="yellow"
-          className="border-yellow-500 bg-yellow-500 data-[state=checked]:border-yellow-500 data-[state=checked]:bg-yellow-500"
-        />
-        <RadioGroupItem
-          value="green"
-          id="radio-07-green"
-          aria-label="green"
-          className="border-green-500 bg-green-500 data-[state=checked]:border-green-500 data-[state=checked]:bg-green-500"
-        /> */
 }

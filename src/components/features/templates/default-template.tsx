@@ -10,6 +10,7 @@ import {
 
 import { Icons } from "@/components/assets/icons";
 import SaveContactButton from "@/components/save-contact-button";
+import getTextColorByBackground from "@/lib/get-brightness-by-color";
 import { cn } from "@/lib/utils";
 import { Company, Person } from "@/types";
 import { removeExtension } from "@/utils/remove-extension";
@@ -28,6 +29,11 @@ export default function DefaultTemplate({
   if (!card) return null;
 
   const companyData = company?.find((c) => c.id === card.companyId);
+
+  const textColor = getTextColorByBackground(card.btnColor || "#4938ff");
+
+  const theme = card.theme || "#4938ff";
+
   return (
     <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
       <div className="no-scrollbar">
@@ -173,7 +179,14 @@ export default function DefaultTemplate({
         )}
       </div>
       <div className="sticky bottom-0 mt-auto h-20 w-full max-w-screen-sm bg-background p-4">
-        <SaveContactButton data={card} imageBase64={imageBase64URI} />
+        <SaveContactButton
+          data={card}
+          imageBase64={imageBase64URI}
+          style={{
+            backgroundColor: theme,
+            color: textColor,
+          }}
+        />
       </div>
     </div>
   );

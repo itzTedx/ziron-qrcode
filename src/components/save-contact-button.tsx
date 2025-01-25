@@ -23,8 +23,14 @@ VERSION:3.0
 N:${data.name.replace(/\s+/g, ";")}
 ORG:${data.company && data.company.name}
 TITLE:${data.designation && data.designation}
-TEL;MEDIATYPE=WORK:${data.phone && data.phone.replace(/\s+/g, "")}
-EMAIL:${data.email && data.email}
+${
+  data.phones &&
+  data.phones.map(
+    (phone) =>
+      `TEL;MEDIATYPE=WORK:${phone.phone && phone.phone.replace(/\s+/g, "")}`
+  )
+}
+${data.emails && data.emails.map((email) => `EMAIL:${email.email && email.email}`)}
 ADR:${data.address && data.address}
 PHOTO;ENCODING=BASE64;JPEG:${imageBase64}
 END:VCARD`;

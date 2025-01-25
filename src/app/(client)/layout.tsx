@@ -24,11 +24,11 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "flex min-h-dvh @container md:items-center md:justify-center",
+          "flex min-h-dvh @container sm:items-center sm:justify-center",
           plusJakarta.className
         )}
       >
-        <ScrollArea className="h-[700px] max-w-md md:overflow-hidden md:rounded-xl md:shadow-xl">
+        <ScrollArea className="h-svh sm:h-[700px] sm:overflow-hidden sm:rounded-xl sm:shadow-xl md:max-w-md">
           <main className="relative">{children}</main>
         </ScrollArea>
         <Footer />

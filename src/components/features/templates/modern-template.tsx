@@ -25,7 +25,10 @@ export default function ModernTemplate({
 
   const companyData = company?.find((c) => c.id === card.companyId);
 
-  const textColor = getTextColorByBackground(card.btnColor);
+  const textColor = getTextColorByBackground(card.btnColor || "#4938ff");
+
+  const theme = card.theme || "#4938ff";
+  const btnColor = card.btnColor || "#4938ff";
   return (
     <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
       <div className="no-scrollbar md:overflow-y-scroll">
@@ -70,7 +73,7 @@ export default function ModernTemplate({
             {card.image && (
               <div
                 className="absolute left-1/2 top-1/2 size-24 -translate-x-1/2 overflow-hidden rounded-full border-4 bg-gray-100 @sm:size-32"
-                style={{ borderColor: card.theme }}
+                style={{ borderColor: theme }}
               >
                 <Image
                   src={card.image}
@@ -91,7 +94,7 @@ export default function ModernTemplate({
               <h2
                 className="font-medium"
                 style={{
-                  color: card.theme,
+                  color: theme,
                 }}
               >
                 {companyData?.name || card.company?.name}
@@ -110,8 +113,8 @@ export default function ModernTemplate({
                 href={`tel:${card.phones[0].phone}`}
                 className="flex h-10 w-full items-center justify-center rounded-full border-2 border-primary px-6 text-center font-semibold text-primary @sm:h-12"
                 style={{
-                  color: card.theme,
-                  borderColor: card.theme,
+                  color: theme,
+                  borderColor: theme,
                 }}
               >
                 Call me now!
@@ -122,7 +125,7 @@ export default function ModernTemplate({
               data={card}
               imageBase64={imageBase64URI}
               style={{
-                backgroundColor: card.btnColor,
+                backgroundColor: btnColor,
                 color: textColor,
               }}
               className="h-10 rounded-full @sm:h-12"
@@ -138,7 +141,7 @@ export default function ModernTemplate({
               {card.emails &&
                 card.emails.map((e, i) => (
                   <LinkBox
-                    color={card.theme}
+                    color={theme}
                     key={`${e.id}-${i}-${e.email}`}
                     href={`mailto:${e.email}`}
                   >
@@ -149,7 +152,7 @@ export default function ModernTemplate({
               {card.phones &&
                 card.phones.map((ph, i) => (
                   <LinkBox
-                    color={card.theme}
+                    color={theme}
                     key={`${ph.id}-${i}-${ph.phone}`}
                     href={`tel:${ph.phone}`}
                   >
@@ -158,7 +161,7 @@ export default function ModernTemplate({
                   </LinkBox>
                 ))}
               {card.address && (
-                <LinkBox color={card.theme} href={`#`}>
+                <LinkBox color={theme} href={`#`}>
                   <IconPinned className="size-9 flex-shrink-0 stroke-[1.5] @sm:size-16" />
                   <p className="sr-only"> {card.address}</p>
                 </LinkBox>
@@ -173,7 +176,7 @@ export default function ModernTemplate({
             <div className="grid grid-cols-3 gap-4">
               {card.links.map((link, index) => (
                 <LinkBox
-                  color={card.theme}
+                  color={theme}
                   key={`${index}-${link.label}-${link.url}`}
                   href={link.url || "#"}
                 >
@@ -184,7 +187,7 @@ export default function ModernTemplate({
                 </LinkBox>
               ))}
               {card.attachmentUrl && card.attachmentFileName && (
-                <LinkBox color={card.theme} href={card.attachmentUrl} download>
+                <LinkBox color={theme} href={card.attachmentUrl} download>
                   <Icons.pdf className="relative size-9 flex-shrink-0 @sm:size-16" />
 
                   <h5 className="sr-only">

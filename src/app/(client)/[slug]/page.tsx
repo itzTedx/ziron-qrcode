@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import CardTemplate from "@/components/features/templates/card-template";
 import DefaultTemplate from "@/components/features/templates/default-template";
 import ModernTemplate from "@/components/features/templates/modern-template";
 import { getCardBySlug } from "@/server/actions/get-card-by-slug";
@@ -26,10 +27,21 @@ export default async function PreviewPage({
 
   const imageURI = card.image ? await imageToBase64(card.image) : undefined;
 
-  const template = card.template;
+  // const template = card.template;
 
-  if (template === "default")
-    return <DefaultTemplate card={card} imageBase64URI={imageURI} />;
+  switch (card.template) {
+    case "default":
+      return <DefaultTemplate card={card} imageBase64URI={imageURI} />;
+    case "modern":
+      return <ModernTemplate card={card} imageBase64URI={imageURI} />;
+    case "card":
+      return <CardTemplate card={card} imageBase64URI={imageURI} />;
+    default:
+      return <DefaultTemplate card={card} imageBase64URI={imageURI} />;
+  }
 
-  return <ModernTemplate card={card} imageBase64URI={imageURI} />;
+  // if (template === "default")
+  //   return <DefaultTemplate card={card} imageBase64URI={imageURI} />;
+
+  // return <ModernTemplate card={card} imageBase64URI={imageURI} />;
 }

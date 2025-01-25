@@ -31,6 +31,8 @@ export const createCard = action
         image,
         template,
         cover,
+        theme,
+        btnColor,
         links: linksData,
       },
     }) => {
@@ -57,6 +59,8 @@ export const createCard = action
               companyId,
               designation,
               template,
+              theme,
+              btnColor,
               image: image || placeholderImage,
               cover: cover || placeholderCover,
             })
@@ -122,6 +126,8 @@ export const createCard = action
               image: image || placeholderImage,
               cover: cover || placeholderCover,
               template,
+              theme,
+              btnColor,
               slug: uniqueSlug,
             })
             .returning();

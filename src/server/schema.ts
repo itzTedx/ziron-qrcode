@@ -8,6 +8,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
+import { InferResultType } from "./db";
+
 export const companies = pgTable("companies", {
   id: serial("id").primaryKey().notNull(),
   name: text("name").notNull(),
@@ -42,9 +44,9 @@ export const persons = pgTable("persons", {
 
   slug: text("slug").unique(),
 
-  template: text("template").default("default"),
-  theme: text("theme_color").default("#4938ff"),
-  btnColor: text("button_color").default("#4938ff"),
+  template: text("template").default("default").notNull(),
+  theme: text("theme_color").default("#4938ff").notNull(),
+  btnColor: text("button_color").default("#4938ff").notNull(),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -123,3 +125,13 @@ export const personEmailsRelations = relations(emails, ({ one }) => ({
     relationName: "personEmails",
   }),
 }));
+
+export type PersonType = InferResultType<
+  "persons",
+  {
+    emails: true;
+    phones: true;
+    company: true;
+    links: true;
+  }
+>;

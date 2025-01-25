@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { Icons } from "@/components/assets/icons";
+import CardTemplate from "@/components/features/templates/card-template";
 import DefaultTemplate from "@/components/features/templates/default-template";
 import ModernTemplate from "@/components/features/templates/modern-template";
 import PhoneMockup from "@/components/phone-mockup";
@@ -64,7 +65,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { LINKS } from "@/constants";
@@ -211,7 +212,7 @@ export default function CardCustomizeForm({
     execute(values);
   }
 
-  const photo = formValues.image;
+  // const photo = formValues.image;
 
   const name = form.getValues("name");
   const placeholderPhoto = name
@@ -226,6 +227,7 @@ export default function CardCustomizeForm({
     return {
       ...formValues,
       id: companyId,
+
       name: formValues.name || "", // Ensure name is always a string
       image: formValues.image || placeholderPhoto,
       company: companyData,
@@ -244,7 +246,7 @@ export default function CardCustomizeForm({
   };
 
   return (
-    <main className="relative pb-12">
+    <main className="relative pb-3">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -292,9 +294,9 @@ export default function CardCustomizeForm({
                         {!isEditMode && (
                           <div className="flex gap-3 pt-3">
                             <div className="relative grid size-20 flex-shrink-0 place-items-center overflow-hidden rounded-full border bg-gray-100">
-                              {photo ? (
+                              {cardData.image ? (
                                 <Image
-                                  src={photo}
+                                  src={cardData.image}
                                   alt=""
                                   fill
                                   sizes="100vw"
@@ -334,12 +336,12 @@ export default function CardCustomizeForm({
                                       );
                                   return (
                                     <div className="flex items-center gap-1.5 text-nowrap text-sm font-medium">
-                                      {photo ? (
+                                      {cardData.image ? (
                                         <IconEdit className="size-4" />
                                       ) : (
                                         <IconUpload className="size-4" />
                                       )}
-                                      {photo ? "Edit" : "Upload Photo"}
+                                      {cardData.image ? "Edit" : "Upload Photo"}
                                     </div>
                                   );
                                 },
@@ -1001,12 +1003,13 @@ export default function CardCustomizeForm({
                 value="template"
                 className="flex flex-col gap-4 overflow-hidden"
               >
-                <section className="flex gap-8 overflow-x-auto px-3 pb-9">
+                <ScrollArea className="flex w-[calc(100svw-3.5rem)] gap-8 overflow-x-clip px-3 sm:w-auto">
+                  <ScrollBar orientation="horizontal" />
                   <FormField
                     control={form.control}
                     name="template"
                     render={({ field }) => (
-                      <FormItem className="space-y-3">
+                      <FormItem className="space-y-3 pb-6">
                         <FormLabel>Select Theme</FormLabel>
                         <FormControl>
                           <RadioGroup
@@ -1066,13 +1069,39 @@ export default function CardCustomizeForm({
                                 </FormLabel>
                               </div>
                             </FormItem>
+                            <FormItem className="flex flex-col items-center space-y-3">
+                              <PhoneMockup className="@container">
+                                <ScrollArea className="h-full">
+                                  <CardTemplate
+                                    card={cardData}
+                                    company={data}
+                                  />
+                                </ScrollArea>
+                              </PhoneMockup>
+                              <div className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem
+                                    value="card"
+                                    id="card"
+                                    aria-label="card template"
+                                    className="size-5 border-primary shadow-none data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                                  />
+                                </FormControl>
+                                <FormLabel
+                                  className="font-normal"
+                                  htmlFor="card"
+                                >
+                                  Card
+                                </FormLabel>
+                              </div>
+                            </FormItem>
                           </RadioGroup>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </section>
+                </ScrollArea>
                 <section className="divide-y">
                   <h5 className="pb-3 text-sm font-medium">Customize Theme</h5>
                   <FormField
@@ -1092,23 +1121,26 @@ export default function CardCustomizeForm({
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name={"btnColor"}
-                    render={({ field }) => (
-                      <FormItem className="flex w-full items-center justify-between gap-3 py-3">
-                        <FormLabel>Button</FormLabel>
-                        <FormControl>
-                          <ColorsInput
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
+                  {cardData.template === "modern" ||
+                  cardData.template === "card" ? (
+                    <FormField
+                      control={form.control}
+                      name={"btnColor"}
+                      render={({ field }) => (
+                        <FormItem className="flex w-full items-center justify-between gap-3 py-3">
+                          <FormLabel>Button</FormLabel>
+                          <FormControl>
+                            <ColorsInput
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
+                          </FormControl>
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ) : null}
                 </section>
               </TabsContent>
               {!isEditMode && (
@@ -1130,11 +1162,26 @@ export default function CardCustomizeForm({
               <CardContent className="relative py-5">
                 <PhoneMockup>
                   <ScrollArea className="h-full">
-                    {form.watch("template") === "default" ? (
-                      <DefaultTemplate card={cardData} company={data} />
-                    ) : (
-                      <ModernTemplate card={cardData} company={data} />
-                    )}
+                    {(() => {
+                      switch (form.watch("template")) {
+                        case "default":
+                          return (
+                            <DefaultTemplate card={cardData} company={data} />
+                          );
+                        case "modern":
+                          return (
+                            <ModernTemplate card={cardData} company={data} />
+                          );
+                        case "card":
+                          return (
+                            <CardTemplate card={cardData} company={data} />
+                          );
+                        default:
+                          return (
+                            <DefaultTemplate card={cardData} company={data} />
+                          );
+                      }
+                    })()}
                   </ScrollArea>
                 </PhoneMockup>
               </CardContent>
