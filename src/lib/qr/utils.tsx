@@ -16,11 +16,11 @@ export function excavateModules(
   modules: Modules,
   excavation: Excavation
 ): Modules {
-  return modules.slice().map((row, y) => {
+  return modules.slice().map((row: boolean[], y: number): boolean[] => {
     if (y < excavation.y || y >= excavation.y + excavation.h) {
       return row;
     }
-    return row.map((cell, x) => {
+    return row.map((cell: boolean, x: number): boolean => {
       if (x < excavation.x || x >= excavation.x + excavation.w) {
         return cell;
       }
@@ -31,9 +31,9 @@ export function excavateModules(
 
 export function generatePath(modules: Modules, margin = 0): string {
   const ops: Array<string> = [];
-  modules.forEach((row, y) => {
+  modules.forEach((row: boolean[], y: number) => {
     let start: number | null = null;
-    row.forEach((cell, x) => {
+    row.forEach((cell: boolean, x: number) => {
       if (!cell && start !== null) {
         // M0 0h7v1H0z injects the space with the move and drops the comma,
         // saving a char per operation
@@ -183,6 +183,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         );
 
       image = (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={imageSettings.src}
           alt="Logo"
@@ -243,7 +244,8 @@ export function QRCodeSVG(props: QRPropsSVG) {
 export const SUPPORTS_PATH2D = (function () {
   try {
     new Path2D().addPath(new Path2D());
-  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_e) {
     return false;
   }
   return true;

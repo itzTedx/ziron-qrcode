@@ -6,6 +6,7 @@
 
 "use strict";
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace qrcodegen {
   type bit = number;
   type byte = number;
@@ -640,6 +641,7 @@ namespace qrcodegen {
       data: Readonly<Array<byte>>,
       divisor: Readonly<Array<byte>>
     ): Array<byte> {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const result: Array<byte> = divisor.map((_) => 0);
       for (const b of data) {
         // Polynomial division
@@ -978,6 +980,7 @@ namespace qrcodegen {
 
 /*---- Public helper enumeration ----*/
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace qrcodegen.QrCode {
   type int = number;
 
@@ -1005,6 +1008,7 @@ namespace qrcodegen.QrCode {
 
 /*---- Public helper enumeration ----*/
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace qrcodegen.QrSegment {
   type int = number;
 

@@ -5,8 +5,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 
-import { DUB_QR_LOGO } from "@dub/utils/src/constants";
-
+// import { DUB_QR_LOGO } from "@dub/utils/src/constants";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -136,6 +135,7 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
   let img: JSX.Element | null = null;
   if (imgSrc != null) {
     img = (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         alt="QR code"
         src={imgSrc}
@@ -356,20 +356,20 @@ export function getQRData({
   margin?: number;
 }) {
   return {
-    value: `${url}?qr=1`,
+    value: url,
+    size: 512,
     bgColor: "#ffffff",
     fgColor,
-    size: 1024,
-    level: "Q", // QR Code error correction level: https://blog.qrstuff.com/general/qr-code-error-correction
-    hideLogo,
+    level: "Q",
     margin,
-    ...(!hideLogo && {
-      imageSettings: {
-        src: logo || DUB_QR_LOGO,
-        height: 256,
-        width: 256,
-        excavate: true,
-      },
-    }),
+    imageSettings:
+      logo && hideLogo
+        ? {
+            src: logo,
+            height: 124,
+            width: 124,
+            excavate: true,
+          }
+        : undefined,
   };
 }
