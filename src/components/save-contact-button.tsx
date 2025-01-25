@@ -17,10 +17,11 @@ export default function SaveContactButton({
   imageBase64,
   className,
 }: SaveContactButtonProps) {
+  // N:${data.name.replace(/\s+/g, ";")}
   const generateVCard = () => {
     const vCardData = `BEGIN:VCARD
 VERSION:3.0
-N:${data.name.replace(/\s+/g, ";")}
+FN:${data.name}
 ORG:${data.company && data.company.name}
 TITLE:${data.designation && data.designation}
 ${
@@ -33,6 +34,7 @@ ${
 ${data.emails && data.emails.map((email) => `EMAIL:${email.email && email.email}`)}
 ADR:${data.address && data.address}
 PHOTO;ENCODING=BASE64;JPEG:${imageBase64}
+NOTE:${data.bio}
 END:VCARD`;
     return vCardData;
   };
