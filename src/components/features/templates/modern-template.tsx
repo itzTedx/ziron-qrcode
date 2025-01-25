@@ -5,6 +5,7 @@ import { IconMail, IconPhone, IconPinned } from "@tabler/icons-react";
 
 import { Icons } from "@/components/assets/icons";
 import SaveContactButton from "@/components/save-contact-button";
+import getTextColorByBackground from "@/lib/get-brightness-by-color";
 import { cn } from "@/lib/utils";
 import { Company, Person } from "@/types";
 import { removeExtension } from "@/utils/remove-extension";
@@ -23,6 +24,8 @@ export default function ModernTemplate({
   if (!card) return null;
 
   const companyData = company?.find((c) => c.id === card.companyId);
+
+  const textColor = getTextColorByBackground(card.btnColor);
   return (
     <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
       <div className="no-scrollbar md:overflow-y-scroll">
@@ -65,7 +68,10 @@ export default function ModernTemplate({
               )}
             </section>
             {card.image && (
-              <div className="absolute left-1/2 top-1/2 size-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-primary bg-gray-100 @sm:size-32">
+              <div
+                className="absolute left-1/2 top-1/2 size-24 -translate-x-1/2 overflow-hidden rounded-full border-4 bg-gray-100 @sm:size-32"
+                style={{ borderColor: card.theme }}
+              >
                 <Image
                   src={card.image}
                   fill
@@ -82,7 +88,12 @@ export default function ModernTemplate({
               <h1 className="text-xl font-bold @sm:text-2xl">{card.name}</h1>
             )}
             {card.company || companyData ? (
-              <h2 className="font-medium text-primary">
+              <h2
+                className="font-medium"
+                style={{
+                  color: card.theme,
+                }}
+              >
                 {companyData?.name || card.company?.name}
               </h2>
             ) : null}
@@ -98,6 +109,10 @@ export default function ModernTemplate({
               <Link
                 href={`tel:${card.phones[0].phone}`}
                 className="flex h-10 w-full items-center justify-center rounded-full border-2 border-primary px-6 text-center font-semibold text-primary @sm:h-12"
+                style={{
+                  color: card.theme,
+                  borderColor: card.theme,
+                }}
               >
                 Call me now!
               </Link>
@@ -106,6 +121,10 @@ export default function ModernTemplate({
             <SaveContactButton
               data={card}
               imageBase64={imageBase64URI}
+              style={{
+                backgroundColor: card.btnColor,
+                color: textColor,
+              }}
               className="h-10 rounded-full @sm:h-12"
             />
           </section>
@@ -118,67 +137,60 @@ export default function ModernTemplate({
             <div className="grid grid-cols-3 gap-4">
               {card.emails &&
                 card.emails.map((e, i) => (
-                  <Link
+                  <LinkBox
+                    color={card.theme}
                     key={`${e.id}-${i}-${e.email}`}
                     href={`mailto:${e.email}`}
-                    className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-3 text-sm @sm:p-5 @sm:text-base"
                   >
                     <IconMail className="size-9 flex-shrink-0 stroke-[1.5] @sm:size-16" />
                     <p className="sr-only">{e.email}</p>
-                  </Link>
+                  </LinkBox>
                 ))}
               {card.phones &&
                 card.phones.map((ph, i) => (
-                  <Link
+                  <LinkBox
+                    color={card.theme}
                     key={`${ph.id}-${i}-${ph.phone}`}
                     href={`tel:${ph.phone}`}
-                    className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-3 text-sm @sm:p-5 @sm:text-base"
                   >
                     <IconPhone className="size-9 flex-shrink-0 stroke-[1.5] @sm:size-16" />
                     <p className="sr-only"> {ph.phone}</p>
-                  </Link>
+                  </LinkBox>
                 ))}
               {card.address && (
-                <Link
-                  href={`#`}
-                  className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-3 text-sm @sm:p-5 @sm:text-base"
-                >
+                <LinkBox color={card.theme} href={`#`}>
                   <IconPinned className="size-9 flex-shrink-0 stroke-[1.5] @sm:size-16" />
                   <p className="sr-only"> {card.address}</p>
-                </Link>
+                </LinkBox>
               )}
             </div>
           </section>
         ) : null}
 
         {card.links && card.links.length > 0 && (
-          <section className="space-y-3 px-4 @sm:space-y-4 @sm:px-8">
+          <section className="space-y-3 px-4 pb-8 @sm:space-y-4 @sm:px-8">
             <h2 className="sr-only">Links</h2>
             <div className="grid grid-cols-3 gap-4">
               {card.links.map((link, index) => (
-                <Link
+                <LinkBox
+                  color={card.theme}
                   key={`${index}-${link.label}-${link.url}`}
                   href={link.url || "#"}
-                  className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-3 text-sm @sm:p-5 @sm:text-base"
                 >
                   <div className="relative size-9 flex-shrink-0 @sm:size-16">
                     <Image src={link.icon} fill alt="" sizes="10vw" />
                   </div>
                   <h5 className="sr-only">{link.label}</h5>
-                </Link>
+                </LinkBox>
               ))}
               {card.attachmentUrl && card.attachmentFileName && (
-                <Link
-                  href={card.attachmentUrl}
-                  download
-                  className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-5 text-sm @sm:text-base"
-                >
-                  <Icons.pdf className="relative size-16 flex-shrink-0" />
+                <LinkBox color={card.theme} href={card.attachmentUrl} download>
+                  <Icons.pdf className="relative size-9 flex-shrink-0 @sm:size-16" />
 
                   <h5 className="sr-only">
                     {removeExtension(card.attachmentFileName)}
                   </h5>
-                </Link>
+                </LinkBox>
               )}
             </div>
           </section>
@@ -187,3 +199,26 @@ export default function ModernTemplate({
     </div>
   );
 }
+
+const LinkBox = ({
+  href,
+  download,
+  color,
+  children,
+}: {
+  href: string;
+  download?: boolean;
+  color: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <Link
+      href={href}
+      download={download}
+      className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-5 text-sm @sm:text-base"
+      style={{ borderColor: color, backgroundColor: `${color}10` }}
+    >
+      {children}
+    </Link>
+  );
+};

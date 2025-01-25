@@ -14,6 +14,8 @@ export interface Person {
   attachmentFileName?: string | null;
   slug?: string | null;
   id?: number | null;
+  theme: string;
+  btnColor: string;
 }
 
 export interface Company {

@@ -56,6 +56,8 @@ export const cardSchema = z.object({
     .optional(),
 
   template: z.string().optional().default("default"),
+  theme: z.string().optional().default("#4938ff"),
+  btnColor: z.string().optional().default("#4938ff"),
 });
 
 export type zCardSchema = z.infer<typeof cardSchema>;

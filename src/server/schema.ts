@@ -43,6 +43,8 @@ export const persons = pgTable("persons", {
   slug: text("slug").unique(),
 
   template: text("template").default("default"),
+  theme: text("theme_color").default("#4938ff"),
+  btnColor: text("button_color").default("#4938ff"),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")

@@ -1007,7 +1007,7 @@ export default function CardCustomizeForm({
                     name="template"
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        <FormLabel> Select Theme</FormLabel>
+                        <FormLabel>Select Theme</FormLabel>
                         <FormControl>
                           <RadioGroup
                             onValueChange={field.onChange}
@@ -1073,12 +1073,42 @@ export default function CardCustomizeForm({
                     )}
                   />
                 </section>
-                <section>
-                  <h5>Customize Theme</h5>
-                  <div className="flex gap-3">
-                    <h6>Button Color</h6>
-                    <ColorsInput />
-                  </div>
+                <section className="divide-y">
+                  <h5 className="pb-3 text-sm font-medium">Customize Theme</h5>
+                  <FormField
+                    control={form.control}
+                    name={"theme"}
+                    render={({ field }) => (
+                      <FormItem className="flex w-full items-center justify-between gap-3 py-3">
+                        <FormLabel>Theme Color</FormLabel>
+                        <FormControl>
+                          <ColorsInput
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={"btnColor"}
+                    render={({ field }) => (
+                      <FormItem className="flex w-full items-center justify-between gap-3 py-3">
+                        <FormLabel>Button</FormLabel>
+                        <FormControl>
+                          <ColorsInput
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </section>
               </TabsContent>
               {!isEditMode && (

@@ -148,6 +148,20 @@
       "when": 1731581100410,
       "tag": "0020_polite_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1737806187189,
+      "tag": "0021_tired_ghost_rider",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1737808747751,
+      "tag": "0022_jittery_warbound",
+      "breakpoints": true
     }
   ]
 }

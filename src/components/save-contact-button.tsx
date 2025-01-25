@@ -5,12 +5,14 @@ import { cn } from "@/lib/utils";
 import { Person } from "@/types";
 
 interface SaveContactButtonProps {
+  style?: React.CSSProperties;
   data: Person;
   imageBase64?: string;
   className?: string;
 }
 
 export default function SaveContactButton({
+  style,
   data,
   imageBase64,
   className,
@@ -44,7 +46,11 @@ END:VCARD`;
   };
 
   return (
-    <Button className={cn("w-full", className)} onClick={downloadVCard}>
+    <Button
+      className={cn("w-full", className)}
+      onClick={downloadVCard}
+      style={style}
+    >
       Add Contact
     </Button>
   );
