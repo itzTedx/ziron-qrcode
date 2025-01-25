@@ -20,7 +20,6 @@ import {
 } from "../../ui/dialog";
 
 export default function ShareModal() {
-  const [step, setStep] = useState(1);
   const [copied, setCopied] = useState(false);
 
   const { isOpen, data, closeModal } = useShareModalStore();
@@ -38,98 +37,83 @@ export default function ShareModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
-      <DialogContent
-        className={cn(
-          "p-0 transition-[max-width]",
-          step === 1 ? "max-w-xl" : "max-w-max"
-        )}
-      >
-        <DialogHeader className="border-b p-9">
-          <DialogTitle>
-            {step === 1 ? "Share Card" : "Download QR Code"}
-          </DialogTitle>
+      <DialogContent className={cn("p-0", "max-w-xl")}>
+        <DialogHeader className="border-b p-6">
+          <DialogTitle>Share Card</DialogTitle>
         </DialogHeader>
-        {step === 1 ? (
-          <div className="divide-y p-9 pt-0">
-            <div
-              onClick={copyLink}
-              className="flex items-center justify-between gap-6 py-6"
-            >
-              <div className="flex cursor-pointer items-center gap-4">
-                <div className="flex size-14 flex-shrink-0 items-center justify-center rounded-full border border-secondary bg-purple-100 text-secondary">
-                  <Icons.link />
-                </div>
-                <div className="">
-                  <h5 className="font-semibold">
-                    {copied ? "Link Copied!" : "Copy Link"}
-                  </h5>
-                  <p className="line-clamp-1 text-sm">{data.url}</p>
-                </div>
-              </div>
-              <Button
-                className="text-secondary hover:text-purple-700"
-                size="icon"
-                variant="ghost"
-              >
-                {copied ? <IconCheck /> : <IconCopy />}
-              </Button>
-            </div>
-            <div
-              onClick={() => setStep(2)}
-              className="group flex items-center justify-between gap-6 py-6"
-            >
-              <div className="flex cursor-pointer items-center gap-4">
-                <div className="flex size-14 flex-shrink-0 items-center justify-center rounded-full border border-secondary bg-purple-100 text-secondary">
-                  <Icons.qrcode />
-                </div>
-                <div className="">
-                  <h5 className="font-semibold">Get QR Code</h5>
-                  <p className="line-clamp-1 text-sm">
-                    Download qr code and share
-                  </p>
-                </div>
-              </div>
-              <Button
-                className="text-secondary hover:text-purple-700"
-                size="icon"
-                variant="ghost"
-              >
-                <IconChevronRight className="size-4" />
-              </Button>
-            </div>
-            <Link
-              href={data.url}
-              target="_blank"
-              className="flex items-center justify-between gap-6 pb-3 pt-6"
-            >
-              <div className="flex items-center gap-4">
-                <div className="flex size-14 flex-shrink-0 items-center justify-center rounded-full border border-secondary bg-purple-100 text-secondary">
-                  <Icons.window />
-                </div>
-                <div className="">
-                  <h5 className="font-semibold">View in browser</h5>
-                  <p className="line-clamp-1 text-sm">
-                    Open profile page in new tab
-                  </p>
-                </div>
-              </div>
-              <Button
-                className="text-secondary hover:text-purple-700"
-                size="icon"
-                variant="ghost"
-              >
-                <IconChevronRight className="size-4" />
-              </Button>
-            </Link>
-          </div>
-        ) : (
+
+        <div className="divide-y p-6 pt-0">
           <QRCodeDownload
             data={data}
             shareLink={data.url}
             cardName={data.name}
-            onBack={() => setStep(1)}
           />
-        )}
+          <div className="flex items-center justify-between gap-6 pb-6">
+            <div className="flex cursor-pointer items-center gap-4">
+              <div className="flex size-14 flex-shrink-0 items-center justify-center rounded-full border border-secondary bg-purple-100 text-secondary">
+                <Icons.link />
+              </div>
+              <div className="">
+                <h5 className="font-semibold">
+                  {copied ? "Link Copied!" : "Copy Link"}
+                </h5>
+                <p className="line-clamp-1 text-sm">{data.url}</p>
+              </div>
+            </div>
+            <Button
+              onClick={copyLink}
+              className="text-secondary hover:text-purple-700"
+              size="icon"
+              variant="ghost"
+            >
+              {copied ? <IconCheck /> : <IconCopy />}
+            </Button>
+          </div>
+          <div className="group flex items-center justify-between gap-6 py-6">
+            <div className="flex cursor-pointer items-center gap-4">
+              <div className="flex size-14 flex-shrink-0 items-center justify-center rounded-full border border-secondary bg-purple-100 text-secondary">
+                <Icons.qrcode />
+              </div>
+              <div className="">
+                <h5 className="font-semibold">Get QR Code</h5>
+                <p className="line-clamp-1 text-sm">
+                  Download qr code and share
+                </p>
+              </div>
+            </div>
+            <Button
+              className="text-secondary hover:text-purple-700"
+              size="icon"
+              variant="ghost"
+            >
+              <IconChevronRight className="size-4" />
+            </Button>
+          </div>
+          <Link
+            href={data.url}
+            target="_blank"
+            className="flex items-center justify-between gap-6 pb-3 pt-6"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex size-14 flex-shrink-0 items-center justify-center rounded-full border border-secondary bg-purple-100 text-secondary">
+                <Icons.window />
+              </div>
+              <div className="">
+                <h5 className="font-semibold">View in browser</h5>
+                <p className="line-clamp-1 text-sm">
+                  Open profile page in new tab
+                </p>
+              </div>
+            </div>
+            <Button
+              className="text-secondary hover:text-purple-700"
+              size="icon"
+              variant="ghost"
+            >
+              <IconChevronRight className="size-4" />
+            </Button>
+          </Link>
+        </div>
       </DialogContent>
     </Dialog>
   );

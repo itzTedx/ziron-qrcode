@@ -241,9 +241,7 @@ export default function ProfileDashboard({
                 className="hidden items-center gap-1.5 text-white md:flex"
               >
                 <Icons.share className="size-4 stroke-[1.5]" />
-                <span>
-                  Share <span className="max-md:hidden">url</span>
-                </span>
+                <span>Share</span>
               </Button>
             </div>
           </div>
