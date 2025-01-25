@@ -35,8 +35,6 @@ export default function CardTemplate({
   const theme = card.theme || "#4938ff";
   const btnColor = card.btnColor || "#4938ff";
 
-  console.log("card query:", card);
-
   return (
     <div className="relative flex h-full w-full flex-col justify-between @sm:max-h-[700px]">
       <div className="no-scrollbar pb-6">

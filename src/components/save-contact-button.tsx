@@ -34,6 +34,7 @@ ${
 ${data.emails && data.emails.map((email) => `EMAIL:${email.email && email.email}`)}
 ADR:${data.address && data.address}
 PHOTO;ENCODING=BASE64;JPEG:${imageBase64}
+LOGO;TYPE=SVG;VALUE=URI:${data.company && data.company.logo}
 NOTE:${data.bio}
 END:VCARD`;
     return vCardData;
