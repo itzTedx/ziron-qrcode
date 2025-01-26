@@ -1041,7 +1041,7 @@ export default function CardCustomizeForm({
                 value="template"
                 className="flex flex-col gap-4 overflow-hidden"
               >
-                <ScrollArea className="flex w-[calc(100svw-3.5rem)] gap-8 overflow-x-clip px-3 sm:w-auto">
+                <ScrollArea className="flex w-[calc(100svw-1rem)] gap-8 overflow-x-clip px-3 sm:w-auto">
                   <ScrollBar orientation="horizontal" />
                   <FormField
                     control={form.control}
@@ -1146,7 +1146,7 @@ export default function CardCustomizeForm({
                     control={form.control}
                     name={"theme"}
                     render={({ field }) => (
-                      <FormItem className="flex w-full items-center justify-between gap-3 py-3">
+                      <FormItem className="flex w-full flex-col items-start justify-between gap-3 py-3 sm:flex-row sm:items-center">
                         <FormLabel>Theme Color</FormLabel>
                         <FormControl>
                           <ColorsInput
@@ -1165,7 +1165,7 @@ export default function CardCustomizeForm({
                       control={form.control}
                       name={"btnColor"}
                       render={({ field }) => (
-                        <FormItem className="flex w-full items-center justify-between gap-3 py-3">
+                        <FormItem className="flex w-full flex-col items-start justify-between gap-3 py-3 sm:flex-row sm:items-center">
                           <FormLabel>Button</FormLabel>
                           <FormControl>
                             <ColorsInput
