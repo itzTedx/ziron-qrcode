@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogTrigger } from "@radix-ui/react-dialog";
@@ -97,6 +97,8 @@ export default function CardCustomizeForm({
   const [openPopover, setOpenPopover] = useState(false);
   const [active, setActive] = useState(0);
   const [tab, setTab] = useQueryState("tab");
+
+  const dragRef = useRef<HTMLDivElement>(null);
 
   const openCompanyModal = useCompanyFormModal((state) => state.openModal);
 
@@ -246,7 +248,7 @@ export default function CardCustomizeForm({
   };
 
   return (
-    <main className="relative pb-3">
+    <main className="relative pb-9 sm:pb-2">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -369,7 +371,7 @@ export default function CardCustomizeForm({
                     </FormItem>
                   )}
                 />
-                <div className="">
+                <div className="col-span-2 sm:col-span-1">
                   {emailFields.map((field, index) => (
                     <FormField
                       control={form.control}
@@ -427,7 +429,7 @@ export default function CardCustomizeForm({
                     Add work or personal email
                   </Button>
                 </div>
-                <div className="">
+                <div className="col-span-2 sm:col-span-1">
                   {phoneFields.map((field, index) => (
                     <FormField
                       control={form.control}
@@ -519,8 +521,31 @@ export default function CardCustomizeForm({
                               )}
                             >
                               {field.value
-                                ? data.find((cat) => cat.id === field.value)
-                                    ?.name
+                                ? data.find(
+                                    (cat) => cat.id === field.value
+                                  ) && (
+                                    <span className="inline-flex gap-2.5">
+                                      <Image
+                                        src={
+                                          data.find(
+                                            (cat) => cat.id === field.value
+                                          )?.logo ||
+                                          "images/placeholder-cover.jpg"
+                                        }
+                                        height={16}
+                                        width={16}
+                                        alt=""
+                                      />
+
+                                      <span>
+                                        {
+                                          data.find(
+                                            (cat) => cat.id === field.value
+                                          )?.name
+                                        }
+                                      </span>
+                                    </span>
+                                  )
                                 : "Select Category"}
                               <IconCaretUpDownFilled className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
@@ -538,14 +563,23 @@ export default function CardCustomizeForm({
                                 {data.map((cat) => (
                                   <CommandItem
                                     value={cat.name}
-                                    className="cursor-pointer px-4 py-2.5 font-medium"
+                                    className="cursor-pointer gap-2.5 px-4 py-2.5 font-medium"
                                     key={cat.id}
                                     onSelect={() => {
                                       form.setValue("companyId", cat.id!);
                                       setOpenPopover(false);
                                     }}
                                   >
-                                    {cat.name}
+                                    <Image
+                                      src={
+                                        cat.logo ||
+                                        "images/placeholder-cover.jpg"
+                                      }
+                                      height={16}
+                                      width={16}
+                                      alt=""
+                                    />
+                                    <span>{cat.name}</span>
                                   </CommandItem>
                                 ))}
                               </CommandGroup>
@@ -660,158 +694,162 @@ export default function CardCustomizeForm({
                 )}
               </TabsContent>
               <TabsContent value="links" className="flex flex-col gap-8">
-                <Reorder.Group
-                  as="div"
-                  className="w-full space-y-4"
-                  values={fields}
-                  onReorder={(e) => {
-                    const activeEl = fields[active];
-                    e.map((item, index) => {
-                      if (item === activeEl) {
-                        move(active, index);
-                        setActive(index);
+                <div className="flex flex-col gap-8 pt-3" ref={dragRef}>
+                  <Reorder.Group
+                    as="div"
+                    className="w-full space-y-4"
+                    values={fields}
+                    onReorder={(e) => {
+                      const activeEl = fields[active];
+                      e.map((item, index) => {
+                        if (item === activeEl) {
+                          move(active, index);
+                          setActive(index);
+                          return;
+                        }
                         return;
-                      }
-                      return;
-                    });
-                  }}
-                >
-                  {fields.map((data, index) =>
-                    data.category === "General" ? (
-                      <Reorder.Item
-                        as="div"
-                        id={data.id}
-                        onDragStart={() => setActive(index)}
-                        value={data}
-                        key={data.id}
-                      >
-                        <Card className="flex items-center justify-between gap-2 p-4">
-                          <div className="grid grid-cols-5 items-center gap-4">
-                            <FormField
-                              control={form.control}
-                              name={`links.${index}.label`}
-                              render={({ field }) => (
-                                <FormItem className="col-span-2 flex gap-3 space-y-0">
-                                  <Image
-                                    src={data.icon}
-                                    height={40}
-                                    width={40}
-                                    alt=""
-                                    className="flex-shrink-0"
-                                  />
-                                  <FormControl>
-                                    <Input
-                                      className="space-y-0"
-                                      {...field}
-                                      disabled={loading}
-                                      placeholder={`${data.label} Title`}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              key={data.id}
-                              name={`links.${index}.url`}
-                              render={({ field }) => (
-                                <FormItem className="col-span-3">
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      disabled={loading}
-                                      placeholder={`${data.label} Url`}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            className="text-destructive hover:text-destructive"
-                            size="icon"
-                            onClick={() => remove(index)}
-                          >
-                            <IconTrash size={16} />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            title="Drag to Re-Order"
-                            className="text-gray-400 hover:bg-transparent hover:text-foreground"
-                            onClick={(e) => e.preventDefault()}
-                          >
-                            <IconGripVertical size={16} />
-                          </Button>
-                        </Card>
-                      </Reorder.Item>
-                    ) : (
-                      <Reorder.Item
-                        as="div"
-                        id={data.id}
-                        onDragStart={() => setActive(index)}
-                        value={data}
-                        key={data.id}
-                      >
-                        <Card
+                      });
+                    }}
+                  >
+                    {fields.map((data, index) =>
+                      data.category === "General" ? (
+                        <Reorder.Item
+                          as="div"
+                          id={data.id}
+                          dragConstraints={dragRef}
+                          onDragStart={() => setActive(index)}
+                          value={data}
                           key={data.id}
-                          className="flex items-center justify-between gap-2 p-4"
                         >
-                          <div className="flex flex-1 gap-3">
-                            <Image
-                              src={data.icon}
-                              height={40}
-                              width={40}
-                              alt=""
-                            />
-                            <FormField
-                              control={form.control}
-                              key={data.id}
-                              name={`links.${index}.url`}
-                              render={({ field }) => (
-                                <FormItem className="w-full">
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      disabled={loading}
-                                      placeholder={`${data.label} url`}
+                          <Card className="flex items-center justify-between gap-2 p-4">
+                            <div className="grid grid-cols-5 items-center gap-4">
+                              <FormField
+                                control={form.control}
+                                name={`links.${index}.label`}
+                                render={({ field }) => (
+                                  <FormItem className="col-span-2 flex gap-3 space-y-0">
+                                    <Image
+                                      src={data.icon}
+                                      height={40}
+                                      width={40}
+                                      alt=""
+                                      className="flex-shrink-0"
                                     />
-                                  </FormControl>
+                                    <FormControl>
+                                      <Input
+                                        className="space-y-0"
+                                        {...field}
+                                        disabled={loading}
+                                        placeholder={`${data.label} Title`}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                key={data.id}
+                                name={`links.${index}.url`}
+                                render={({ field }) => (
+                                  <FormItem className="col-span-3">
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        disabled={loading}
+                                        placeholder={`${data.label} Url`}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              className="text-destructive hover:text-destructive"
+                              size="icon"
+                              onClick={() => remove(index)}
+                            >
+                              <IconTrash size={16} />
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              title="Drag to Re-Order"
+                              className="text-gray-400 hover:bg-transparent hover:text-foreground"
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              <IconGripVertical size={16} />
+                            </Button>
+                          </Card>
+                        </Reorder.Item>
+                      ) : (
+                        <Reorder.Item
+                          as="div"
+                          id={data.id}
+                          onDragStart={() => setActive(index)}
+                          value={data}
+                          dragConstraints={dragRef}
+                          key={data.id}
+                        >
+                          <Card
+                            key={data.id}
+                            className="flex items-center justify-between gap-2 p-4"
+                          >
+                            <div className="flex flex-1 gap-3">
+                              <Image
+                                src={data.icon}
+                                height={40}
+                                width={40}
+                                alt=""
+                              />
+                              <FormField
+                                control={form.control}
+                                key={data.id}
+                                name={`links.${index}.url`}
+                                render={({ field }) => (
+                                  <FormItem className="w-full">
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        disabled={loading}
+                                        placeholder={`${data.label} url`}
+                                      />
+                                    </FormControl>
 
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="text-destructive hover:text-destructive"
-                            onClick={() => remove(index)}
-                          >
-                            <IconTrash size={16} />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            title="Drag to Re-Order"
-                            className="text-gray-400 hover:bg-transparent hover:text-foreground"
-                            onClick={(e) => e.preventDefault()}
-                          >
-                            <IconGripVertical size={16} />
-                          </Button>
-                        </Card>
-                      </Reorder.Item>
-                    )
-                  )}
-                </Reorder.Group>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="text-destructive hover:text-destructive"
+                              onClick={() => remove(index)}
+                            >
+                              <IconTrash size={16} />
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              title="Drag to Re-Order"
+                              className="text-gray-400 hover:bg-transparent hover:text-foreground"
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              <IconGripVertical size={16} />
+                            </Button>
+                          </Card>
+                        </Reorder.Item>
+                      )
+                    )}
+                  </Reorder.Group>
+                </div>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
                     <Button

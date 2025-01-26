@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useCopyToClipboard } from "@/hooks/use-copy";
 import { getQRAsCanvas, getQRAsSVGDataUri, getQRData } from "@/lib/qr";
 
+import { Icons } from "./assets/icons";
 import { QRCode } from "./qr-code";
 import { IconMenu } from "./ui/custom/icon-menu";
 import { Popover } from "./ui/custom/popover";
@@ -47,7 +48,7 @@ export default function QRCodeDownload({ data }: QRCodeDownloadProps) {
   );
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 px-3 pb-2">
       <div className="flex items-center justify-between">
         <Label className="flex items-center gap-1.5 text-sm font-medium">
           QR Code Preview
@@ -65,7 +66,7 @@ export default function QRCodeDownload({ data }: QRCodeDownloadProps) {
                   content: "Download QR code",
                 }}
               >
-                <IconDownload className="h-4 w-4 text-gray-500" />
+                <IconDownload className="size-4 text-gray-500" />
               </ButtonTooltip>
             </div>
           </DownloadPopover>
@@ -76,7 +77,7 @@ export default function QRCodeDownload({ data }: QRCodeDownloadProps) {
                   content: "Copy QR code",
                 }}
               >
-                <IconCopy className="h-4 w-4 text-gray-500" />
+                <IconCopy className="size-4 text-gray-500" />
               </ButtonTooltip>
             </div>
           </CopyPopover>
@@ -157,17 +158,17 @@ function DownloadPopover({
     <div>
       <Popover
         content={
-          <div className="grid p-1 sm:min-w-48">
+          <div className="grid p-3 text-foreground sm:min-w-48">
             <button
               type="button"
               onClick={async () => {
                 download(await getQRAsSVGDataUri(qrData), "svg");
               }}
-              className="rounded-md p-2 text-left text-sm font-medium text-gray-500 transition-all duration-75 hover:bg-gray-100"
+              className="w-full rounded-md p-3 text-left text-sm font-medium outline-none transition-all duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <IconMenu
                 text="Download SVG"
-                icon={<IconPhoto className="h-4 w-4" />}
+                icon={<Icons.svg className="size-5" />}
               />
             </button>
             <button
@@ -178,11 +179,11 @@ function DownloadPopover({
                   "png"
                 );
               }}
-              className="rounded-md p-2 text-left text-sm font-medium text-gray-500 transition-all duration-75 hover:bg-gray-100"
+              className="w-full rounded-md p-3 text-left text-sm font-medium outline-none transition-all duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <IconMenu
                 text="Download PNG"
-                icon={<IconPhoto className="h-4 w-4" />}
+                icon={<Icons.png className="size-5" />}
               />
             </button>
             <button
@@ -193,11 +194,11 @@ function DownloadPopover({
                   "jpg"
                 );
               }}
-              className="rounded-md p-2 text-left text-sm font-medium text-gray-500 transition-all duration-75 hover:bg-gray-100"
+              className="w-full rounded-md p-3 text-left text-sm font-medium outline-none transition-all duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <IconMenu
                 text="Download JPEG"
-                icon={<IconPhoto className="h-4 w-4" />}
+                icon={<Icons.jpg className="size-5" />}
               />
             </button>
           </div>
@@ -242,7 +243,7 @@ function CopyPopover({
   return (
     <Popover
       content={
-        <div className="grid p-1 sm:min-w-48">
+        <div className="grid gap-2 p-3 sm:min-w-48">
           <button
             type="button"
             onClick={async () => {
@@ -252,15 +253,15 @@ function CopyPopover({
                 error: "Failed to copy",
               });
             }}
-            className="rounded-md p-2 text-left text-sm font-medium text-gray-500 transition-all duration-75 hover:bg-gray-100"
+            className="rounded-md p-4 text-left text-sm font-medium transition-all duration-75 hover:bg-gray-50"
           >
             <IconMenu
               text="Copy Image"
               icon={
                 copiedImage ? (
-                  <IconCheck className="h-4 w-4" />
+                  <IconCheck className="size-4" />
                 ) : (
-                  <IconPhoto className="h-4 w-4" />
+                  <IconPhoto className="size-4" />
                 )
               }
             />

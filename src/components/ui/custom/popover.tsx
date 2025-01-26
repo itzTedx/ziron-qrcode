@@ -3,8 +3,9 @@
 import { PropsWithChildren, ReactNode, WheelEventHandler } from "react";
 
 import * as PopoverPrimitive from "@radix-ui/react-popover";
-import { Drawer } from "vaul";
 
+// import { Drawer } from "vaul";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 
@@ -40,35 +41,13 @@ export function Popover({
 
   if (mobileOnly || isMobile) {
     return (
-      <Drawer.Root open={openPopover} onOpenChange={setOpenPopover}>
-        <Drawer.Trigger className="sm:hidden" asChild>
+      <Drawer open={openPopover} onOpenChange={setOpenPopover}>
+        <DrawerTrigger className="sm:hidden" asChild>
           {children}
-        </Drawer.Trigger>
-        <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 z-50 bg-gray-100 bg-opacity-10 backdrop-blur" />
-          <Drawer.Content
-            className="fixed bottom-0 left-0 right-0 z-50 mt-24 rounded-t-[10px] border-t border-gray-200 bg-white"
-            onEscapeKeyDown={onEscapeKeyDown}
-            onPointerDownOutside={(e) => {
-              // Prevent dismissal when clicking inside a toast
-              if (
-                e.target instanceof Element &&
-                e.target.closest("[data-sonner-toast]")
-              ) {
-                e.preventDefault();
-              }
-            }}
-          >
-            <div className="sticky top-0 z-20 flex w-full items-center justify-center rounded-t-[10px] bg-inherit">
-              <div className="my-3 h-1 w-12 rounded-full bg-gray-300" />
-            </div>
-            <div className="flex min-h-[150px] w-full items-center justify-center overflow-hidden bg-white pb-8 align-middle shadow-xl">
-              {content}
-            </div>
-          </Drawer.Content>
-          <Drawer.Overlay />
-        </Drawer.Portal>
-      </Drawer.Root>
+        </DrawerTrigger>
+
+        <DrawerContent>{content}</DrawerContent>
+      </Drawer>
     );
   }
 

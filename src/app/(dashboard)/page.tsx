@@ -81,7 +81,7 @@ export default async function Home({
           <CollapsibleContent
             className={cn(
               "text-popover-foreground outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-              "grid grid-cols-2 gap-4 pt-3 sm:grid-cols-[repeat(auto-fill,minmax(13rem,1fr))]"
+              "grid grid-cols-2 gap-4 pt-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
             )}
           >
             {!company.persons.length && (
@@ -108,20 +108,20 @@ export default async function Home({
               const placeholderCover = await getPlaceholder(person.image);
               return (
                 <Card
-                  className="relative overflow-hidden p-4 transition-colors duration-500 hover:border-primary"
+                  className="relative overflow-hidden pt-12"
                   key={person.id}
                 >
                   <CardContent className="flex flex-col items-center justify-between p-0">
                     <Image
                       src={person.cover}
                       width={120}
-                      height={80}
+                      height={96}
                       alt=""
                       placeholder="blur"
                       blurDataURL={placeholderCover}
-                      className="absolute top-0 h-20 w-full object-cover"
+                      className="absolute top-0 h-28 w-full object-cover"
                     />
-                    <div className="z-10 flex flex-col items-center text-center">
+                    <div className="z-10 flex flex-col items-center pb-3 text-center">
                       <Image
                         src={person.image}
                         height={112}
@@ -137,15 +137,15 @@ export default async function Home({
                         {person.designation}
                       </p>
                     </div>
-                    <div className="flex w-full gap-2 pt-4">
+                    <div className="flex w-full gap-2 border-t p-2">
                       <Button
                         className="w-full gap-1.5 text-sm"
-                        variant="outline"
+                        variant="ghost"
                         asChild
                       >
                         <Link href={`card/${person.id}`}>
                           <IconEdit className="size-4" />
-                          Edit
+                          <span className="hidden sm:block">Edit</span>
                         </Link>
                       </Button>
                       <ShareButton

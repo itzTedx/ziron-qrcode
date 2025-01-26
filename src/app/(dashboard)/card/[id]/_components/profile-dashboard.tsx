@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { IconCamera, IconEdit } from "@tabler/icons-react";
+import { IconCamera, IconPhoto, IconShare } from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import { z } from "zod";
 import { Icons } from "@/components/assets/icons";
 import { DeleteIcon } from "@/components/assets/trash-icon";
 import CopyButton from "@/components/copy-button";
+import { ResponsiveModal } from "@/components/responsive-modal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,14 +27,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   FormControl,
   FormField,
@@ -84,7 +77,7 @@ export default function ProfileDashboard({
 
   return (
     <div className="-mt-20">
-      <div className="group relative h-60 bg-secondary">
+      <div className="group relative h-72 bg-secondary">
         <Image
           src={data.cover!}
           fill
@@ -95,58 +88,56 @@ export default function ProfileDashboard({
           className="object-cover transition-[filter] group-hover:brightness-90"
           quality={60}
         />
-        <Dialog open={openCover} onOpenChange={setOpenCover}>
-          <DialogTrigger asChild>
+        <ResponsiveModal
+          isOpen={openCover}
+          asChild
+          closeModal={setOpenCover}
+          title="Update Cover Image"
+          trigger={
             <Button
-              className="absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-2 rounded-full"
+              className="absolute right-3 top-20 z-10 flex size-12 items-center justify-center gap-2 rounded-full bg-background/70 backdrop-blur-md sm:left-1/2 sm:top-1/2 sm:size-auto sm:w-fit sm:-translate-x-1/2 sm:-translate-y-1/2"
               variant="outline"
             >
-              <IconCamera className="size-5" /> Change Cover
+              <IconPhoto className="size-5 shrink-0" />
+              <span className="hidden sm:block"> Change Cover</span>
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader className="sr-only">
-              <DialogTitle>Update Cover Image</DialogTitle>
-              <DialogDescription>
-                Upload some best headshot of the person
-              </DialogDescription>
-            </DialogHeader>
-            <FormField
-              control={control}
-              name="image"
-              render={({}) => (
-                <FormItem>
-                  <FormLabel>Change Cover Image</FormLabel>
-                  <FormControl>
-                    <UploadDropzone
-                      endpoint="cover"
-                      onUploadBegin={() => {
-                        toast.loading("Uploading profile picture...");
-                      }}
-                      onUploadError={(error) => {
-                        setError("cover", {
-                          type: "validate",
-                          message: error.message,
-                        });
-                      }}
-                      onClientUploadComplete={(res) => {
-                        setValue("cover", res[0].url);
+          }
+        >
+          <FormField
+            control={control}
+            name="image"
+            render={({}) => (
+              <FormItem className="p-6">
+                <FormLabel>Change Cover Image</FormLabel>
+                <FormControl>
+                  <UploadDropzone
+                    endpoint="cover"
+                    onUploadBegin={() => {
+                      toast.loading("Uploading profile picture...");
+                    }}
+                    onUploadError={(error) => {
+                      setError("cover", {
+                        type: "validate",
+                        message: error.message,
+                      });
+                    }}
+                    onClientUploadComplete={(res) => {
+                      setValue("cover", res[0].url);
 
-                        toast.dismiss();
-                        toast.success("Profile picture uploaded");
-                        setOpenCover(false);
-                      }}
-                      config={{ mode: "auto" }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </DialogContent>
-        </Dialog>
+                      toast.dismiss();
+                      toast.success("Profile picture uploaded");
+                      setOpenCover(false);
+                    }}
+                    config={{ mode: "auto" }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </ResponsiveModal>
       </div>
-      <div className="container relative -mt-16 grid max-w-6xl grid-cols-10 rounded-lg bg-background py-4 shadow-lg shadow-muted/30 md:divide-x">
+      <div className="container relative -mt-16 grid max-w-6xl grid-cols-10 rounded-lg border-t border-background bg-background/80 py-4 shadow-muted/30 backdrop-blur-xl sm:border sm:shadow-lg md:divide-x">
         <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
           <div className="group absolute left-1/2 size-28 -translate-y-20 max-md:-translate-x-1/2 md:-top-[60%] md:left-5 md:size-36 md:translate-y-1/3">
             <Image
@@ -157,8 +148,12 @@ export default function ProfileDashboard({
               quality={25}
               className="overflow-clip rounded-full border-4 border-background object-cover transition-[filter] group-hover:brightness-90"
             />
-            <Dialog open={openPhoto} onOpenChange={setOpenPhoto}>
-              <DialogTrigger asChild>
+            <ResponsiveModal
+              isOpen={openPhoto}
+              closeModal={setOpenPhoto}
+              asChild
+              title="Update Profile Picture"
+              trigger={
                 <Button
                   className="absolute bottom-1 right-1 z-10 flex items-center justify-center rounded-full"
                   variant="outline"
@@ -166,58 +161,65 @@ export default function ProfileDashboard({
                 >
                   <IconCamera className="size-5" />
                 </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader className="sr-only">
-                  <DialogTitle>Update Profile Picture</DialogTitle>
-                  <DialogDescription>
-                    Upload some best headshot of the person
-                  </DialogDescription>
-                </DialogHeader>
-                <FormField
-                  control={control}
-                  name="image"
-                  render={({}) => (
-                    <FormItem>
-                      <FormLabel>Change Profile Picture</FormLabel>
-                      <FormControl>
-                        <UploadDropzone
-                          endpoint="photo"
-                          onUploadBegin={() => {
-                            toast.loading("Uploading profile picture...");
-                          }}
-                          onUploadError={(error) => {
-                            setError("image", {
-                              type: "validate",
-                              message: error.message,
-                            });
-                          }}
-                          onClientUploadComplete={(res) => {
-                            setValue("image", res[0].url);
+              }
+            >
+              <FormField
+                control={control}
+                name="image"
+                render={({}) => (
+                  <FormItem className="p-6">
+                    <FormLabel>Change Profile Picture</FormLabel>
+                    <FormControl>
+                      <UploadDropzone
+                        endpoint="photo"
+                        onUploadBegin={() => {
+                          toast.loading("Uploading profile picture...");
+                        }}
+                        onUploadError={(error) => {
+                          setError("image", {
+                            type: "validate",
+                            message: error.message,
+                          });
+                        }}
+                        onClientUploadComplete={(res) => {
+                          setValue("image", res[0].url);
 
-                            toast.dismiss();
-                            toast.success("Profile picture uploaded");
-                            setOpenPhoto(false);
-                          }}
-                          config={{ mode: "auto" }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </DialogContent>
-            </Dialog>
+                          toast.dismiss();
+                          toast.success("Profile picture uploaded");
+                          setOpenPhoto(false);
+                        }}
+                        config={{ mode: "auto" }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </ResponsiveModal>
           </div>
           <div className="w-full max-md:mt-3 md:ml-32">
             <div className="flex items-center justify-between gap-3">
-              <Badge variant="secondary">{data.company?.name}</Badge>
+              <Badge variant="secondary" className="gap-1.5">
+                {data.company && data.company.logo && (
+                  <Image src={data.company.logo} height={8} width={8} alt="" />
+                )}
+                {data.company?.name}
+              </Badge>
               <span className="flex gap-3 text-primary md:hidden">
-                <IconEdit />
-                {/* <Share /> */}
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openModal(shareData, data.name);
+                  }}
+                  variant="ghost"
+                >
+                  <IconShare className="size-5" />
+                </Button>
               </span>
             </div>
-            <h2 className="text-lg font-semibold lg:text-2xl">{data.name}</h2>
+            <h2 className="-mt-1 text-lg font-semibold lg:text-2xl">
+              {data.name}
+            </h2>
             <p className="text-sm">{data.designation}</p>
           </div>
         </div>
@@ -237,8 +239,8 @@ export default function ProfileDashboard({
                   e.preventDefault();
                   openModal(shareData, data.name);
                 }}
-                variant="secondary"
-                className="hidden items-center gap-1.5 text-white md:flex"
+                variant="outline"
+                className="hidden items-center gap-1.5 md:flex"
               >
                 <Icons.share className="size-4 stroke-[1.5]" />
                 <span>Share</span>
@@ -257,7 +259,7 @@ export default function ProfileDashboard({
             <AlertDialogTrigger asChild>
               <Button
                 variant="outline"
-                className="border-destructive bg-destructive/30 text-foreground hover:text-destructive"
+                className="border-destructive bg-destructive/50 text-foreground hover:bg-destructive/40"
               >
                 <DeleteIcon className="size-4" />
                 Delete

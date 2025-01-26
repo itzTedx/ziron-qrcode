@@ -45,21 +45,23 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <SidebarProvider defaultOpen={defaultOpen}>
-              <NextSSRPlugin
-                routerConfig={extractRouterConfig(ourFileRouter)}
-              />
+            <div vaul-drawer-wrapper="" className="w-full flex-1 bg-background">
+              <SidebarProvider defaultOpen={defaultOpen}>
+                <NextSSRPlugin
+                  routerConfig={extractRouterConfig(ourFileRouter)}
+                />
 
-              <AppSidebar collapsible="icon" />
-              <div className="flex-1">
-                <Header />
-                <ShareModal />
-                {children}
-                <CompanyFormModal />
-                <BreakpointIndicator />
-                <Toaster richColors closeButton />
-              </div>
-            </SidebarProvider>
+                <AppSidebar collapsible="icon" />
+                <div className="flex-1">
+                  <Header />
+                  <ShareModal />
+                  {children}
+                  <CompanyFormModal />
+                  <BreakpointIndicator />
+                </div>
+              </SidebarProvider>
+            </div>
+            <Toaster richColors />
           </ThemeProvider>
         </NuqsAdapter>
       </body>
