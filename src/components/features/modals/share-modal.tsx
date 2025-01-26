@@ -47,7 +47,7 @@ export default function ShareModal() {
             <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-full border border-secondary bg-purple-100 text-secondary">
               <Icons.link />
             </div>
-            <div>
+            <div className="w-full">
               <h5 className="text-start font-semibold">
                 {copied ? "Link Copied!" : "Copy Link"}
               </h5>

@@ -1206,7 +1206,7 @@ export default function CardCustomizeForm({
                   title="Preview"
                   className="max-w-sm gap-0"
                 >
-                  <CardContent className="relative p-0">
+                  <CardContent className="light relative p-0">
                     <ScrollArea className="h-[640px]">
                       {(() => {
                         switch (form.watch("template")) {
