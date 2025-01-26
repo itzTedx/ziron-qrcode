@@ -48,10 +48,10 @@ export default function ShareModal() {
               <Icons.link />
             </div>
             <div className="w-full">
-              <h5 className="text-start font-semibold">
+              <h5 className="w-full text-start font-semibold">
                 {copied ? "Link Copied!" : "Copy Link"}
               </h5>
-              <p className="line-clamp-1 text-start text-xs font-light">
+              <p className="line-clamp-1 w-full text-start text-xs font-light">
                 {data.url}
               </p>
             </div>
