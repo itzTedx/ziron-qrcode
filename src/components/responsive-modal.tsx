@@ -27,10 +27,12 @@ interface Props {
   trigger?: React.ReactNode;
   closeModal?: (value: boolean) => void;
   title: string;
+  className?: string;
 }
 
 export const ResponsiveModal = ({
   children,
+  className,
   isOpen,
   closeModal,
   trigger,
@@ -56,11 +58,10 @@ export const ResponsiveModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
       {trigger && <DialogTrigger asChild={asChild}>{trigger}</DialogTrigger>}
-      <DialogContent className={cn("p-0", "max-w-xl")}>
+      <DialogContent className={cn("p-0", "max-w-xl", className)}>
         <DialogHeader className="border-b p-6">
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-
         {children}
       </DialogContent>
     </Dialog>
