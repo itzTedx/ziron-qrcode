@@ -22,12 +22,9 @@ export default async function PreviewPage({
   params: { slug: string };
 }) {
   const { card } = await getCardBySlug(params.slug);
-
   if (!card) notFound();
 
   const imageURI = card.image ? await imageToBase64(card.image) : undefined;
-
-  // const template = card.template;
 
   switch (card.template) {
     case "default":
@@ -39,9 +36,22 @@ export default async function PreviewPage({
     default:
       return <DefaultTemplate card={card} imageBase64URI={imageURI} />;
   }
+}
 
-  // if (template === "default")
-  //   return <DefaultTemplate card={card} imageBase64URI={imageURI} />;
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { card } = await getCardBySlug(params.slug);
 
-  // return <ModernTemplate card={card} imageBase64URI={imageURI} />;
+  const data = {
+    title: `${card?.name} - ${card?.company.name}`,
+    description: card?.bio,
+  };
+
+  return {
+    title: data.title,
+    description: data.description,
+  };
 }
