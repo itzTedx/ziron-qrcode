@@ -47,11 +47,13 @@ export default function ShareModal() {
             <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-full border border-secondary bg-purple-100 text-secondary">
               <Icons.link />
             </div>
-            <div className="">
+            <div>
               <h5 className="text-start font-semibold">
                 {copied ? "Link Copied!" : "Copy Link"}
               </h5>
-              <p className="line-clamp-1 text-xs font-light">{data.url}</p>
+              <p className="line-clamp-1 text-start text-xs font-light">
+                {data.url}
+              </p>
             </div>
           </div>
           <Button
