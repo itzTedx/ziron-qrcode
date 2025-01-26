@@ -75,6 +75,7 @@ import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
 import { useCompanyFormModal } from "@/store/use-company-form-modal";
+import { usePreviewModalStore } from "@/store/use-preview-modal";
 import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
 import { removeExtension } from "@/utils/remove-extension";
@@ -103,6 +104,7 @@ export default function CardCustomizeForm({
   const dragRef = useRef<HTMLDivElement>(null);
 
   const openCompanyModal = useCompanyFormModal((state) => state.openModal);
+  const { onOpenChange, isOpen } = usePreviewModalStore();
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -215,8 +217,6 @@ export default function CardCustomizeForm({
 
     execute(values);
   }
-
-  // const photo = formValues.image;
 
   const name = form.getValues("name");
   const placeholderPhoto = name
@@ -1198,6 +1198,8 @@ export default function CardCustomizeForm({
               <CardHeader className="flex-row items-center justify-between border-b py-4">
                 <h5>Preview</h5>
                 <ResponsiveModal
+                  isOpen={isOpen}
+                  closeModal={onOpenChange}
                   trigger={
                     <IconArrowsMaximize className="size-4 text-gray-600" />
                   }

@@ -4,7 +4,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { IconCamera, IconPhoto, IconShare } from "@tabler/icons-react";
+import {
+  IconArrowsMaximize,
+  IconCamera,
+  IconPhoto,
+  IconShare,
+} from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
@@ -36,6 +41,7 @@ import {
 } from "@/components/ui/form";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { deleteCard } from "@/server/actions/delete-card";
+import { usePreviewModalStore } from "@/store/use-preview-modal";
 import { useShareModalStore } from "@/store/use-share-modal";
 import { Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
@@ -58,6 +64,7 @@ export default function ProfileDashboard({
     useFormContext<z.infer<typeof cardSchema>>();
 
   const openModal = useShareModalStore((state) => state.openModal);
+  const openPreview = usePreviewModalStore((state) => state.onOpenChange);
 
   const shareData = {
     url: shareLink,
@@ -205,13 +212,24 @@ export default function ProfileDashboard({
                 )}
                 {data.company?.name}
               </Badge>
-              <span className="flex gap-3 text-primary md:hidden">
+              <span className="flex gap-2 text-primary md:hidden">
                 <Button
-                  onClick={(e) => {
-                    e.preventDefault();
+                  type="button"
+                  onClick={() => {
+                    openPreview();
+                  }}
+                  variant="ghost"
+                  size="icon"
+                >
+                  <IconArrowsMaximize className="size-5" />
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => {
                     openModal(shareData, data.name);
                   }}
                   variant="ghost"
+                  size="icon"
                 >
                   <IconShare className="size-5" />
                 </Button>
@@ -228,11 +246,6 @@ export default function ProfileDashboard({
           <div className="w-full space-y-2 max-md:hidden">
             <h3 className="max-md:text-xs">Link</h3>
             <div className="inline-flex items-center gap-2">
-              {/* <Input
-                readOnly
-                className="w-full bg-gray-50"
-                defaultValue={shareLink}
-              /> */}
               <CopyButton link={shareLink} />
               <Button
                 onClick={(e) => {
