@@ -35,7 +35,12 @@ export default function ShareModal() {
   };
 
   return (
-    <ResponsiveModal isOpen={isOpen} closeModal={closeModal} title="Share card">
+    <ResponsiveModal
+      isOpen={isOpen}
+      closeModal={closeModal}
+      title="Share card"
+      className="max-w-lg"
+    >
       <div className="space-y-1 p-6 pt-0">
         <QRCodeDownload data={data} />
         <Separator />
