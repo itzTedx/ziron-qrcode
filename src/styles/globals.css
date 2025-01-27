@@ -14,7 +14,7 @@
     --primary-foreground: 245 20% 98%;
     --secondary: 270 100% 59%;
     --secondary-foreground: 280 60% 5%;
-    --muted: 270 6% 90%;
+    --muted: 270 6% 80%;
     --muted-foreground: 280 5% 50%;
     --accent: 0 0% 87%;
     --accent-foreground: 280 60% 5%;
@@ -58,7 +58,7 @@
     --secondary: 270 100% 65%;
     --secondary-foreground: 270 20% 2%;
     --muted: 270 20% 20%;
-    --muted-foreground: 280 10% 60%;
+    --muted-foreground: 280 5% 60%;
     --accent: 0 0% 13%;
     --accent-foreground: 280 60% 95%;
     --destructive: 0 62% 30%;
@@ -130,4 +130,24 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background: hsla(var(--muted));
+}
+::-webkit-scrollbar-thumb:active {
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background: hsla(var(--muted-foreground));
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(255, 255, 255, 0.3);
 }

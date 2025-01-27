@@ -69,7 +69,7 @@ export function Search({ data }: SearchProps) {
       >
         <IconSearch className="size-4 flex-shrink-0 sm:mr-2.5 sm:text-muted-foreground/60" />
         <span className="hidden sm:inline-flex">Search...</span>
-        <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden h-5 -translate-y-1/2 select-none items-center justify-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
+        <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden h-5 -translate-y-1/2 select-none items-center justify-center gap-1 rounded border bg-muted/30 px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
           <span className="text-[10px]">⌘</span>K
         </kbd>
       </Button>
