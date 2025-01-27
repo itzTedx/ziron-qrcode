@@ -30,6 +30,10 @@ export const cardSchema = z.object({
     .optional(),
 
   address: z.string().min(6, { message: "Please enter address" }).optional(),
+  mapUrl: z
+    .string()
+    .min(6, { message: "Please copy link from map" })
+    .optional(),
   bio: z.string().optional(),
 
   companyId: z.number(),

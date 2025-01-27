@@ -490,6 +490,7 @@ export default function CardCustomizeForm({
                               />
                               <Select defaultValue="work">
                                 <SelectTrigger
+                                  tabIndex={-1}
                                   className={cn(
                                     "w-24 shrink-0 rounded-none text-xs font-medium text-muted-foreground",
                                     emailFields.length === 1
@@ -539,6 +540,7 @@ export default function CardCustomizeForm({
                     variant="link"
                     size="sm"
                     className="px-0"
+                    tabIndex={-1}
                     onClick={() => {
                       const lastPhoneField =
                         phoneFields[phoneFields.length - 1];
@@ -565,6 +567,20 @@ export default function CardCustomizeForm({
                       <FormLabel>Address</FormLabel>
                       <FormControl>
                         <Input placeholder="Address" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="mapUrl"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>Google Map URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
                       </FormControl>
 
                       <FormMessage />

@@ -32,6 +32,7 @@ export const persons = pgTable("persons", {
   name: text("name").notNull(),
 
   address: text("address"),
+  mapUrl: text("map_url"),
   bio: text("bio"),
   designation: text("designation"),
   companyId: integer("companyId").notNull(),
