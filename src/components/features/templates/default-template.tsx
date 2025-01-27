@@ -95,7 +95,12 @@ export default function DefaultTemplate({
             <div className="space-y-3 @sm:space-y-6">
               {card.company || companyData ? (
                 <Link
-                  href={`#`}
+                  href={
+                    card.company && card.company.website
+                      ? card.company.website
+                      : "#"
+                  }
+                  target="_blank"
                   className="flex items-center gap-2 text-sm @sm:text-base"
                 >
                   <IconBuildingSkyscraper className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
@@ -145,6 +150,7 @@ export default function DefaultTemplate({
                 <Link
                   key={`${index}-${link.url}`}
                   href={link.url || "#"}
+                  target="_blank"
                   className="flex items-center gap-2 rounded-md border p-3 text-sm @sm:text-base"
                 >
                   <div className="relative size-8 flex-shrink-0">

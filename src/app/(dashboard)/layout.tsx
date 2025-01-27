@@ -37,7 +37,7 @@ export default function RootLayout({
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("flex w-full antialiased", plusJakarta.className)}>
+      <body className={cn("antialiased", plusJakarta.className)}>
         <NuqsAdapter>
           <ThemeProvider
             attribute="class"

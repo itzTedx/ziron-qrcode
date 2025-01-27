@@ -68,6 +68,13 @@ import {
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { LINKS } from "@/constants";
@@ -259,7 +266,7 @@ export default function CardCustomizeForm({
           {isEditMode && initialData && (
             <ProfileDashboard data={cardData} loading={loading} />
           )}
-          <div className="container grid max-w-6xl gap-8 py-3 pb-9 md:grid-cols-12 md:py-9">
+          <div className="container grid max-w-7xl gap-8 py-3 pb-9 md:grid-cols-12 md:py-9">
             <Tabs
               defaultValue={defaultTab}
               className="col-span-8 w-full items-start"
@@ -391,12 +398,30 @@ export default function CardCustomizeForm({
                                 type="email"
                                 {...field}
                                 placeholder="name@company.com"
-                                className={cn(
-                                  emailFields.length > 1
-                                    ? "rounded-e-none border-r-0"
-                                    : "rounded-md"
-                                )}
+                                className={cn("rounded-e-none border-r-0")}
                               />
+                              <Select defaultValue="work">
+                                <SelectTrigger
+                                  className={cn(
+                                    "w-24 shrink-0 rounded-none text-xs font-medium text-muted-foreground",
+                                    emailFields.length === 1
+                                      ? "rounded-e-lg border-r"
+                                      : "border-r-0"
+                                  )}
+                                >
+                                  <SelectValue placeholder="Label" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="primary">
+                                    Primary
+                                  </SelectItem>
+                                  <SelectItem value="work">Work</SelectItem>
+                                  <SelectItem value="personal">
+                                    Personal
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+
                               <Button
                                 size="icon"
                                 variant="outline"
@@ -405,6 +430,7 @@ export default function CardCustomizeForm({
                                   removeEmail(index);
                                 }}
                                 className={cn(
+                                  "shrink-0",
                                   emailFields.length > 1
                                     ? "flex rounded-s-none"
                                     : "hidden"
@@ -425,7 +451,18 @@ export default function CardCustomizeForm({
                     variant="link"
                     size="sm"
                     className="px-0"
-                    onClick={() => appendEmail({ email: "" })}
+                    onClick={() => {
+                      const lastEmailField =
+                        emailFields[emailFields.length - 1];
+                      if (lastEmailField && !lastEmailField.email) {
+                        // Do not add a new phone field if the last one is empty
+                        toast.error(
+                          "Please add a email before adding another."
+                        );
+                        return;
+                      }
+                      appendEmail({ email: "" });
+                    }}
                   >
                     <IconPlus className="mr-2 size-4" />
                     Add work or personal email
@@ -449,20 +486,39 @@ export default function CardCustomizeForm({
                                 type="tel"
                                 {...field}
                                 placeholder="+971 98 765 4321"
-                                className={cn(
-                                  phoneFields.length > 1
-                                    ? "rounded-e-none border-r-0"
-                                    : "rounded-md"
-                                )}
+                                className={cn("rounded-e-none border-r-0")}
                               />
+                              <Select defaultValue="work">
+                                <SelectTrigger
+                                  className={cn(
+                                    "w-24 shrink-0 rounded-none text-xs font-medium text-muted-foreground",
+                                    emailFields.length === 1
+                                      ? "rounded-e-lg border-r"
+                                      : "border-r-0"
+                                  )}
+                                >
+                                  <SelectValue placeholder="Label" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="primary">
+                                    Primary
+                                  </SelectItem>
+                                  <SelectItem value="work">Work</SelectItem>
+                                  <SelectItem value="personal">
+                                    Personal
+                                  </SelectItem>
+                                  <SelectItem value="home">Home</SelectItem>
+                                </SelectContent>
+                              </Select>
                               <Button
                                 size="icon"
+                                type="button"
                                 variant="outline"
-                                onClick={(e) => {
-                                  e.preventDefault();
+                                onClick={() => {
                                   removePhone(index);
                                 }}
                                 className={cn(
+                                  "shrink-0",
                                   phoneFields.length > 1
                                     ? "flex rounded-s-none"
                                     : "hidden"
@@ -483,7 +539,18 @@ export default function CardCustomizeForm({
                     variant="link"
                     size="sm"
                     className="px-0"
-                    onClick={() => appendPhone({ phone: "" })}
+                    onClick={() => {
+                      const lastPhoneField =
+                        phoneFields[phoneFields.length - 1];
+                      if (lastPhoneField && !lastPhoneField.phone) {
+                        // Do not add a new phone field if the last one is empty
+                        toast.error(
+                          "Please add a phone number before adding another."
+                        );
+                        return;
+                      }
+                      appendPhone({ phone: "" });
+                    }}
                   >
                     <IconPlus className="mr-2 size-4" />
                     Add another number
@@ -1043,8 +1110,9 @@ export default function CardCustomizeForm({
                 value="template"
                 className="flex flex-col gap-4 overflow-hidden"
               >
-                <ScrollArea className="flex w-[calc(100svw-1rem)] gap-8 overflow-x-clip px-3 sm:w-auto">
+                <ScrollArea className="relative flex w-[calc(100svw-1rem)] gap-8 overflow-x-clip px-3 sm:w-auto">
                   <ScrollBar orientation="horizontal" />
+
                   <FormField
                     control={form.control}
                     name="template"
@@ -1059,7 +1127,7 @@ export default function CardCustomizeForm({
                           >
                             <FormItem className="flex flex-col items-center space-y-3">
                               <PhoneMockup className="@container">
-                                <ScrollArea className="h-full">
+                                <ScrollArea className="h-full touch-none select-none">
                                   <DefaultTemplate
                                     card={cardData}
                                     company={data}
