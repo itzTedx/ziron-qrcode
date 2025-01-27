@@ -244,7 +244,7 @@ export default function CardCustomizeForm({
       company: companyData,
       links: formValues.links?.map((link) => ({
         ...link,
-        id: link.id ? parseInt(link.id) : undefined,
+        id: link.id ? parseInt(link.id.toString()) : undefined,
       })),
     } as Person; // Assert the type as Person
   }, [formValues, data, placeholderPhoto]);
@@ -461,7 +461,7 @@ export default function CardCustomizeForm({
                         );
                         return;
                       }
-                      appendEmail({ email: "" });
+                      appendEmail({ email: "", label: "primary" });
                     }}
                   >
                     <IconPlus className="mr-2 size-4" />
@@ -549,7 +549,7 @@ export default function CardCustomizeForm({
                         );
                         return;
                       }
-                      appendPhone({ phone: "" });
+                      appendPhone({ phone: "", label: "primary" });
                     }}
                   >
                     <IconPlus className="mr-2 size-4" />
@@ -1082,7 +1082,7 @@ export default function CardCustomizeForm({
                             <Icons.pdf className="h-6" />
                             <p className="line-clamp-1 text-sm font-medium">
                               {removeExtension(
-                                form.getValues("attachmentFileName")
+                                form.getValues("attachmentFileName")!
                               )}
                             </p>{" "}
                             <IconExternalLink className="size-4 stroke-1 text-muted-foreground" />

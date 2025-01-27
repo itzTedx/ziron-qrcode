@@ -1,1 +1,0 @@
-ALTER TABLE "persons" ADD COLUMN "button_color" text DEFAULT '#4938ff';
