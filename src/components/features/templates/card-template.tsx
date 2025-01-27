@@ -6,7 +6,6 @@ import {
   IconMail,
   IconPhone,
   IconPinned,
-  IconWorldWww,
 } from "@tabler/icons-react";
 
 import SaveContactButton from "@/components/save-contact-button";
@@ -165,7 +164,12 @@ export default function CardTemplate({
             <div className="space-y-3 @sm:space-y-4">
               {card.company || companyData ? (
                 <Link
-                  href={`#`}
+                  href={
+                    card.company && card.company.website
+                      ? card.company.website
+                      : "#"
+                  }
+                  target="_blank"
                   className="flex items-center gap-2 text-sm @sm:text-base"
                 >
                   <IconBuildingSkyscraper className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
@@ -182,16 +186,6 @@ export default function CardTemplate({
                   {card.address}
                 </Link>
               )}
-
-              {card.company || companyData ? (
-                <Link
-                  href={companyData?.website || card.company?.website || "#"}
-                  className="flex items-center gap-2 text-sm @sm:text-base"
-                >
-                  <IconWorldWww className="size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
-                  {companyData?.website || card.company?.website}
-                </Link>
-              ) : null}
             </div>
           </section>
         ) : null}
@@ -238,6 +232,7 @@ const LinkBox = ({
     <Link
       href={href}
       download={download}
+      target="_blank"
       className="flex size-10 items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 text-sm @sm:size-14 @sm:text-base"
       style={{ borderColor: color, backgroundColor: `${color}10` }}
     >

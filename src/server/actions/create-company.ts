@@ -12,13 +12,17 @@ const action = createSafeActionClient();
 export const createCompany = action
   .schema(companySchema)
   .action(async ({ parsedInput: { name, phone, website, address, logo } }) => {
+    const formattedUrl = website
+      ? new URL(website.startsWith("http") ? website : `https://${website}`)
+          .href
+      : "";
     try {
       const newCategory = await db
         .insert(companies)
         .values({
           name,
           phone,
-          website,
+          website: formattedUrl,
           address,
           logo,
         })

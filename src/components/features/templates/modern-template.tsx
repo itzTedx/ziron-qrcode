@@ -218,6 +218,7 @@ const LinkBox = ({
     <Link
       href={href}
       download={download}
+      target="_blank"
       className="flex items-center justify-center gap-2 rounded-md border border-primary bg-primary/10 p-5 text-sm @sm:text-base"
       style={{ borderColor: color, backgroundColor: `${color}10` }}
     >

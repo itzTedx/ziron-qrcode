@@ -33,12 +33,11 @@ export const persons = pgTable("persons", {
 
   address: text("address"),
   bio: text("bio"),
-
-  companyId: integer("companyId").notNull(),
   designation: text("designation"),
+  companyId: integer("companyId").notNull(),
+
   attachmentUrl: text("attachmentUrl"),
   attachmentFileName: text("attachmentFileName"),
-
   image: text("logo").notNull(),
   cover: text("cover").notNull(),
 
@@ -59,6 +58,7 @@ export const phones = pgTable("phones", {
   phone: text("phone"),
   personId: integer("personId").notNull(),
   order: real("order").notNull(),
+  label: text("label").notNull().default("primary"),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -71,6 +71,7 @@ export const emails = pgTable("emails", {
   email: text("email"),
   personId: integer("personId").notNull(),
   order: real("order").notNull(),
+  label: text("label").notNull().default("primary"),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
