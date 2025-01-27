@@ -4,18 +4,17 @@ import CardTemplate from "@/components/features/templates/card-template";
 import DefaultTemplate from "@/components/features/templates/default-template";
 import ModernTemplate from "@/components/features/templates/modern-template";
 import { getCardBySlug } from "@/server/actions/get-card-by-slug";
-import { getCards } from "@/server/actions/get-cards";
 import { imageToBase64 } from "@/utils/get-image-to-base64";
 
-export const revalidate = 60;
+// export const revalidate = 60;
 
-export async function generateStaticParams() {
-  const { cards } = await getCards();
+// export async function generateStaticParams() {
+//   const { cards } = await getCards();
 
-  return cards?.map((card) => ({
-    slug: card.slug,
-  }));
-}
+//   return cards?.map((card) => ({
+//     slug: card.slug,
+//   }));
+// }
 
 export default async function PreviewPage({
   params,
