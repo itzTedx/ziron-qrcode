@@ -108,6 +108,7 @@ export default function DefaultTemplate({
                 </Link>
               ) : null}
               {card.emails &&
+                card.emails[0].email &&
                 card.emails.map((email, i) => (
                   <Link
                     key={`${i + 1}-${email.email}`}
@@ -119,6 +120,7 @@ export default function DefaultTemplate({
                   </Link>
                 ))}
               {card.phones &&
+                card.phones[0].phone &&
                 card.phones.map((phone, i) => (
                   <Link
                     key={`${i + 1}-${phone.phone}`}

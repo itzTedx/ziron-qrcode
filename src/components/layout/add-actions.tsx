@@ -8,12 +8,12 @@ import { IconPlus } from "@tabler/icons-react";
 
 import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCompanyFormModal } from "@/store/use-company-form-modal";
 
@@ -37,6 +37,7 @@ export function AddAction() {
           return;
         }
 
+        localStorage.removeItem("card-form-data");
         router.push("/card/new");
       }
       if (e.key === "D" && (e.metaKey || e.ctrlKey) && e.shiftKey) {
@@ -86,7 +87,10 @@ export function AddAction() {
             className="group transition hover:bg-secondary hover:text-background"
             onClick={() => setOpen(false)}
           >
-            <Link href="/card/new">
+            <Link
+              href="/card/new"
+              onClick={() => localStorage.removeItem("card-form-data")}
+            >
               Digital Card
               <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden h-5 -translate-y-1/2 select-none items-center justify-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
                 <span className="text-[9px]">⌘</span>{" "}

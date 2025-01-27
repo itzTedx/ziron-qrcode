@@ -88,7 +88,7 @@ export const createCard = action
             await db.insert(phones).values(
               phonesData.map((phone, i) => ({
                 phone: phone.phone,
-
+                label: phone.label,
                 personId: editedCard[0].id,
                 order: i,
               }))
@@ -98,7 +98,7 @@ export const createCard = action
             await db.insert(emails).values(
               emailsData.map((email, i) => ({
                 email: email.email,
-
+                label: email.label,
                 personId: editedCard[0].id,
                 order: i,
               }))

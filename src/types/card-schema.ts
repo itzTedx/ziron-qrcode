@@ -15,6 +15,7 @@ export const cardSchema = z.object({
           .min(6, { message: "Invalid Phone number" })
           .max(20)
           .optional(),
+        label: z.string().default("primary"),
       })
     )
     .optional(),
@@ -23,6 +24,7 @@ export const cardSchema = z.object({
       z.object({
         id: z.string().optional(),
         email: z.string().email().optional(),
+        label: z.string().default("primary"),
       })
     )
     .optional(),
@@ -33,8 +35,8 @@ export const cardSchema = z.object({
   companyId: z.number(),
   designation: z.string().optional(),
 
-  attachmentUrl: z.string().optional(),
-  attachmentFileName: z.string().optional(),
+  attachmentUrl: z.string().optional().nullish(),
+  attachmentFileName: z.string().optional().nullish(),
 
   image: z.string().optional(),
   cover: z.string().optional(),
@@ -44,7 +46,7 @@ export const cardSchema = z.object({
   links: z
     .array(
       z.object({
-        id: z.string().optional(),
+        id: z.number().optional(),
         label: z
           .string()
           .min(1, { message: "Please enter title for the link" }),
