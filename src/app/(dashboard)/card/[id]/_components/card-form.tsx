@@ -218,15 +218,6 @@ export default function CardCustomizeForm({
     },
   });
 
-  // console.log(debouncedValue.emails, debouncedValue.phones);
-
-  function onSubmit(values: z.infer<typeof cardSchema>) {
-    const validation = cardSchema.safeParse(values);
-    console.log(validation);
-
-    execute(values);
-  }
-
   const name = form.getValues("name");
   const placeholderPhoto = name
     ? `https://ui-avatars.com/api/?background=random&name=${debouncedValue.name}&size=128`
@@ -253,6 +244,13 @@ export default function CardCustomizeForm({
   const handleTabClick = (tab: string) => {
     setTab(tab);
   };
+
+  function onSubmit(values: z.infer<typeof cardSchema>) {
+    const validation = cardSchema.safeParse(values);
+    console.log(validation);
+
+    execute(values);
+  }
 
   return (
     <main className="relative pb-9 sm:pb-2">
@@ -1238,7 +1236,7 @@ export default function CardCustomizeForm({
                 value="template"
                 className="flex flex-col gap-4 overflow-hidden"
               >
-                <ScrollArea className="relative flex w-[calc(100svw-1rem)] gap-8 overflow-x-clip px-3 sm:w-auto">
+                <ScrollArea className="relative flex w-[calc(100svw-1rem)] gap-4 overflow-x-clip px-3 sm:w-auto md:gap-8">
                   <ScrollBar orientation="horizontal" />
 
                   <FormField
@@ -1254,14 +1252,14 @@ export default function CardCustomizeForm({
                             className="flex gap-9"
                           >
                             <FormItem className="flex flex-col items-center space-y-3">
-                              <PhoneMockup className="@container">
-                                <ScrollArea className="h-full touch-none select-none">
-                                  <DefaultTemplate
-                                    card={cardData}
-                                    company={data}
-                                  />
-                                </ScrollArea>
-                              </PhoneMockup>
+                              <Image
+                                src="/images/default-template.png"
+                                height={552}
+                                width={256}
+                                alt=""
+                                className="rounded-xl"
+                              />
+
                               <div className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
                                   <RadioGroupItem
@@ -1280,14 +1278,13 @@ export default function CardCustomizeForm({
                               </div>
                             </FormItem>
                             <FormItem className="flex flex-col items-center space-y-3">
-                              <PhoneMockup className="@container">
-                                <ScrollArea className="h-full">
-                                  <ModernTemplate
-                                    card={cardData}
-                                    company={data}
-                                  />
-                                </ScrollArea>
-                              </PhoneMockup>
+                              <Image
+                                src="/images/modern-template.png"
+                                height={552}
+                                width={256}
+                                alt=""
+                                className="rounded-xl"
+                              />
                               <div className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
                                   <RadioGroupItem
@@ -1306,14 +1303,13 @@ export default function CardCustomizeForm({
                               </div>
                             </FormItem>
                             <FormItem className="flex flex-col items-center space-y-3">
-                              <PhoneMockup className="@container">
-                                <ScrollArea className="h-full">
-                                  <CardTemplate
-                                    card={cardData}
-                                    company={data}
-                                  />
-                                </ScrollArea>
-                              </PhoneMockup>
+                              <Image
+                                src="/images/card-template.png"
+                                height={552}
+                                width={256}
+                                alt=""
+                                className="rounded-xl"
+                              />
                               <div className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
                                   <RadioGroupItem

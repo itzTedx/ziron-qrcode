@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { HexColorPicker } from "react-colorful";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -9,7 +11,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../ui/drawer";
 import { Input } from "../ui/input";
 
 const HEX_VALUES = [
@@ -43,16 +54,26 @@ const HEX_VALUES = [
   },
 ];
 
-export default function ColorsInput({
-  value = "#4938ff",
-  onChange,
-}: {
+interface Props {
   value: string;
   onChange: (newValue: string) => void;
-}) {
+}
+
+export default function ColorsInput({ value = "#4938ff", onChange }: Props) {
+  const [color, setColor] = useState(value);
+
+  const onColorChange = useDebouncedCallback((color: string) => {
+    onChange(color);
+    setColor(color);
+  }, 500);
+
   return (
-    <fieldset className="flex items-center gap-5">
-      <RadioGroup className="flex gap-2" value={value} onValueChange={onChange}>
+    <fieldset className="flex gap-5 max-sm:flex-col sm:items-center">
+      <RadioGroup
+        className="flex gap-2"
+        value={color}
+        onValueChange={onColorChange}
+      >
         {HEX_VALUES.map((value) => (
           <RadioGroupItem
             key={value.color}
@@ -67,38 +88,71 @@ export default function ColorsInput({
         ))}
       </RadioGroup>
       <div
-        className="flex items-center overflow-hidden rounded-md border-2"
+        className="flex overflow-hidden rounded-md border-2 md:items-center"
         style={{
-          borderColor: value,
+          borderColor: color,
         }}
       >
-        <TooltipProvider delayDuration={0}>
-          <Tooltip>
-            <TooltipTrigger
-              type="button"
-              className="size-9 shrink-0"
-              style={{
-                backgroundColor: value,
-              }}
-            />
-            <TooltipContent className="p-4">
-              <HexColorPicker color={value} onChange={onChange} />
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <ResponsiveInput value={color}>
+          <HexColorPicker color={color} onChange={onColorChange} />
+        </ResponsiveInput>
 
         <Input
           className="h-9 w-24 rounded-none border-0 focus-visible:ring-0"
-          value={value}
+          value={color}
           onChange={(e) => {
             let newValue = e.target.value;
             if (!newValue.startsWith("#")) {
               newValue = `#${newValue.replace("#", "")}`;
             }
-            onChange(newValue);
+            setColor(newValue);
           }}
         />
       </div>
     </fieldset>
   );
 }
+
+const ResponsiveInput = ({
+  value,
+  children,
+}: {
+  value: string;
+  children: React.ReactNode;
+}) => {
+  const { isMobile } = useMediaQuery();
+
+  if (isMobile) {
+    return (
+      <Drawer>
+        <DrawerTrigger
+          type="button"
+          className="size-9 shrink-0"
+          style={{
+            backgroundColor: value,
+          }}
+        />
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Customize Color</DrawerTitle>
+          </DrawerHeader>
+          {children}
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+  return (
+    <Tooltip>
+      <TooltipProvider delayDuration={0}>
+        <TooltipTrigger
+          type="button"
+          className="size-9 shrink-0"
+          style={{
+            backgroundColor: value,
+          }}
+        />
+        <TooltipContent className="p-4">{children}</TooltipContent>
+      </TooltipProvider>
+    </Tooltip>
+  );
+};
