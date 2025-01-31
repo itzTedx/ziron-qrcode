@@ -10,7 +10,6 @@ import { DialogTrigger } from "@radix-ui/react-dialog";
 import {
   IconArrowRight,
   IconCaretUpDownFilled,
-  IconEdit,
   IconExternalLink,
   IconGripVertical,
   IconPlus,
@@ -79,6 +78,7 @@ import { cardSchema } from "@/types/card-schema";
 import { removeExtension } from "@/utils/remove-extension";
 
 import { ActionButtons } from "./buttons/action-buttons";
+import { CoverUpload } from "./buttons/cover-upload";
 import { ImageUploadButton } from "./buttons/image-upload-button";
 import { Preview } from "./preview";
 import ProfileDashboard from "./profile-dashboard";
@@ -213,7 +213,6 @@ export default function CardCustomizeForm({
   const placeholderPhoto = name
     ? `https://ui-avatars.com/api/?background=random&name=${debouncedValue.name}&size=128`
     : null;
-  const cover = form.getValues("cover");
 
   const cardData = useMemo(() => {
     const companyId = formValues.companyId;
@@ -388,72 +387,6 @@ export default function CardCustomizeForm({
                   </Button>
                 </div>
                 <div className="col-span-2 sm:col-span-1">
-                  {/* {phoneFields.map((field, index) => (
-                    <FormField
-                      control={form.control}
-                      key={field.id}
-                      name={`phones.${index}.phone`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={cn(index !== 0 && "sr-only")}>
-                            Phone
-                          </FormLabel>
-
-                          <FormControl>
-                            <div className="flex">
-                              <Input
-                                type="tel"
-                                {...field}
-                                placeholder="+971 98 765 4321"
-                                className={cn("rounded-e-none border-r-0")}
-                              />
-                              <Select defaultValue="work">
-                                <SelectTrigger
-                                  tabIndex={-1}
-                                  className={cn(
-                                    "w-24 shrink-0 rounded-none text-xs font-medium text-muted-foreground",
-                                    emailFields.length === 1
-                                      ? "rounded-e-lg border-r"
-                                      : "border-r-0"
-                                  )}
-                                >
-                                  <SelectValue placeholder="Label" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="primary">
-                                    Primary
-                                  </SelectItem>
-                                  <SelectItem value="work">Work</SelectItem>
-                                  <SelectItem value="personal">
-                                    Personal
-                                  </SelectItem>
-                                  <SelectItem value="home">Home</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <Button
-                                size="icon"
-                                type="button"
-                                variant="outline"
-                                onClick={() => {
-                                  removePhone(index);
-                                }}
-                                className={cn(
-                                  "shrink-0",
-                                  phoneFields.length > 1
-                                    ? "flex rounded-s-none"
-                                    : "hidden"
-                                )}
-                              >
-                                <IconX className="size-4 text-muted-foreground" />
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  ))} */}
-
                   {phoneFields.map((field, index) => (
                     <div className="flex w-full items-end" key={field.id}>
                       <FormField
@@ -735,55 +668,9 @@ export default function CardCustomizeForm({
                   )}
                 />
                 {!isEditMode && (
-                  <FormField
-                    control={form.control}
-                    name="cover"
-                    render={({}) => (
-                      <FormItem className="col-span-2">
-                        <FormLabel>Cover image</FormLabel>
-                        <FormControl>
-                          {cover ? (
-                            <div className="group relative mt-2 flex h-60 w-full items-center justify-center overflow-hidden rounded-md border transition duration-300 hover:brightness-90">
-                              <Button
-                                className="gap-2 opacity-0 shadow-xl backdrop-blur-lg transition-opacity duration-300 group-hover:opacity-100"
-                                type="button"
-                              >
-                                <IconEdit /> Change
-                              </Button>
-                              <Image
-                                src={cover}
-                                fill
-                                alt=""
-                                sizes="100vw"
-                                className="-z-10 object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <UploadDropzone
-                              endpoint="cover"
-                              onUploadBegin={() => {
-                                setLoading(true);
-                                toast.loading("Uploading cover image...");
-                              }}
-                              onUploadError={(error) => {
-                                form.setError("cover", {
-                                  type: "validate",
-                                  message: error.message,
-                                });
-                              }}
-                              onClientUploadComplete={(res) => {
-                                setLoading(false);
-                                form.setValue("cover", res[0].url);
-                                toast.dismiss();
-                                toast.success("Cover image uploaded");
-                              }}
-                              config={{ mode: "auto" }}
-                            />
-                          )}
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                  <CoverUpload
+                    cover={cardData.cover || undefined}
+                    setLoading={setLoading}
                   />
                 )}
               </TabsContent>
