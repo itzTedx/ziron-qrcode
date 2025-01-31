@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -88,7 +89,7 @@ export default function CardCustomizeForm({
   const formValues = useWatch({
     control: form.control,
   });
-  const debouncedValue = useDebounce(formValues, 1000);
+  const debouncedValue = useDebounce(formValues, 100);
 
   // Memoize company ID effect
   useEffect(() => {
@@ -283,6 +284,9 @@ export default function CardCustomizeForm({
                 value="template"
                 className="flex flex-col gap-4 overflow-hidden"
               >
+                <Label className="text-sm font-medium leading-none text-foreground">
+                  Choose a theme
+                </Label>
                 <ScrollArea className="relative flex w-[calc(100svw-2rem)] gap-4 overflow-x-clip px-3 sm:w-auto md:gap-8">
                   <ScrollBar orientation="horizontal" />
 

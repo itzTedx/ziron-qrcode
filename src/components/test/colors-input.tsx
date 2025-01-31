@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import { HexColorPicker } from "react-colorful";
 
@@ -52,7 +52,27 @@ const HEX_VALUES = [
     color: "Green",
     value: "#22c55e",
   },
-];
+] as const;
+
+// Validation helper
+const isValidHexColor = (color: string) =>
+  /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+
+const ColorRadioItem = memo(
+  ({ value, color }: { value: string; color: string }) => (
+    <RadioGroupItem
+      key={color}
+      value={value}
+      id={color}
+      aria-label={color}
+      style={{
+        borderColor: value,
+        backgroundColor: value,
+      }}
+    />
+  )
+);
+ColorRadioItem.displayName = "ColorRadioItem";
 
 interface Props {
   value: string;
@@ -62,10 +82,38 @@ interface Props {
 export default function ColorsInput({ value = "#4938ff", onChange }: Props) {
   const [color, setColor] = useState(value);
 
-  const onColorChange = useDebouncedCallback((color: string) => {
-    onChange(color);
-    setColor(color);
+  const onColorChange = useDebouncedCallback((newColor: string) => {
+    if (isValidHexColor(newColor)) {
+      onChange(newColor);
+      setColor(newColor);
+    }
   }, 500);
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      let newValue = e.target.value;
+      if (!newValue.startsWith("#")) {
+        newValue = `#${newValue.replace("#", "")}`;
+      }
+      setColor(newValue);
+      if (isValidHexColor(newValue)) {
+        onColorChange(newValue);
+      }
+    },
+    [onColorChange]
+  );
+
+  const colorItems = useMemo(
+    () =>
+      HEX_VALUES.map((item) => (
+        <ColorRadioItem
+          key={item.color}
+          value={item.value}
+          color={item.color}
+        />
+      )),
+    []
+  );
 
   return (
     <fieldset className="flex gap-5 max-sm:flex-col sm:items-center">
@@ -74,18 +122,7 @@ export default function ColorsInput({ value = "#4938ff", onChange }: Props) {
         value={color}
         onValueChange={onColorChange}
       >
-        {HEX_VALUES.map((value) => (
-          <RadioGroupItem
-            key={value.color}
-            value={value.value}
-            id={value.color}
-            aria-label={value.color}
-            style={{
-              borderColor: value.value,
-              backgroundColor: value.value,
-            }}
-          />
-        ))}
+        {colorItems}
       </RadioGroup>
       <div
         className="flex overflow-hidden rounded-md border-2 md:items-center"
@@ -93,66 +130,59 @@ export default function ColorsInput({ value = "#4938ff", onChange }: Props) {
           borderColor: color,
         }}
       >
-        <ResponsiveInput value={color}>
+        <MemoizedResponsiveInput value={color}>
           <HexColorPicker color={color} onChange={onColorChange} />
-        </ResponsiveInput>
+        </MemoizedResponsiveInput>
 
         <Input
           className="h-9 w-24 rounded-none border-0 focus-visible:ring-0"
           value={color}
-          onChange={(e) => {
-            let newValue = e.target.value;
-            if (!newValue.startsWith("#")) {
-              newValue = `#${newValue.replace("#", "")}`;
-            }
-            setColor(newValue);
-          }}
+          onChange={handleInputChange}
         />
       </div>
     </fieldset>
   );
 }
 
-const ResponsiveInput = ({
-  value,
-  children,
-}: {
-  value: string;
-  children: React.ReactNode;
-}) => {
-  const { isMobile } = useMediaQuery();
+const ResponsiveInput = memo(
+  ({ value, children }: { value: string; children: React.ReactNode }) => {
+    const { isMobile } = useMediaQuery();
 
-  if (isMobile) {
+    if (isMobile) {
+      return (
+        <Drawer>
+          <DrawerTrigger
+            type="button"
+            className="size-9 shrink-0"
+            style={{
+              backgroundColor: value,
+            }}
+          />
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Customize Color</DrawerTitle>
+            </DrawerHeader>
+            {children}
+          </DrawerContent>
+        </Drawer>
+      );
+    }
     return (
-      <Drawer>
-        <DrawerTrigger
-          type="button"
-          className="size-9 shrink-0"
-          style={{
-            backgroundColor: value,
-          }}
-        />
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Customize Color</DrawerTitle>
-          </DrawerHeader>
-          {children}
-        </DrawerContent>
-      </Drawer>
+      <Tooltip>
+        <TooltipProvider delayDuration={0}>
+          <TooltipTrigger
+            type="button"
+            className="size-9 shrink-0"
+            style={{
+              backgroundColor: value,
+            }}
+          />
+          <TooltipContent className="p-4">{children}</TooltipContent>
+        </TooltipProvider>
+      </Tooltip>
     );
   }
-  return (
-    <Tooltip>
-      <TooltipProvider delayDuration={0}>
-        <TooltipTrigger
-          type="button"
-          className="size-9 shrink-0"
-          style={{
-            backgroundColor: value,
-          }}
-        />
-        <TooltipContent className="p-4">{children}</TooltipContent>
-      </TooltipProvider>
-    </Tooltip>
-  );
-};
+);
+ResponsiveInput.displayName = "ResponsiveInput";
+
+const MemoizedResponsiveInput = memo(ResponsiveInput);
