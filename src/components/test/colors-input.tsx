@@ -70,7 +70,7 @@ export default function ColorsInput({ value = "#4938ff", onChange }: Props) {
   return (
     <fieldset className="flex gap-5 max-sm:flex-col sm:items-center">
       <RadioGroup
-        className="flex gap-2"
+        className="flex gap-3"
         value={color}
         onValueChange={onColorChange}
       >

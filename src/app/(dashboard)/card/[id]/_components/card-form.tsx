@@ -9,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import {
   IconArrowRight,
-  IconArrowsMaximize,
   IconCaretUpDownFilled,
   IconEdit,
   IconExternalLink,
@@ -28,14 +27,9 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { Icons } from "@/components/assets/icons";
-import CardTemplate from "@/components/features/templates/card-template";
-import DefaultTemplate from "@/components/features/templates/default-template";
-import ModernTemplate from "@/components/features/templates/modern-template";
-import PhoneMockup from "@/components/phone-mockup";
-import { ResponsiveModal } from "@/components/responsive-modal";
 import ColorsInput from "@/components/test/colors-input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Command,
   CommandEmpty,
@@ -87,6 +81,7 @@ import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
 import { removeExtension } from "@/utils/remove-extension";
 
+import { Preview } from "./preview";
 import ProfileDashboard from "./profile-dashboard";
 import { ThemeSelector } from "./theme-selector";
 
@@ -1154,6 +1149,16 @@ export default function CardCustomizeForm({
                         </Card>
                       ))
                     )}
+                    <Card
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setOpen(true);
+                      }}
+                      className="flex flex-col items-center justify-center text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:bg-muted/20"
+                      role="button"
+                    >
+                      View More
+                    </Card>
                   </div>
                 </section>
                 <FormField
@@ -1261,7 +1266,7 @@ export default function CardCustomizeForm({
                     control={form.control}
                     name={"theme"}
                     render={({ field }) => (
-                      <FormItem className="flex w-full flex-col items-start justify-between gap-3 py-3 sm:flex-row sm:items-center">
+                      <FormItem className="flex w-full flex-col items-start justify-between gap-3 p-3 sm:flex-row sm:items-center">
                         <FormLabel>Theme Color</FormLabel>
                         <FormControl>
                           <ColorsInput
@@ -1280,7 +1285,7 @@ export default function CardCustomizeForm({
                       control={form.control}
                       name={"btnColor"}
                       render={({ field }) => (
-                        <FormItem className="flex w-full flex-col items-start justify-between gap-3 py-3 sm:flex-row sm:items-center">
+                        <FormItem className="flex w-full flex-col items-start justify-between gap-3 p-3 sm:flex-row sm:items-center">
                           <FormLabel>Button</FormLabel>
                           <FormControl>
                             <ColorsInput
@@ -1307,73 +1312,12 @@ export default function CardCustomizeForm({
               )}
             </Tabs>
 
-            <Card className="sticky top-24 col-span-4 hidden h-fit rounded-lg bg-background @container md:block">
-              <CardHeader className="flex-row items-center justify-between border-b py-4">
-                <h5>Preview</h5>
-                <ResponsiveModal
-                  isOpen={isOpen}
-                  closeModal={onOpenChange}
-                  trigger={
-                    <IconArrowsMaximize className="size-4 text-gray-600" />
-                  }
-                  title="Preview"
-                  className="max-w-sm gap-0"
-                >
-                  <CardContent className="light relative p-0">
-                    <ScrollArea className="h-[640px]">
-                      {(() => {
-                        switch (form.watch("template")) {
-                          case "default":
-                            return (
-                              <DefaultTemplate card={cardData} company={data} />
-                            );
-                          case "modern":
-                            return (
-                              <ModernTemplate card={cardData} company={data} />
-                            );
-                          case "card":
-                            return (
-                              <CardTemplate card={cardData} company={data} />
-                            );
-                          default:
-                            return (
-                              <DefaultTemplate card={cardData} company={data} />
-                            );
-                        }
-                      })()}
-                    </ScrollArea>
-                  </CardContent>
-                </ResponsiveModal>
-
-                {/* <IconDots /> */}
-              </CardHeader>
-              <CardContent className="relative py-5">
-                <PhoneMockup>
-                  <ScrollArea className="h-full">
-                    {(() => {
-                      switch (form.watch("template")) {
-                        case "default":
-                          return (
-                            <DefaultTemplate card={cardData} company={data} />
-                          );
-                        case "modern":
-                          return (
-                            <ModernTemplate card={cardData} company={data} />
-                          );
-                        case "card":
-                          return (
-                            <CardTemplate card={cardData} company={data} />
-                          );
-                        default:
-                          return (
-                            <DefaultTemplate card={cardData} company={data} />
-                          );
-                      }
-                    })()}
-                  </ScrollArea>
-                </PhoneMockup>
-              </CardContent>
-            </Card>
+            <Preview
+              closeModal={onOpenChange}
+              isOpen={isOpen}
+              cardData={cardData}
+              company={data}
+            />
           </div>
           <div className="fixed bottom-0 w-full bg-background/50 px-6 py-4 backdrop-blur-md md:hidden">
             {isEditMode ? (
