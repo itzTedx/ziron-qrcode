@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { LINKS } from "./sidebar-navlinks";
@@ -11,6 +12,8 @@ export default function HeaderTitle() {
   const currentPageTitle = currentLink ? currentLink.label : "Dashboard";
 
   return (
-    <h1 className="text-xl font-semibold md:text-2xl">{currentPageTitle}</h1>
+    <Link href="/" className="text-xl font-semibold md:text-2xl">
+      {currentPageTitle}
+    </Link>
   );
 }
