@@ -1,47 +1,16 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DialogTrigger } from "@radix-ui/react-dialog";
-import {
-  IconArrowRight,
-  IconCaretUpDownFilled,
-  IconExternalLink,
-  IconGripVertical,
-  IconPlus,
-  IconTrash,
-  IconX,
-} from "@tabler/icons-react";
-import { Reorder } from "framer-motion";
 import { useAction } from "next-safe-action/hooks";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Icons } from "@/components/assets/icons";
 import ColorsInput from "@/components/test/colors-input";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -51,35 +20,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { LINKS } from "@/constants";
 import { useDebounce } from "@/hooks/use-debounce";
-import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
-import { useCompanyFormModal } from "@/store/use-company-form-modal";
 import { usePreviewModalStore } from "@/store/use-preview-modal";
 import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
-import { removeExtension } from "@/utils/remove-extension";
 
 import { ActionButtons } from "./buttons/action-buttons";
+import { AttachmentUpload } from "./buttons/attachment-upload";
 import { CoverUpload } from "./buttons/cover-upload";
 import { ImageUploadButton } from "./buttons/image-upload-button";
+import { DndLinks } from "./dnd-links";
+import { CompanyField } from "./fields/company-field";
+import { EmailsField } from "./fields/emails-field";
+import { PhonesField } from "./fields/phones-field";
 import { Preview } from "./preview";
 import ProfileDashboard from "./profile-dashboard";
 import { TabsComp } from "./tabs";
@@ -92,6 +50,41 @@ interface CardCustomizeProps {
   id: string;
 }
 
+const transformInitialData = (data: Person | undefined, id: string) => {
+  if (!data) {
+    return {
+      emails: [{ email: "", label: "primary" }],
+      phones: [{ phone: "", label: "primary" }],
+      links: undefined,
+      template: "default",
+    };
+  }
+
+  return {
+    ...data,
+    id: parseInt(id),
+    phones: data.phones?.map((phone) => ({
+      ...phone,
+      id: phone.id.toString(),
+      phone: phone.phone?.toString(),
+    })),
+    emails: data.emails?.map((email) => ({
+      id: email.id.toString(),
+      email: email.email || undefined,
+      label: email.category || "primary",
+    })),
+    bio: data.bio ?? undefined,
+    mapUrl: data.mapUrl ?? undefined,
+    template: data.template ?? undefined,
+    theme: data.theme ?? undefined,
+    btnColor: data.btnColor ?? undefined,
+    links: data.links?.map((link) => ({
+      ...link,
+      id: link.id?.toString(),
+    })),
+  };
+};
+
 export default function CardCustomizeForm({
   data,
   isEditMode,
@@ -100,55 +93,17 @@ export default function CardCustomizeForm({
 }: CardCustomizeProps) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [openPopover, setOpenPopover] = useState(false);
-  const [active, setActive] = useState(0);
 
-  const dragRef = useRef<HTMLDivElement>(null);
-
-  const openCompanyModal = useCompanyFormModal((state) => state.openModal);
   const { onOpenChange, isOpen } = usePreviewModalStore();
 
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const defaultValues = initialData
-    ? {
-        ...initialData,
-        id: parseInt(id),
-        phones: initialData.phones
-          ? initialData.phones.map((phone) => ({
-              ...phone,
-              id: phone.id.toString(),
-              phone: phone.phone?.toString(),
-            }))
-          : undefined,
-        emails: initialData.emails
-          ? initialData.emails.map((email) => ({
-              ...email,
-              id: email.id.toString(),
-            }))
-          : undefined,
-        bio: initialData.bio || undefined,
-        mapUrl: initialData.mapUrl || undefined,
-        links: initialData.links
-          ? initialData.links.map((link) => ({
-              ...link,
-              id: link.id?.toString(),
-            }))
-          : undefined,
-      }
-    : {
-        emails: [{ email: "", label: "primary" }],
-        phones: [{ phone: "", label: "primary" }],
-        links: undefined,
-        template: "default",
-      };
-
   const form = useForm<z.infer<typeof cardSchema>>({
     resolver: zodResolver(cardSchema),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    defaultValues,
+    defaultValues: transformInitialData(initialData, id),
     mode: "onBlur",
   });
 
@@ -157,28 +112,6 @@ export default function CardCustomizeForm({
     control: form.control,
   });
   const debouncedValue = useDebounce(formValues, 1000);
-
-  const { fields, append, remove, move } = useFieldArray({
-    name: "links",
-    control: form.control,
-  });
-
-  const {
-    fields: emailFields,
-    append: appendEmail,
-    remove: removeEmail,
-  } = useFieldArray({
-    name: "emails",
-    control: form.control,
-  });
-  const {
-    fields: phoneFields,
-    append: appendPhone,
-    remove: removePhone,
-  } = useFieldArray({
-    name: "phones",
-    control: form.control,
-  });
 
   useEffect(() => {
     const companyIdParams = searchParams.get("company");
@@ -196,7 +129,6 @@ export default function CardCustomizeForm({
       console.log("On success data", data);
       if (data?.success) {
         router.push(`/?default=${data.company}`);
-
         toast.dismiss();
         toast.success(data.success);
         setLoading(false);
@@ -209,31 +141,31 @@ export default function CardCustomizeForm({
     },
   });
 
-  const name = form.getValues("name");
-  const placeholderPhoto = name
-    ? `https://ui-avatars.com/api/?background=random&name=${debouncedValue.name}&size=128`
-    : null;
-
   const cardData = useMemo(() => {
-    const companyId = formValues.companyId;
+    const companyId = debouncedValue.companyId;
     const companyData = data?.find((c) => c.id === companyId);
+    const placeholderPhoto = debouncedValue.name
+      ? `https://ui-avatars.com/api/?background=random&name=${debouncedValue.name}&size=128`
+      : null;
 
     return {
-      ...formValues,
+      ...debouncedValue,
 
-      name: formValues.name || "",
-      image: formValues.image || placeholderPhoto,
+      name: debouncedValue.name || "",
+      image: debouncedValue.image || placeholderPhoto,
       company: companyData,
-      links: formValues.links?.map((link) => ({
+      links: debouncedValue.links?.map((link) => ({
         ...link,
         id: link.id ? parseInt(link.id.toString()) : undefined,
       })),
     } as Person;
-  }, [formValues, data, placeholderPhoto]);
+  }, [data, debouncedValue]);
 
   function onSubmit(values: z.infer<typeof cardSchema>) {
     const validation = cardSchema.safeParse(values);
     console.log(validation);
+
+    if (!validation.success) toast.error("Please fill valid details");
 
     execute(values);
   }
@@ -274,232 +206,9 @@ export default function CardCustomizeForm({
                     </FormItem>
                   )}
                 />
-                <div className="col-span-2 sm:col-span-1">
-                  {emailFields.map((field, index) => (
-                    <div className="flex w-full items-end" key={field.id}>
-                      <FormField
-                        control={form.control}
-                        name={`emails.${index}.email`}
-                        render={({ field }) => (
-                          <FormItem className="w-full">
-                            <div className="flex items-center justify-between">
-                              <FormLabel
-                                className={cn(index !== 0 && "sr-only")}
-                              >
-                                Email
-                              </FormLabel>
-                              <FormMessage />
-                            </div>
 
-                            <FormControl className="w-full">
-                              <Input
-                                type="email"
-                                {...field}
-                                placeholder="name@company.com"
-                                className={cn(
-                                  "w-full rounded-e-none border-r-0"
-                                )}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name={`emails.${index}.label`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={"sr-only"}>
-                              Email Label
-                            </FormLabel>
-
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger
-                                  className={cn(
-                                    "w-24 shrink-0 rounded-none text-xs font-medium text-muted-foreground",
-                                    emailFields.length === 1
-                                      ? "rounded-e-lg border-r"
-                                      : "border-r-0"
-                                  )}
-                                >
-                                  <SelectValue placeholder="Label" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="primary">Primary</SelectItem>
-                                <SelectItem value="work">Work</SelectItem>
-                                <SelectItem value="personal">
-                                  Personal
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormItem>
-                        )}
-                      />
-
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          removeEmail(index);
-                        }}
-                        className={cn(
-                          "shrink-0",
-                          emailFields.length > 1
-                            ? "flex rounded-s-none"
-                            : "hidden"
-                        )}
-                      >
-                        <IconX className="size-4 text-muted-foreground" />
-                      </Button>
-                    </div>
-                  ))}
-
-                  <Button
-                    type="button"
-                    variant="link"
-                    size="sm"
-                    className="px-0"
-                    onClick={() => {
-                      if (cardData.emails) {
-                        const lastEmailField =
-                          cardData.emails[emailFields.length - 1];
-
-                        console.log(lastEmailField);
-                        if (lastEmailField && !lastEmailField.email) {
-                          // Do not add a new phone field if the last one is empty
-                          toast.error(
-                            "Please add a email before adding another."
-                          );
-                          return;
-                        }
-                      }
-                      appendEmail({ email: "", label: "primary" });
-                    }}
-                  >
-                    <IconPlus className="mr-2 size-4" />
-                    Add work or personal email
-                  </Button>
-                </div>
-                <div className="col-span-2 sm:col-span-1">
-                  {phoneFields.map((field, index) => (
-                    <div className="flex w-full items-end" key={field.id}>
-                      <FormField
-                        control={form.control}
-                        name={`phones.${index}.phone`}
-                        render={({ field }) => (
-                          <FormItem className="w-full">
-                            <div className="flex items-center justify-between">
-                              <FormLabel
-                                className={cn(index !== 0 && "sr-only")}
-                              >
-                                Phone
-                              </FormLabel>
-                              <FormMessage />
-                            </div>
-                            <FormControl className="w-full">
-                              <Input
-                                type="tel"
-                                {...field}
-                                placeholder="+971 98 765 4321"
-                                className={cn(
-                                  "w-full rounded-e-none border-r-0"
-                                )}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name={`phones.${index}.label`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={"sr-only"}>
-                              Phone Label
-                            </FormLabel>
-
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger
-                                  tabIndex={-1}
-                                  className={cn(
-                                    "w-24 shrink-0 rounded-none text-xs font-medium text-muted-foreground",
-                                    emailFields.length === 1
-                                      ? "rounded-e-lg border-r"
-                                      : "border-r-0"
-                                  )}
-                                >
-                                  <SelectValue placeholder="Label" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="primary">Primary</SelectItem>
-                                <SelectItem value="work">Work</SelectItem>
-                                <SelectItem value="personal">
-                                  Personal
-                                </SelectItem>
-                                <SelectItem value="home">Home</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormItem>
-                        )}
-                      />
-
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          removePhone(index);
-                        }}
-                        className={cn(
-                          "shrink-0",
-                          emailFields.length > 1
-                            ? "flex rounded-s-none"
-                            : "hidden"
-                        )}
-                      >
-                        <IconX className="size-4 text-muted-foreground" />
-                      </Button>
-                    </div>
-                  ))}
-
-                  <Button
-                    type="button"
-                    variant="link"
-                    size="sm"
-                    className="px-0"
-                    tabIndex={-1}
-                    onClick={() => {
-                      if (cardData.phones) {
-                        const lastPhoneField =
-                          cardData.phones[phoneFields.length - 1];
-
-                        console.log(lastPhoneField);
-                        if (lastPhoneField && !lastPhoneField.phone) {
-                          // Do not add a new phone field if the last one is empty
-                          toast.error(
-                            "Please add a email before adding another."
-                          );
-                          return;
-                        }
-                      }
-                      appendPhone({ phone: "", label: "primary" });
-                    }}
-                  >
-                    <IconPlus className="mr-2 size-4" />
-                    Add another number
-                  </Button>
-                </div>
+                <EmailsField emails={cardData.emails} />
+                <PhonesField phones={cardData.phones} />
 
                 <FormField
                   control={form.control}
@@ -529,108 +238,9 @@ export default function CardCustomizeForm({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="companyId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Company</FormLabel>
 
-                      <Popover open={openPopover} onOpenChange={setOpenPopover}>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                "w-full justify-between border-input text-foreground",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value
-                                ? data.find(
-                                    (cat) => cat.id === field.value
-                                  ) && (
-                                    <span className="inline-flex gap-2.5">
-                                      <Image
-                                        src={
-                                          data.find(
-                                            (cat) => cat.id === field.value
-                                          )?.logo ||
-                                          "images/placeholder-cover.jpg"
-                                        }
-                                        height={16}
-                                        width={16}
-                                        alt=""
-                                      />
+                <CompanyField companyData={data} />
 
-                                      <span>
-                                        {
-                                          data.find(
-                                            (cat) => cat.id === field.value
-                                          )?.name
-                                        }
-                                      </span>
-                                    </span>
-                                  )
-                                : "Select Category"}
-                              <IconCaretUpDownFilled className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent
-                          align="start"
-                          className="p-0 sm:w-[19.5rem]"
-                        >
-                          <Command>
-                            <CommandInput placeholder="Search Category..." />
-                            <CommandEmpty>Company not found</CommandEmpty>
-                            <CommandList className="p-1">
-                              <CommandGroup heading="Companies">
-                                {data.map((cat) => (
-                                  <CommandItem
-                                    value={cat.name}
-                                    className="cursor-pointer gap-2.5 px-4 py-2.5 font-medium"
-                                    key={cat.id}
-                                    onSelect={() => {
-                                      form.setValue("companyId", cat.id!);
-                                      setOpenPopover(false);
-                                    }}
-                                  >
-                                    <Image
-                                      src={
-                                        cat.logo ||
-                                        "images/placeholder-cover.jpg"
-                                      }
-                                      height={16}
-                                      width={16}
-                                      alt=""
-                                    />
-                                    <span>{cat.name}</span>
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                              <CommandGroup heading="New Company?">
-                                <CommandItem
-                                  className="cursor-pointer px-4 py-2.5 font-medium"
-                                  onSelect={() => {
-                                    setOpenPopover(false);
-                                    openCompanyModal();
-                                  }}
-                                >
-                                  {/* <IconPlus className="mr-2 size-3" /> */}
-                                  Add new
-                                </CommandItem>
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="designation"
@@ -675,357 +285,12 @@ export default function CardCustomizeForm({
                 )}
               </TabsContent>
               <TabsContent value="links" className="flex flex-col gap-8">
-                <div className="flex flex-col gap-8 pt-3" ref={dragRef}>
-                  <Reorder.Group
-                    as="div"
-                    className="w-full space-y-4"
-                    values={fields}
-                    onReorder={(e) => {
-                      const activeEl = fields[active];
-                      e.map((item, index) => {
-                        if (item === activeEl) {
-                          move(active, index);
-                          setActive(index);
-                          return;
-                        }
-                        return;
-                      });
-                    }}
-                  >
-                    {fields.map((data, index) =>
-                      data.category === "General" ? (
-                        <Reorder.Item
-                          as="div"
-                          id={data.id}
-                          dragConstraints={dragRef}
-                          onDragStart={() => setActive(index)}
-                          value={data}
-                          key={data.id}
-                        >
-                          <Card className="flex items-center justify-between gap-2 p-4">
-                            <div className="grid grid-cols-5 items-center gap-4">
-                              <FormField
-                                control={form.control}
-                                name={`links.${index}.label`}
-                                render={({ field }) => (
-                                  <FormItem className="col-span-2 flex gap-3 space-y-0">
-                                    <Image
-                                      src={data.icon}
-                                      height={40}
-                                      width={40}
-                                      alt=""
-                                      className="flex-shrink-0"
-                                    />
-                                    <FormControl>
-                                      <Input
-                                        className="space-y-0"
-                                        {...field}
-                                        disabled={loading}
-                                        placeholder={`${data.label} Title`}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
-                                control={form.control}
-                                key={data.id}
-                                name={`links.${index}.url`}
-                                render={({ field }) => (
-                                  <FormItem className="col-span-3">
-                                    <FormControl>
-                                      <Input
-                                        {...field}
-                                        disabled={loading}
-                                        placeholder={`${data.label} Url`}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </div>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              className="text-destructive hover:text-destructive"
-                              size="icon"
-                              onClick={() => remove(index)}
-                            >
-                              <IconTrash size={16} />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              title="Drag to Re-Order"
-                              className="text-gray-400 hover:bg-transparent hover:text-foreground"
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              <IconGripVertical size={16} />
-                            </Button>
-                          </Card>
-                        </Reorder.Item>
-                      ) : (
-                        <Reorder.Item
-                          as="div"
-                          id={data.id}
-                          onDragStart={() => setActive(index)}
-                          value={data}
-                          dragConstraints={dragRef}
-                          key={data.id}
-                        >
-                          <Card
-                            key={data.id}
-                            className="flex items-center justify-between gap-2 p-4"
-                          >
-                            <div className="flex flex-1 gap-3">
-                              <Image
-                                src={data.icon}
-                                height={40}
-                                width={40}
-                                alt=""
-                              />
-                              <FormField
-                                control={form.control}
-                                key={data.id}
-                                name={`links.${index}.url`}
-                                render={({ field }) => (
-                                  <FormItem className="w-full">
-                                    <FormControl>
-                                      <Input
-                                        {...field}
-                                        disabled={loading}
-                                        placeholder={`${data.label} url`}
-                                      />
-                                    </FormControl>
+                <DndLinks loading={loading} open={open} setOpen={setOpen} />
 
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </div>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="text-destructive hover:text-destructive"
-                              onClick={() => remove(index)}
-                            >
-                              <IconTrash size={16} />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              title="Drag to Re-Order"
-                              className="text-gray-400 hover:bg-transparent hover:text-foreground"
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              <IconGripVertical size={16} />
-                            </Button>
-                          </Card>
-                        </Reorder.Item>
-                      )
-                    )}
-                  </Reorder.Group>
-                </div>
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-12 w-full"
-                    >
-                      <IconPlus size={16} className="mr-2" /> Add
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl p-0">
-                    <DialogHeader className="border-b p-6">
-                      <DialogTitle>Add Link</DialogTitle>
-                      <DialogDescription className="sr-only">
-                        Add Social or custom links to digital card
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="p-6 pb-6 pt-0">
-                      {LINKS.map((item, i) => (
-                        <div key={i} className="py-3">
-                          <h4 className="pb-2 text-sm font-medium text-gray-700">
-                            {item.label}
-                          </h4>
-
-                          <div className="grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-x-6">
-                            {item.links.map((link, i) => (
-                              <div
-                                className="flex items-center justify-between border-b py-3"
-                                key={`addLink-${i}-${link.label}`}
-                              >
-                                <div className="flex items-center gap-4 font-medium">
-                                  <div className="relative size-8">
-                                    <Image
-                                      src={link.icon}
-                                      fill
-                                      alt=""
-                                      sizes="10vw"
-                                    />
-                                  </div>
-
-                                  <p>{link.label}</p>
-                                </div>
-                                <DialogClose asChild>
-                                  <Button
-                                    variant="ghost"
-                                    onClick={() =>
-                                      append({
-                                        category: item.label,
-                                        label: link.label,
-                                        url: link.url,
-                                        icon: link.icon,
-                                      })
-                                    }
-                                    className="h-8 gap-2 px-2 font-semibold text-primary hover:text-blue-800"
-                                  >
-                                    <IconPlus className="size-3 stroke-[2.5]" />
-                                    Add
-                                  </Button>
-                                </DialogClose>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </DialogContent>
-                </Dialog>
-
-                <section>
-                  <div className="flex items-center justify-between">
-                    <h3>Suggestions</h3>
-                    <Button
-                      variant="link"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setOpen(true);
-                      }}
-                    >
-                      View All
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-3">
-                    {LINKS.map((item) =>
-                      item.links.slice(0, 4).map((link) => (
-                        <Card
-                          key={link.id}
-                          onClick={() =>
-                            append({
-                              category: item.label,
-                              label: link.label,
-                              url: link.url,
-                              icon: link.icon,
-                            })
-                          }
-                          className="flex flex-col items-center justify-between p-6 transition-colors hover:border-primary hover:bg-muted/20"
-                          role="button"
-                        >
-                          <Image
-                            src={link.icon}
-                            height={40}
-                            width={40}
-                            alt=""
-                          />
-                          <p className="mt-1 whitespace-nowrap text-sm font-medium">
-                            {link.label}
-                          </p>
-                        </Card>
-                      ))
-                    )}
-                    <Card
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setOpen(true);
-                      }}
-                      className="flex flex-col items-center justify-center text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:bg-muted/20"
-                      role="button"
-                    >
-                      View More
-                    </Card>
-                  </div>
-                </section>
-                <FormField
-                  control={form.control}
-                  name="cover"
-                  render={() => (
-                    <FormItem className="col-span-2">
-                      <FormLabel className="flex items-center justify-between text-base font-normal">
-                        Attachments
-                        <Link
-                          target="_blank"
-                          href="https://www.ilovepdf.com/compress_pdf"
-                          className="flex items-center gap-1 px-2 text-xs font-medium text-primary hover:underline"
-                        >
-                          Pdf Compressor
-                          <IconArrowRight className="size-3" />
-                        </Link>
-                      </FormLabel>
-                      <FormControl>
-                        <UploadDropzone
-                          endpoint="attachments"
-                          onUploadBegin={() => {
-                            setLoading(true);
-                            toast.loading("Uploading attachment file...");
-                          }}
-                          onUploadError={(error) => {
-                            form.setError("attachmentUrl", {
-                              type: "validate",
-                              message: error.message,
-                            });
-                          }}
-                          onClientUploadComplete={(res) => {
-                            setLoading(false);
-                            form.setValue("attachmentUrl", res[0].url);
-                            form.setValue("attachmentFileName", res[0].name);
-                            toast.dismiss();
-                            toast.success("Attachment uploaded");
-                          }}
-                          config={{ mode: "auto" }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      {formValues.attachmentFileName &&
-                      formValues.attachmentUrl ? (
-                        <Card className="flex justify-between gap-3 p-3">
-                          <Link
-                            href={formValues.attachmentUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5"
-                          >
-                            <Icons.pdf className="h-6" />
-                            <p className="line-clamp-1 text-sm font-medium">
-                              {removeExtension(
-                                form.getValues("attachmentFileName")!
-                              )}
-                            </p>{" "}
-                            <IconExternalLink className="size-4 stroke-1 text-muted-foreground" />
-                          </Link>
-
-                          <Button
-                            variant={"outline"}
-                            size="icon"
-                            className="hover:bg-red-600 hover:text-red-100"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              form.setValue("attachmentFileName", undefined);
-                              form.setValue("attachmentUrl", undefined);
-                            }}
-                          >
-                            <IconX className="size-5" />
-                          </Button>
-                        </Card>
-                      ) : null}
-                    </FormItem>
-                  )}
+                <AttachmentUpload
+                  setLoading={setLoading}
+                  filename={cardData.attachmentFileName || undefined}
+                  url={cardData.attachmentUrl || undefined}
                 />
               </TabsContent>
               <TabsContent

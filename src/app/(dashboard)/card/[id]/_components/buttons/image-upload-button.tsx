@@ -5,7 +5,6 @@ import Image from "next/image";
 import { IconEdit, IconUpload, IconUser } from "@tabler/icons-react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import {
   FormControl,
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { UploadButton } from "@/lib/uploadthing";
 import { Person } from "@/types";
-import { cardSchema } from "@/types/card-schema";
+import { zCardSchema } from "@/types/card-schema";
 
 interface Props {
   isEditMode: boolean;
@@ -28,7 +27,7 @@ export const ImageUploadButton = ({
   cardData,
   setLoading,
 }: Props) => {
-  const form = useFormContext<z.infer<typeof cardSchema>>();
+  const form = useFormContext<zCardSchema>();
 
   return (
     <FormField

@@ -3,7 +3,6 @@ import Image from "next/image";
 import { IconEdit } from "@tabler/icons-react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { UploadDropzone } from "@/lib/uploadthing";
-import { cardSchema } from "@/types/card-schema";
+import { zCardSchema } from "@/types/card-schema";
 
 interface Props {
   cover?: string;
@@ -22,7 +21,7 @@ interface Props {
 }
 
 export const CoverUpload = ({ cover, setLoading }: Props) => {
-  const form = useFormContext<z.infer<typeof cardSchema>>();
+  const form = useFormContext<zCardSchema>();
 
   return (
     <FormField
