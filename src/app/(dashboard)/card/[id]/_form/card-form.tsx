@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
@@ -30,18 +30,19 @@ import { usePreviewModalStore } from "@/store/use-preview-modal";
 import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
 
-import { ActionButtons } from "./buttons/action-buttons";
-import { AttachmentUpload } from "./buttons/attachment-upload";
-import { CoverUpload } from "./buttons/cover-upload";
-import { ImageUploadButton } from "./buttons/image-upload-button";
-import { DndLinks } from "./dnd-links";
-import { CompanyField } from "./fields/company-field";
-import { EmailsField } from "./fields/emails-field";
-import { PhonesField } from "./fields/phones-field";
-import { Preview } from "./preview";
-import ProfileDashboard from "./profile-dashboard";
-import { TabsComp } from "./tabs";
-import { ThemeSelector } from "./theme-selector";
+import { ActionButtons } from "../_components/buttons/action-buttons";
+import { AttachmentUpload } from "../_components/buttons/attachment-upload";
+import { CoverUpload } from "../_components/buttons/cover-upload";
+import { ImageUploadButton } from "../_components/buttons/image-upload-button";
+import { DndLinks } from "../_components/dnd-links";
+import { CompanyField } from "../_components/fields/company-field";
+import { EmailsField } from "../_components/fields/emails-field";
+import { PhonesField } from "../_components/fields/phones-field";
+import { Preview } from "../_components/preview";
+import ProfileDashboard from "../_components/profile-dashboard";
+import { TabsComp } from "../_components/tabs";
+import { ThemeSelector } from "../_components/theme-selector";
+import { transformInitialData } from "../utils";
 
 interface CardCustomizeProps {
   data: Company[];
@@ -50,40 +51,10 @@ interface CardCustomizeProps {
   id: string;
 }
 
-const transformInitialData = (data: Person | undefined, id: string) => {
-  if (!data) {
-    return {
-      emails: [{ email: "", label: "primary" }],
-      phones: [{ phone: "", label: "primary" }],
-      links: undefined,
-      template: "default",
-    };
-  }
-
-  return {
-    ...data,
-    id: parseInt(id),
-    phones: data.phones?.map((phone) => ({
-      ...phone,
-      id: phone.id.toString(),
-      phone: phone.phone?.toString(),
-    })),
-    emails: data.emails?.map((email) => ({
-      id: email.id.toString(),
-      email: email.email || undefined,
-      label: email.category || "primary",
-    })),
-    bio: data.bio ?? undefined,
-    mapUrl: data.mapUrl ?? undefined,
-    template: data.template ?? undefined,
-    theme: data.theme ?? undefined,
-    btnColor: data.btnColor ?? undefined,
-    links: data.links?.map((link) => ({
-      ...link,
-      id: link.id?.toString(),
-    })),
-  };
-};
+// Memoize child components
+const MemoizedProfileDashboard = memo(ProfileDashboard);
+const MemoizedPreview = memo(Preview);
+const MemoizedTabsComp = memo(TabsComp);
 
 export default function CardCustomizeForm({
   data,
@@ -99,20 +70,27 @@ export default function CardCustomizeForm({
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  // Optimize form initialization
+  const defaultValues = useMemo(
+    () => transformInitialData(initialData, id),
+    [initialData, id]
+  );
+
   const form = useForm<z.infer<typeof cardSchema>>({
     resolver: zodResolver(cardSchema),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    defaultValues: transformInitialData(initialData, id),
+    //@ts-expect-error
+    defaultValues,
     mode: "onBlur",
   });
 
-  // Use useWatch to observe all form values for the preview
+  // Optimize form watching
   const formValues = useWatch({
     control: form.control,
   });
   const debouncedValue = useDebounce(formValues, 1000);
 
+  // Memoize company ID effect
   useEffect(() => {
     const companyIdParams = searchParams.get("company");
     if (companyIdParams) {
@@ -120,13 +98,13 @@ export default function CardCustomizeForm({
     }
   }, [searchParams, form]);
 
+  // Optimize action handler
   const { execute } = useAction(createCard, {
-    onExecute: () => {
+    onExecute: useCallback(() => {
       toast.loading("Loading");
       setLoading(true);
-    },
+    }, []),
     onSuccess: ({ data }) => {
-      console.log("On success data", data);
       if (data?.success) {
         router.push(`/?default=${data.company}`);
         toast.dismiss();
@@ -135,12 +113,13 @@ export default function CardCustomizeForm({
       }
     },
 
-    onError: () => {
+    onError: useCallback(() => {
       toast.error("Something went wrong.");
       setLoading(false);
-    },
+    }, []),
   });
 
+  // Memoize card data transformation
   const cardData = useMemo(() => {
     const companyId = debouncedValue.companyId;
     const companyData = data?.find((c) => c.id === companyId);
@@ -150,7 +129,6 @@ export default function CardCustomizeForm({
 
     return {
       ...debouncedValue,
-
       name: debouncedValue.name || "",
       image: debouncedValue.image || placeholderPhoto,
       company: companyData,
@@ -161,14 +139,18 @@ export default function CardCustomizeForm({
     } as Person;
   }, [data, debouncedValue]);
 
-  function onSubmit(values: z.infer<typeof cardSchema>) {
-    const validation = cardSchema.safeParse(values);
-    console.log(validation);
-
-    if (!validation.success) toast.error("Please fill valid details");
-
-    execute(values);
-  }
+  // Optimize submit handler
+  const onSubmit = useCallback(
+    (values: z.infer<typeof cardSchema>) => {
+      const validation = cardSchema.safeParse(values);
+      if (!validation.success) {
+        toast.error("Please fill valid details");
+        return;
+      }
+      execute(values);
+    },
+    [execute]
+  );
 
   return (
     <main className="relative pb-9 sm:pb-2">
@@ -178,10 +160,11 @@ export default function CardCustomizeForm({
           className={cn(isEditMode && "mt-4", "relative")}
         >
           {isEditMode && initialData && (
-            <ProfileDashboard data={cardData} loading={loading} />
+            <MemoizedProfileDashboard data={cardData} loading={loading} />
           )}
+
           <div className="container grid max-w-7xl gap-8 py-3 pb-9 md:grid-cols-12 md:py-9">
-            <TabsComp>
+            <MemoizedTabsComp>
               <TabsContent
                 value="information"
                 className="grid grid-cols-2 gap-4"
@@ -366,9 +349,9 @@ export default function CardCustomizeForm({
                   Create Card
                 </Button>
               )}
-            </TabsComp>
+            </MemoizedTabsComp>
 
-            <Preview
+            <MemoizedPreview
               closeModal={onOpenChange}
               isOpen={isOpen}
               cardData={cardData}

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
 import { eq } from "drizzle-orm";
 import { createSafeActionClient } from "next-safe-action";
@@ -110,7 +110,6 @@ export const createCard = action
           revalidateTag(`card-${editedCard[0].slug}`);
           revalidatePath("/");
 
-redirect('/')
           return {
             success: `Digital Card: (${editedCard[0].name}) has been Edited`,
             company: editedCard[0].companyId,
@@ -189,6 +188,7 @@ redirect('/')
             company: newCard[0].companyId,
           };
         }
+        redirect("/");
       } catch (err) {
         return { error: JSON.stringify(err) };
       }

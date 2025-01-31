@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import Script from "next/script";
 
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -37,6 +38,12 @@ export default function RootLayout({
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          crossOrigin="anonymous"
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+        />
+      </head>
       <body className={cn("antialiased", plusJakarta.className)}>
         <NuqsAdapter>
           <ThemeProvider
