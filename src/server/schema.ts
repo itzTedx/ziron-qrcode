@@ -17,6 +17,7 @@ export const companies = pgTable("companies", {
   website: text("website"),
   address: text("address"),
   logo: text("logo"),
+
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

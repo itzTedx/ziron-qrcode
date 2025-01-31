@@ -10,12 +10,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
 import { cn } from "@/lib/utils";
 import { getCompanies } from "@/server/actions/get-company";
 import { getPlaceholder } from "@/utils/get-placeholder";
@@ -30,18 +24,11 @@ export default async function Home({
 }) {
   const { companies } = await getCompanies();
 
+  console.log("Companies: ", companies);
+
   if (!companies || companies?.length === 0)
     return (
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background py-9">
-        <ContextMenu>
-          <ContextMenuTrigger>Right click</ContextMenuTrigger>
-          <ContextMenuContent>
-            <ContextMenuItem>Profile</ContextMenuItem>
-            <ContextMenuItem>Billing</ContextMenuItem>
-            <ContextMenuItem>Team</ContextMenuItem>
-            <ContextMenuItem>Subscription</ContextMenuItem>
-          </ContextMenuContent>
-        </ContextMenu>
         <Image
           src="/not-available.svg"
           height={200}
@@ -72,16 +59,6 @@ export default async function Home({
             <CollapsibleTrigger asChild>
               <div className="flex w-full items-center gap-3">
                 <div className="flex size-8 items-center justify-center rounded-full border bg-white p-1">
-                  <ContextMenu>
-                    <ContextMenuTrigger>Right click</ContextMenuTrigger>
-                    <ContextMenuContent>
-                      <ContextMenuItem>Profile</ContextMenuItem>
-                      <ContextMenuItem>Billing</ContextMenuItem>
-                      <ContextMenuItem>Team</ContextMenuItem>
-                      <ContextMenuItem>Subscription</ContextMenuItem>
-                    </ContextMenuContent>
-                  </ContextMenu>
-
                   <Image
                     src={company.logo!}
                     alt={`${company.name}'s Logo`}
