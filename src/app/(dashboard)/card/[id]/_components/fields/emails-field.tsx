@@ -1,5 +1,7 @@
 "use client";
 
+import { memo, useCallback } from "react";
+
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
@@ -30,13 +32,37 @@ interface Props {
   }[];
 }
 
-export const EmailsField = ({ emails }: Props) => {
+/**
+ * EmailsField Component
+ * Renders a dynamic form for managing multiple email addresses with labels
+ * @param {emails} emails
+ */
+export const EmailsField = memo(({ emails }: Props) => {
   const form = useFormContext<zCardSchema>();
 
   const { fields, append, remove } = useFieldArray({
     name: "emails",
     control: form.control,
   });
+
+  const handleRemove = useCallback(
+    (index: number) => (e: React.MouseEvent) => {
+      e.preventDefault();
+      remove(index);
+    },
+    [remove]
+  );
+
+  const handleAppend = useCallback(() => {
+    if (emails) {
+      const lastEmailField = emails[fields.length - 1];
+      if (lastEmailField && !lastEmailField.email) {
+        toast.error("Please add a email before adding another.");
+        return;
+      }
+    }
+    append({ email: "", label: "primary" });
+  }, [emails, fields.length, append]);
 
   return (
     <div className="col-span-2 sm:col-span-1">
@@ -65,6 +91,7 @@ export const EmailsField = ({ emails }: Props) => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name={`emails.${index}.label`}
@@ -101,10 +128,7 @@ export const EmailsField = ({ emails }: Props) => {
           <Button
             size="icon"
             variant="outline"
-            onClick={(e) => {
-              e.preventDefault();
-              remove(index);
-            }}
+            onClick={handleRemove(index)}
             className={cn(
               "shrink-0",
               fields.length > 1 ? "flex rounded-s-none" : "hidden"
@@ -120,23 +144,13 @@ export const EmailsField = ({ emails }: Props) => {
         variant="link"
         size="sm"
         className="px-0"
-        onClick={() => {
-          if (emails) {
-            const lastEmailField = emails[fields.length - 1];
-
-            console.log(lastEmailField);
-            if (lastEmailField && !lastEmailField.email) {
-              // Do not add a new phone field if the last one is empty
-              toast.error("Please add a email before adding another.");
-              return;
-            }
-          }
-          append({ email: "", label: "primary" });
-        }}
+        onClick={handleAppend}
       >
         <IconPlus className="mr-2 size-4" />
         Add work or personal email
       </Button>
     </div>
   );
-};
+});
+
+EmailsField.displayName = "EmailsField";

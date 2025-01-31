@@ -222,7 +222,10 @@ export default function CardCustomizeForm({
                   )}
                 />
 
-                <CompanyField companyData={data} />
+                <CompanyField
+                  companyData={data}
+                  companyId={cardData.companyId}
+                />
 
                 <FormField
                   control={form.control}

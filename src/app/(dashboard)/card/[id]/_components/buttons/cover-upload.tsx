@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { memo, useCallback } from "react";
 
 import { IconEdit } from "@tabler/icons-react";
 import { useFormContext } from "react-hook-form";
@@ -20,14 +21,41 @@ interface Props {
   setLoading: (loading: boolean) => void;
 }
 
-export const CoverUpload = ({ cover, setLoading }: Props) => {
+export const CoverUpload = memo(({ cover, setLoading }: Props) => {
   const form = useFormContext<zCardSchema>();
+
+  const handleUploadBegin = useCallback(() => {
+    setLoading(true);
+    toast.loading("Uploading cover image...");
+  }, [setLoading]);
+
+  const handleUploadError = useCallback(
+    (error: Error) => {
+      setLoading(false);
+      toast.dismiss();
+      form.setError("cover", {
+        type: "validate",
+        message: error.message,
+      });
+    },
+    [form, setLoading]
+  );
+
+  const handleUploadComplete = useCallback(
+    (res: { url: string }[]) => {
+      setLoading(false);
+      form.setValue("cover", res[0].url);
+      toast.dismiss();
+      toast.success("Cover image uploaded");
+    },
+    [form, setLoading]
+  );
 
   return (
     <FormField
       control={form.control}
       name="cover"
-      render={({}) => (
+      render={() => (
         <FormItem className="col-span-2">
           <FormLabel>Cover image</FormLabel>
           <FormControl>
@@ -42,30 +70,19 @@ export const CoverUpload = ({ cover, setLoading }: Props) => {
                 <Image
                   src={cover}
                   fill
-                  alt=""
-                  sizes="100vw"
+                  alt="Cover image"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="-z-10 object-cover"
+                  priority={false}
+                  loading="lazy"
                 />
               </div>
             ) : (
               <UploadDropzone
                 endpoint="cover"
-                onUploadBegin={() => {
-                  setLoading(true);
-                  toast.loading("Uploading cover image...");
-                }}
-                onUploadError={(error) => {
-                  form.setError("cover", {
-                    type: "validate",
-                    message: error.message,
-                  });
-                }}
-                onClientUploadComplete={(res) => {
-                  setLoading(false);
-                  form.setValue("cover", res[0].url);
-                  toast.dismiss();
-                  toast.success("Cover image uploaded");
-                }}
+                onUploadBegin={handleUploadBegin}
+                onUploadError={handleUploadError}
+                onClientUploadComplete={handleUploadComplete}
                 config={{ mode: "auto" }}
               />
             )}
@@ -75,4 +92,6 @@ export const CoverUpload = ({ cover, setLoading }: Props) => {
       )}
     />
   );
-};
+});
+
+CoverUpload.displayName = "CoverUpload";

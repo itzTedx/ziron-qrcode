@@ -20,8 +20,8 @@ export const transformInitialData = (data: Person | undefined, id: string) => {
     })),
     emails: data.emails?.map((email) => ({
       id: email.id.toString(),
-      email: email.email || undefined,
-      label: email.category || "primary",
+      email: email.email ?? undefined,
+      label: email.category ?? "primary",
     })),
     bio: data.bio ?? undefined,
     mapUrl: data.mapUrl ?? undefined,

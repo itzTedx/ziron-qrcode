@@ -2,14 +2,23 @@ import { useQueryState } from "nuqs";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export const TabsComp = ({ children }: { children: React.ReactNode }) => {
+// Available tab values
+type TabValue = "information" | "links" | "template";
+
+interface Props {
+  children: React.ReactNode;
+}
+
+/**
+ * TabsComp - A tabbed navigation component that syncs with URL query parameters
+ */
+export const TabsComp = ({ children }: Props) => {
   const [tab, setTab] = useQueryState("tab");
-
-  const handleTabClick = (tab: string) => {
-    setTab(tab);
-  };
-
   const defaultTab = tab || "information";
+
+  // Update URL query param when tab changes
+  const handleTabClick = (value: TabValue) => setTab(value);
+
   return (
     <Tabs defaultValue={defaultTab} className="col-span-8 w-full items-start">
       <TabsList className="w-full">

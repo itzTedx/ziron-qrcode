@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { IconCaretUpDownFilled } from "@tabler/icons-react";
 import { useFormContext } from "react-hook-form";
@@ -32,13 +32,36 @@ import { zCardSchema } from "@/types/card-schema";
 
 interface Props {
   companyData: Company[];
+  companyId: number;
 }
 
-export const CompanyField = ({ companyData: data }: Props) => {
+export const CompanyField = ({ companyData: data, companyId }: Props) => {
   const [openPopover, setOpenPopover] = useState(false);
-
   const openCompanyModal = useCompanyFormModal((state) => state.openModal);
   const form = useFormContext<zCardSchema>();
+
+  // Memoize company lookup
+  const selectedCompany = useMemo(() => {
+    return data.find((cat) => cat.id === companyId);
+  }, [data, companyId]);
+
+  // Memoize selection handler
+  const handleSelect = useCallback(
+    (companyId?: string) => {
+      if (companyId) {
+        form.setValue("companyId", parseInt(companyId));
+        setOpenPopover(false);
+      }
+    },
+    [form]
+  );
+
+  // Memoize modal handler
+  const handleModalOpen = useCallback(() => {
+    setOpenPopover(false);
+    openCompanyModal();
+  }, [openCompanyModal]);
+
   return (
     <FormField
       control={form.control}
@@ -58,25 +81,23 @@ export const CompanyField = ({ companyData: data }: Props) => {
                     !field.value && "text-muted-foreground"
                   )}
                 >
-                  {field.value
-                    ? data.find((cat) => cat.id === field.value) && (
-                        <span className="inline-flex gap-2.5">
-                          <Image
-                            src={
-                              data.find((cat) => cat.id === field.value)
-                                ?.logo || "images/placeholder-cover.jpg"
-                            }
-                            height={16}
-                            width={16}
-                            alt=""
-                          />
-
-                          <span>
-                            {data.find((cat) => cat.id === field.value)?.name}
-                          </span>
-                        </span>
-                      )
-                    : "Select Category"}
+                  {selectedCompany ? (
+                    <span className="inline-flex gap-2.5">
+                      <Image
+                        src={
+                          selectedCompany.logo ||
+                          "/images/placeholder-cover.jpg"
+                        }
+                        height={16}
+                        width={16}
+                        alt={`${selectedCompany.name} logo`}
+                        priority
+                      />
+                      <span>{selectedCompany.name}</span>
+                    </span>
+                  ) : (
+                    "Select Category"
+                  )}
                   <IconCaretUpDownFilled className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </FormControl>
@@ -85,23 +106,21 @@ export const CompanyField = ({ companyData: data }: Props) => {
               <Command>
                 <CommandInput placeholder="Search Category..." />
                 <CommandEmpty>Company not found</CommandEmpty>
-                <CommandList className="p-1">
+                <CommandList className="max-h-[300px] overflow-auto">
                   <CommandGroup heading="Companies">
                     {data.map((cat) => (
                       <CommandItem
                         value={cat.name}
                         className="cursor-pointer gap-2.5 px-4 py-2.5 font-medium"
                         key={cat.id}
-                        onSelect={() => {
-                          form.setValue("companyId", cat.id!);
-                          setOpenPopover(false);
-                        }}
+                        onSelect={() => handleSelect(cat.id?.toString())}
                       >
                         <Image
-                          src={cat.logo || "images/placeholder-cover.jpg"}
+                          src={cat.logo || "/images/placeholder-cover.jpg"}
                           height={16}
                           width={16}
-                          alt=""
+                          alt={`${cat.name} logo`}
+                          loading="lazy"
                         />
                         <span>{cat.name}</span>
                       </CommandItem>
@@ -110,12 +129,8 @@ export const CompanyField = ({ companyData: data }: Props) => {
                   <CommandGroup heading="New Company?">
                     <CommandItem
                       className="cursor-pointer px-4 py-2.5 font-medium"
-                      onSelect={() => {
-                        setOpenPopover(false);
-                        openCompanyModal();
-                      }}
+                      onSelect={handleModalOpen}
                     >
-                      {/* <IconPlus className="mr-2 size-3" /> */}
                       Add new
                     </CommandItem>
                   </CommandGroup>

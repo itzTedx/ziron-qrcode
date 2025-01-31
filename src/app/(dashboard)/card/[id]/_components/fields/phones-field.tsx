@@ -1,5 +1,7 @@
 "use client";
 
+import { memo } from "react";
+
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
@@ -23,19 +25,55 @@ import {
 import { cn } from "@/lib/utils";
 import { zCardSchema } from "@/types/card-schema";
 
-interface Props {
-  phones?: {
-    phone?: string | null;
-    label?: string | null;
-  }[];
+/** Phone label options for the select field */
+const PHONE_LABELS = [
+  { value: "primary", label: "Primary" },
+  { value: "work", label: "Work" },
+  { value: "personal", label: "Personal" },
+  { value: "home", label: "Home" },
+] as const;
+
+interface PhoneEntry {
+  phone?: string | null;
+  label?: string | null;
 }
 
-export const PhonesField = ({ phones }: Props) => {
+interface PhonesFieldProps {
+  /** Initial phone entries */
+  phones?: PhoneEntry[];
+}
+
+/**
+ * PhonesField Component
+ *
+ * Renders a dynamic form field for managing multiple phone numbers with labels.
+ * Supports adding/removing phone entries and validation.
+ *
+ * @param {PhonesFieldProps} props - Component props
+ * @returns {JSX.Element} Rendered form field component
+ */
+export const PhonesField = memo(({ phones }: PhonesFieldProps) => {
   const form = useFormContext<zCardSchema>();
   const { fields, append, remove } = useFieldArray({
     name: "phones",
     control: form.control,
   });
+
+  const handleAddPhone = () => {
+    if (phones) {
+      const lastPhoneField = phones[fields.length - 1];
+      if (lastPhoneField && !lastPhoneField.phone) {
+        toast.error("Please add a phone number before adding another.");
+        return;
+      }
+    }
+    append({ phone: "", label: "primary" });
+  };
+
+  const handleRemovePhone = (index: number) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    remove(index);
+  };
 
   return (
     <div className="col-span-2 sm:col-span-1">
@@ -63,13 +101,13 @@ export const PhonesField = ({ phones }: Props) => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name={`phones.${index}.label`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className={"sr-only"}>Phone Label</FormLabel>
-
+                <FormLabel className="sr-only">Phone Label</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -88,10 +126,11 @@ export const PhonesField = ({ phones }: Props) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="primary">Primary</SelectItem>
-                    <SelectItem value="work">Work</SelectItem>
-                    <SelectItem value="personal">Personal</SelectItem>
-                    <SelectItem value="home">Home</SelectItem>
+                    {PHONE_LABELS.map(({ value, label }) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </FormItem>
@@ -101,10 +140,7 @@ export const PhonesField = ({ phones }: Props) => {
           <Button
             size="icon"
             variant="outline"
-            onClick={(e) => {
-              e.preventDefault();
-              remove(index);
-            }}
+            onClick={handleRemovePhone(index)}
             className={cn(
               "shrink-0",
               fields.length > 1 ? "flex rounded-s-none" : "hidden"
@@ -121,23 +157,13 @@ export const PhonesField = ({ phones }: Props) => {
         size="sm"
         className="px-0"
         tabIndex={-1}
-        onClick={() => {
-          if (phones) {
-            const lastPhoneField = phones[fields.length - 1];
-
-            console.log(lastPhoneField);
-            if (lastPhoneField && !lastPhoneField.phone) {
-              // Do not add a new phone field if the last one is empty
-              toast.error("Please add a email before adding another.");
-              return;
-            }
-          }
-          append({ phone: "", label: "primary" });
-        }}
+        onClick={handleAddPhone}
       >
         <IconPlus className="mr-2 size-4" />
         Add another number
       </Button>
     </div>
   );
-};
+});
+
+PhonesField.displayName = "PhonesField";
