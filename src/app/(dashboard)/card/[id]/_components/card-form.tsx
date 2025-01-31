@@ -239,7 +239,6 @@ export default function CardCustomizeForm({
 
     return {
       ...formValues,
-      id: companyId,
 
       name: formValues.name || "",
       image: formValues.image || placeholderPhoto,
