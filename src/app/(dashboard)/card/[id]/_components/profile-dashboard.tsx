@@ -1,8 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 import {
   IconArrowsMaximize,
@@ -11,16 +12,18 @@ import {
   IconShare,
 } from "@tabler/icons-react";
 import { useAction } from "next-safe-action/hooks";
-import { useFormContext } from "react-hook-form";
+import {
+  Control,
+  UseFormSetError,
+  UseFormSetValue,
+  useFormContext,
+} from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Icons } from "@/components/assets/icons";
 import { DeleteIcon } from "@/components/assets/trash-icon";
 import CopyButton from "@/components/copy-button";
-import { ResponsiveModal } from "@/components/responsive-modal";
 import {
-  AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
@@ -44,7 +47,72 @@ import { deleteCard } from "@/server/actions/delete-card";
 import { usePreviewModalStore } from "@/store/use-preview-modal";
 import { useShareModalStore } from "@/store/use-share-modal";
 import { Person } from "@/types";
-import { cardSchema } from "@/types/card-schema";
+import { zCardSchema } from "@/types/card-schema";
+
+// Dynamically import heavy components
+const ResponsiveModal = dynamic(
+  () =>
+    import("@/components/responsive-modal").then((mod) => mod.ResponsiveModal),
+  {
+    ssr: false,
+  }
+);
+
+const AlertDialog = dynamic(() =>
+  import("@/components/ui/alert-dialog").then((mod) => mod.AlertDialog)
+);
+
+// Memoize static sub-components
+interface ImageUploadFieldProps {
+  control: Control<zCardSchema>;
+  setError: UseFormSetError<zCardSchema>;
+  setValue: UseFormSetValue<zCardSchema>;
+  onSuccess: () => void;
+  endpoint: "photo" | "cover";
+}
+
+const ImageUploadField = memo(
+  ({
+    control,
+    setError,
+    setValue,
+    onSuccess,
+    endpoint,
+  }: ImageUploadFieldProps) => (
+    <FormField
+      control={control}
+      name="image"
+      render={() => (
+        <FormItem className="p-6">
+          <FormLabel>
+            Change {endpoint === "photo" ? "Profile Picture" : "Cover Image"}
+          </FormLabel>
+          <FormControl>
+            <UploadDropzone
+              endpoint={endpoint}
+              onUploadBegin={() => toast.loading("Uploading...")}
+              onUploadError={(error) => {
+                setError(endpoint === "photo" ? "image" : "cover", {
+                  type: "validate",
+                  message: error.message,
+                });
+              }}
+              onClientUploadComplete={(res) => {
+                setValue(endpoint === "photo" ? "image" : "cover", res[0].url);
+                toast.dismiss();
+                toast.success("Upload complete");
+                onSuccess();
+              }}
+              config={{ mode: "auto" }}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+);
+ImageUploadField.displayName = "ImageUploadField";
 
 interface ProfileDashboardProps {
   data: Person;
@@ -60,17 +128,20 @@ export default function ProfileDashboard({
   const router = useRouter();
   const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/${data.slug}`;
 
-  const { setValue, control, setError } =
-    useFormContext<z.infer<typeof cardSchema>>();
+  const { setValue, control, setError } = useFormContext<zCardSchema>();
 
   const openModal = useShareModalStore((state) => state.openModal);
   const openPreview = usePreviewModalStore((state) => state.onOpenChange);
 
-  const shareData = {
-    url: shareLink,
-    name: data.name,
-    logo: data.company?.logo || undefined,
-  };
+  // Memoize handlers
+  const handleShare = useCallback(() => {
+    const shareData = {
+      url: shareLink,
+      name: data.name,
+      logo: data.company?.logo || undefined,
+    };
+    openModal(shareData, data.name);
+  }, [shareLink, data.name, data.company?.logo, openModal]);
 
   const { execute: deleteExistingCard } = useAction(deleteCard, {
     onSuccess: ({ data: existingCard }) => {
@@ -82,6 +153,12 @@ export default function ProfileDashboard({
     },
   });
 
+  const handleDelete = useCallback(() => {
+    if (data.id) {
+      deleteExistingCard({ id: data.id });
+    }
+  }, [data.id, deleteExistingCard]);
+
   return (
     <div className="-mt-20">
       <div className="group relative h-72 bg-secondary">
@@ -89,12 +166,15 @@ export default function ProfileDashboard({
           src={data.cover!}
           fill
           priority
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, 50vw"
           alt="cover image"
           title="Cover Image"
           className="object-cover transition-[filter] group-hover:brightness-90"
           quality={60}
+          placeholder="blur"
+          blurDataURL={`data:image/svg+xml;base64,...`} // Add appropriate blur placeholder
         />
+
         <ResponsiveModal
           isOpen={openCover}
           asChild
@@ -110,37 +190,12 @@ export default function ProfileDashboard({
             </Button>
           }
         >
-          <FormField
+          <ImageUploadField
             control={control}
-            name="image"
-            render={({}) => (
-              <FormItem className="p-6">
-                <FormLabel>Change Cover Image</FormLabel>
-                <FormControl>
-                  <UploadDropzone
-                    endpoint="cover"
-                    onUploadBegin={() => {
-                      toast.loading("Uploading profile picture...");
-                    }}
-                    onUploadError={(error) => {
-                      setError("cover", {
-                        type: "validate",
-                        message: error.message,
-                      });
-                    }}
-                    onClientUploadComplete={(res) => {
-                      setValue("cover", res[0].url);
-
-                      toast.dismiss();
-                      toast.success("Profile picture uploaded");
-                      setOpenCover(false);
-                    }}
-                    config={{ mode: "auto" }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            setError={setError}
+            setValue={setValue}
+            onSuccess={() => setOpenCover(false)}
+            endpoint="cover"
           />
         </ResponsiveModal>
       </div>
@@ -170,37 +225,12 @@ export default function ProfileDashboard({
                 </Button>
               }
             >
-              <FormField
+              <ImageUploadField
                 control={control}
-                name="image"
-                render={({}) => (
-                  <FormItem className="p-6">
-                    <FormLabel>Change Profile Picture</FormLabel>
-                    <FormControl>
-                      <UploadDropzone
-                        endpoint="photo"
-                        onUploadBegin={() => {
-                          toast.loading("Uploading profile picture...");
-                        }}
-                        onUploadError={(error) => {
-                          setError("image", {
-                            type: "validate",
-                            message: error.message,
-                          });
-                        }}
-                        onClientUploadComplete={(res) => {
-                          setValue("image", res[0].url);
-
-                          toast.dismiss();
-                          toast.success("Profile picture uploaded");
-                          setOpenPhoto(false);
-                        }}
-                        config={{ mode: "auto" }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                setError={setError}
+                setValue={setValue}
+                onSuccess={() => setOpenPhoto(false)}
+                endpoint="photo"
               />
             </ResponsiveModal>
           </div>
@@ -225,9 +255,7 @@ export default function ProfileDashboard({
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => {
-                    openModal(shareData, data.name);
-                  }}
+                  onClick={handleShare}
                   variant="ghost"
                   size="icon"
                 >
@@ -250,7 +278,7 @@ export default function ProfileDashboard({
               <Button
                 onClick={(e) => {
                   e.preventDefault();
-                  openModal(shareData, data.name);
+                  handleShare();
                 }}
                 variant="outline"
                 className="hidden items-center gap-1.5 md:flex"
@@ -259,11 +287,6 @@ export default function ProfileDashboard({
                 <span>Share</span>
               </Button>
             </div>
-          </div>
-          <div className="space-y-2">
-            {/* <div className="hidden items-center gap-1.5 text-nowrap text-xs md:flex md:text-sm">
-              Customize url <IconArrowRight className="size-3 md:size-4" />
-            </div> */}
           </div>
         </div>
 
@@ -290,11 +313,7 @@ export default function ProfileDashboard({
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   className={buttonVariants({ variant: "destructive" })}
-                  onClick={() => {
-                    if (data.id) {
-                      deleteExistingCard({ id: data.id });
-                    }
-                  }}
+                  onClick={handleDelete}
                 >
                   Yes, I&apos;m sure
                 </AlertDialogAction>
