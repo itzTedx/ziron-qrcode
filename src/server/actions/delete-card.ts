@@ -20,7 +20,7 @@ export const deleteCard = action
       const user = await db
         .delete(persons)
         .where(eq(persons.id, id))
-        .returning();
+        .returning({ name: persons.name });
 
       await db.delete(links).where(eq(links.personId, id));
       await db.delete(phones).where(eq(phones.id, id));
