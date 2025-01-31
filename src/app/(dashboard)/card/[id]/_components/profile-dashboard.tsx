@@ -301,18 +301,6 @@ export default function ProfileDashboard({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          {/* <Button
-            variant="outline"
-            className="border-destructive text-destructive"
-            onClick={(e) => {
-              e.preventDefault();
-              if (data.id) {
-                deleteExistingCard({ id: data.id });
-              }
-            }}
-          >
-            Delete
-          </Button> */}
 
           <Button type="submit" disabled={loading}>
             Save Changes

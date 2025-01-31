@@ -24,8 +24,6 @@ export default async function Home({
 }) {
   const { companies } = await getCompanies();
 
-  console.log("Companies: ", companies);
-
   if (!companies || companies?.length === 0)
     return (
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background py-9">

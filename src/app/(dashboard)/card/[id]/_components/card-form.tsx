@@ -138,6 +138,7 @@ export default function CardCustomizeForm({
             }))
           : undefined,
         bio: initialData.bio || undefined,
+        mapUrl: initialData.mapUrl || undefined,
         links: initialData.links
           ? initialData.links.map((link) => ({
               ...link,

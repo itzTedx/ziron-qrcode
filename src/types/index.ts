@@ -3,6 +3,7 @@ export interface Person {
   emails?: Email[];
   phones?: Phone[];
   address?: string | null;
+  mapUrl?: string | null;
   bio?: string | null;
   companyId: number;
   company?: Company | null;
