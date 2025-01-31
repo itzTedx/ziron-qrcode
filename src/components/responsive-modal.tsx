@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -15,6 +16,7 @@ import {
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -27,6 +29,7 @@ interface Props {
   trigger?: React.ReactNode;
   closeModal?: (value: boolean) => void;
   title: string;
+  description?: string;
   className?: string;
 }
 
@@ -38,6 +41,7 @@ export const ResponsiveModal = ({
   trigger,
   asChild,
   title,
+  description,
 }: Props) => {
   const { isMobile } = useMediaQuery();
 
@@ -48,6 +52,9 @@ export const ResponsiveModal = ({
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
+            {description && (
+              <DrawerDescription className="sr-only">{title}</DrawerDescription>
+            )}
           </DrawerHeader>
           {children}
         </DrawerContent>
@@ -61,6 +68,9 @@ export const ResponsiveModal = ({
       <DialogContent className={cn("p-0", "max-w-xl", className)}>
         <DialogHeader className="border-b p-6">
           <DialogTitle>{title}</DialogTitle>
+          {description && (
+            <DialogDescription className="sr-only">{title}</DialogDescription>
+          )}
         </DialogHeader>
         {children}
       </DialogContent>

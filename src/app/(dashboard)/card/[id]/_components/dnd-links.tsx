@@ -7,17 +7,10 @@ import { IconGripVertical, IconPlus, IconTrash } from "@tabler/icons-react";
 import { Reorder } from "framer-motion";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
-import { AlertDialogHeader } from "@/components/ui/alert-dialog";
+import { ResponsiveModal } from "@/components/responsive-modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { DialogClose } from "@/components/ui/dialog";
 import {
   FormControl,
   FormField,
@@ -26,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LINKS } from "@/constants";
+import { Link } from "@/types";
 import { zCardSchema } from "@/types/card-schema";
 
 interface Props {
@@ -54,14 +48,14 @@ const LinkItem = memo(
     const isGeneral = data.category === "General";
 
     return (
-      <Card className="flex items-center justify-between gap-2 p-4">
+      <Card className="flex items-center justify-between gap-2 p-3 md:p-4">
         {isGeneral ? (
-          <div className="grid grid-cols-5 items-center gap-4">
+          <div className="grid w-full items-center gap-4 md:grid-cols-5">
             <FormField
               control={form.control}
               name={`links.${index}.label`}
               render={({ field }) => (
-                <FormItem className="col-span-2 flex gap-3 space-y-0">
+                <FormItem className="flex gap-2 space-y-0 md:col-span-2 md:gap-3">
                   <Image
                     src={data.icon}
                     height={40}
@@ -86,7 +80,7 @@ const LinkItem = memo(
               key={data.id}
               name={`links.${index}.url`}
               render={({ field }) => (
-                <FormItem className="col-span-3">
+                <FormItem className="md:col-span-3">
                   <FormControl>
                     <Input
                       {...field}
@@ -100,7 +94,7 @@ const LinkItem = memo(
             />
           </div>
         ) : (
-          <div className="flex flex-1 gap-3">
+          <div className="flex flex-1 gap-2 md:gap-3">
             <Image src={data.icon} height={40} width={40} alt="" />
             <FormField
               control={form.control}
@@ -125,22 +119,20 @@ const LinkItem = memo(
         <Button
           type="button"
           variant="ghost"
-          className="text-destructive hover:text-destructive"
-          size="icon"
+          className="shrink-0 text-destructive hover:text-destructive"
+          size="smallIcon"
           onClick={() => onRemove(index)}
         >
           <IconTrash size={16} />
         </Button>
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon"
           title="Drag to Re-Order"
           className="text-gray-400 hover:bg-transparent hover:text-foreground"
           onClick={(e) => e.preventDefault()}
         >
           <IconGripVertical size={16} />
-        </Button>
+        </button>
       </Card>
     );
   }
@@ -229,6 +221,18 @@ export const DndLinks = ({ loading, open, setOpen }: Props) => {
     []
   );
 
+  const handleLinkAdd = (link: Link, category: string) => {
+    append({
+      id: link.id,
+      label: link.label,
+      url: link.url,
+      icon: link.icon,
+      category: category,
+    });
+
+    setOpen(false);
+  };
+
   return (
     <>
       <div className="flex flex-col gap-8 pt-3" ref={dragRef}>
@@ -264,64 +268,56 @@ export const DndLinks = ({ loading, open, setOpen }: Props) => {
           ))}
         </Reorder.Group>
       </div>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
+      <ResponsiveModal
+        isOpen={open}
+        closeModal={setOpen}
+        title={"Add Link"}
+        className="max-w-2xl"
+        asChild
+        trigger={
           <Button type="button" variant="outline" className="h-12 w-full">
             <IconPlus size={16} className="mr-2" /> Add
           </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-2xl p-0">
-          <AlertDialogHeader className="border-b p-6">
-            <DialogTitle>Add Link</DialogTitle>
-            <DialogDescription className="sr-only">
-              Add Social or custom links to digital card
-            </DialogDescription>
-          </AlertDialogHeader>
-          <div className="p-6 pb-6 pt-0">
-            {LINKS.map((item, i) => (
-              <div key={i} className="py-3">
-                <h4 className="pb-2 text-sm font-medium text-gray-700">
-                  {item.label}
-                </h4>
+        }
+      >
+        <div className="p-6 pb-6 pt-0">
+          {LINKS.map((item, i) => (
+            <div key={i} className="py-3">
+              <h4 className="pb-2 text-sm font-medium text-gray-700">
+                {item.label}
+              </h4>
 
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-x-6">
-                  {item.links.map((link, i) => (
-                    <div
-                      className="flex items-center justify-between border-b py-3"
-                      key={`addLink-${i}-${link.label}`}
-                    >
-                      <div className="flex items-center gap-4 font-medium">
-                        <div className="relative size-8">
-                          <Image src={link.icon} fill alt="" sizes="10vw" />
-                        </div>
-
-                        <p>{link.label}</p>
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-x-6">
+                {item.links.map((link, i) => (
+                  <div
+                    className="flex items-center justify-between border-b py-3"
+                    key={`addLink-${i}-${link.label}`}
+                  >
+                    <div className="flex items-center gap-4 font-medium">
+                      <div className="relative size-8">
+                        <Image src={link.icon} fill alt="" sizes="10vw" />
                       </div>
-                      <DialogClose asChild>
-                        <Button
-                          variant="ghost"
-                          onClick={() =>
-                            handleAppend({
-                              category: item.label,
-                              label: link.label,
-                              url: link.url,
-                              icon: link.icon,
-                            })
-                          }
-                          className="h-8 gap-2 px-2 font-semibold text-primary hover:text-blue-800"
-                        >
-                          <IconPlus className="size-3 stroke-[2.5]" />
-                          Add
-                        </Button>
-                      </DialogClose>
+
+                      <p>{link.label}</p>
                     </div>
-                  ))}
-                </div>
+                    <DialogClose asChild>
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleLinkAdd(link, item.label)}
+                        className="h-8 gap-2 px-2 font-semibold text-primary hover:text-blue-800"
+                      >
+                        <IconPlus className="size-3 stroke-[2.5]" />
+                        Add
+                      </Button>
+                    </DialogClose>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
+            </div>
+          ))}
+        </div>
+      </ResponsiveModal>
+
       <section>
         <div className="flex items-center justify-between">
           <h3>Suggestions</h3>
