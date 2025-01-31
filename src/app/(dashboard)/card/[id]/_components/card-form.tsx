@@ -15,8 +15,6 @@ import {
   IconGripVertical,
   IconPlus,
   IconTrash,
-  IconUpload,
-  IconUser,
   IconX,
 } from "@tabler/icons-react";
 import { Reorder } from "framer-motion";
@@ -71,7 +69,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { LINKS } from "@/constants";
 import { useDebounce } from "@/hooks/use-debounce";
-import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
+import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
 import { useCompanyFormModal } from "@/store/use-company-form-modal";
@@ -80,6 +78,8 @@ import { Company, Person } from "@/types";
 import { cardSchema } from "@/types/card-schema";
 import { removeExtension } from "@/utils/remove-extension";
 
+import { ActionButtons } from "./buttons/action-buttons";
+import { ImageUploadButton } from "./buttons/image-upload-button";
 import { Preview } from "./preview";
 import ProfileDashboard from "./profile-dashboard";
 import { TabsComp } from "./tabs";
@@ -255,76 +255,12 @@ export default function CardCustomizeForm({
                 value="information"
                 className="grid grid-cols-2 gap-4"
               >
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({}) => (
-                    <FormItem className="col-span-2">
-                      <FormControl>
-                        {!isEditMode && (
-                          <div className="flex gap-3 pt-3">
-                            <div className="relative grid size-20 flex-shrink-0 place-items-center overflow-hidden rounded-full border bg-gray-100">
-                              {cardData.image ? (
-                                <Image
-                                  src={cardData.image}
-                                  alt=""
-                                  fill
-                                  sizes="100vw"
-                                  className="object-cover"
-                                />
-                              ) : (
-                                <IconUser className="size-8 text-muted-foreground/60" />
-                              )}
-                            </div>
-                            <UploadButton
-                              endpoint="photo"
-                              className="cursor-pointer transition-all duration-500 ease-in-out ut-button:h-9 ut-button:w-fit ut-button:border ut-button:bg-transparent ut-button:px-4 ut-button:text-foreground ut-allowed-content:hidden ut-button:ut-uploading:after:bg-secondary"
-                              onUploadError={(error) => {
-                                form.setError("image", {
-                                  type: "validate",
-                                  message: error.message,
-                                });
-                              }}
-                              onUploadBegin={() => {
-                                setLoading(true);
-                                toast.loading("Uploading photo");
-                              }}
-                              onClientUploadComplete={(res) => {
-                                setLoading(false);
-                                form.setValue("image", res[0].url);
-                                toast.dismiss();
-                                toast.success("Photo Uploaded");
-                              }}
-                              content={{
-                                button({ ready, isUploading }) {
-                                  if (ready)
-                                    if (isUploading)
-                                      return (
-                                        <div className="text-sm">
-                                          Uploading...
-                                        </div>
-                                      );
-                                  return (
-                                    <div className="flex items-center gap-1.5 text-nowrap text-sm font-medium">
-                                      {cardData.image ? (
-                                        <IconEdit className="size-4" />
-                                      ) : (
-                                        <IconUpload className="size-4" />
-                                      )}
-                                      {cardData.image ? "Edit" : "Upload Photo"}
-                                    </div>
-                                  );
-                                },
-                              }}
-                            />
-                          </div>
-                        )}
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                <ImageUploadButton
+                  isEditMode={isEditMode}
+                  cardData={cardData}
+                  setLoading={setLoading}
                 />
+
                 <FormField
                   control={form.control}
                   name="name"
@@ -1287,17 +1223,10 @@ export default function CardCustomizeForm({
               company={data}
             />
           </div>
-          <div className="fixed bottom-0 w-full bg-background/50 px-6 py-4 backdrop-blur-md md:hidden">
-            {!isEditMode && (
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={form.formState.isSubmitting || loading}
-              >
-                Create Card
-              </Button>
-            )}
-          </div>
+          <ActionButtons
+            isEditMode={isEditMode}
+            disabled={form.formState.isSubmitting || loading}
+          />
         </form>
       </Form>
     </main>
