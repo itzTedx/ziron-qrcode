@@ -78,6 +78,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { LINKS } from "@/constants";
+import { useDebounce } from "@/hooks/use-debounce";
 import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { createCard } from "@/server/actions/create-card";
@@ -106,6 +107,7 @@ export default function CardCustomizeForm({
   const [open, setOpen] = useState(false);
   const [openPopover, setOpenPopover] = useState(false);
   const [active, setActive] = useState(0);
+
   const [tab, setTab] = useQueryState("tab");
 
   const dragRef = useRef<HTMLDivElement>(null);
@@ -144,8 +146,8 @@ export default function CardCustomizeForm({
           : undefined,
       }
     : {
-        emails: [{ email: "" }],
-        phones: [{ phone: "" }],
+        emails: [{ email: "", label: "primary" }],
+        phones: [{ phone: "", label: "primary" }],
         links: undefined,
         template: "default",
       };
@@ -162,6 +164,7 @@ export default function CardCustomizeForm({
   const formValues = useWatch({
     control: form.control,
   });
+  const debouncedValue = useDebounce(formValues, 1000);
 
   const { fields, append, remove, move } = useFieldArray({
     name: "links",
@@ -192,11 +195,6 @@ export default function CardCustomizeForm({
     }
   }, [searchParams, form]);
 
-  // Set focus on the name field when the component mounts
-  useEffect(() => {
-    form.setFocus("name"); // Set focus on the name field
-  }, [form]);
-
   const { execute } = useAction(createCard, {
     onExecute: () => {
       toast.loading("Loading");
@@ -219,15 +217,18 @@ export default function CardCustomizeForm({
     },
   });
 
+  // console.log(debouncedValue.emails, debouncedValue.phones);
+
   function onSubmit(values: z.infer<typeof cardSchema>) {
-    // const validation = cardSchema.safeParse(values);
+    const validation = cardSchema.safeParse(values);
+    console.log(validation);
 
     execute(values);
   }
 
   const name = form.getValues("name");
   const placeholderPhoto = name
-    ? `https://ui-avatars.com/api/?background=random&name=${name}&size=128`
+    ? `https://ui-avatars.com/api/?background=random&name=${debouncedValue.name}&size=128`
     : null;
   const cover = form.getValues("cover");
 
@@ -239,20 +240,17 @@ export default function CardCustomizeForm({
       ...formValues,
       id: companyId,
 
-      name: formValues.name || "", // Ensure name is always a string
+      name: formValues.name || "",
       image: formValues.image || placeholderPhoto,
       company: companyData,
       links: formValues.links?.map((link) => ({
         ...link,
         id: link.id ? parseInt(link.id.toString()) : undefined,
       })),
-    } as Person; // Assert the type as Person
+    } as Person;
   }, [formValues, data, placeholderPhoto]);
 
   const handleTabClick = (tab: string) => {
-    // const newSearchParams = new URLSearchParams(searchParams.toString());
-    // newSearchParams.set("tab", tab);
-    // router.push(`?${newSearchParams.toString()}`);
     setTab(tab);
   };
 
@@ -382,25 +380,48 @@ export default function CardCustomizeForm({
                 />
                 <div className="col-span-2 sm:col-span-1">
                   {emailFields.map((field, index) => (
-                    <FormField
-                      control={form.control}
-                      key={field.id}
-                      name={`emails.${index}.email`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={cn(index !== 0 && "sr-only")}>
-                            Email
-                          </FormLabel>
+                    <div className="flex w-full items-end" key={field.id}>
+                      <FormField
+                        control={form.control}
+                        name={`emails.${index}.email`}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <div className="flex items-center justify-between">
+                              <FormLabel
+                                className={cn(index !== 0 && "sr-only")}
+                              >
+                                Email
+                              </FormLabel>
+                              <FormMessage />
+                            </div>
 
-                          <FormControl>
-                            <div className="flex">
+                            <FormControl className="w-full">
                               <Input
                                 type="email"
                                 {...field}
                                 placeholder="name@company.com"
-                                className={cn("rounded-e-none border-r-0")}
+                                className={cn(
+                                  "w-full rounded-e-none border-r-0"
+                                )}
                               />
-                              <Select defaultValue="work">
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`emails.${index}.label`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={"sr-only"}>
+                              Email Label
+                            </FormLabel>
+
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
                                 <SelectTrigger
                                   className={cn(
                                     "w-24 shrink-0 rounded-none text-xs font-medium text-muted-foreground",
@@ -411,39 +432,36 @@ export default function CardCustomizeForm({
                                 >
                                   <SelectValue placeholder="Label" />
                                 </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="primary">
-                                    Primary
-                                  </SelectItem>
-                                  <SelectItem value="work">Work</SelectItem>
-                                  <SelectItem value="personal">
-                                    Personal
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="primary">Primary</SelectItem>
+                                <SelectItem value="work">Work</SelectItem>
+                                <SelectItem value="personal">
+                                  Personal
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormItem>
+                        )}
+                      />
 
-                              <Button
-                                size="icon"
-                                variant="outline"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  removeEmail(index);
-                                }}
-                                className={cn(
-                                  "shrink-0",
-                                  emailFields.length > 1
-                                    ? "flex rounded-s-none"
-                                    : "hidden"
-                                )}
-                              >
-                                <IconX className="size-4 text-muted-foreground" />
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          removeEmail(index);
+                        }}
+                        className={cn(
+                          "shrink-0",
+                          emailFields.length > 1
+                            ? "flex rounded-s-none"
+                            : "hidden"
+                        )}
+                      >
+                        <IconX className="size-4 text-muted-foreground" />
+                      </Button>
+                    </div>
                   ))}
 
                   <Button
@@ -452,14 +470,18 @@ export default function CardCustomizeForm({
                     size="sm"
                     className="px-0"
                     onClick={() => {
-                      const lastEmailField =
-                        emailFields[emailFields.length - 1];
-                      if (lastEmailField && !lastEmailField.email) {
-                        // Do not add a new phone field if the last one is empty
-                        toast.error(
-                          "Please add a email before adding another."
-                        );
-                        return;
+                      if (cardData.emails) {
+                        const lastEmailField =
+                          cardData.emails[emailFields.length - 1];
+
+                        console.log(lastEmailField);
+                        if (lastEmailField && !lastEmailField.email) {
+                          // Do not add a new phone field if the last one is empty
+                          toast.error(
+                            "Please add a email before adding another."
+                          );
+                          return;
+                        }
                       }
                       appendEmail({ email: "", label: "primary" });
                     }}
@@ -469,7 +491,7 @@ export default function CardCustomizeForm({
                   </Button>
                 </div>
                 <div className="col-span-2 sm:col-span-1">
-                  {phoneFields.map((field, index) => (
+                  {/* {phoneFields.map((field, index) => (
                     <FormField
                       control={form.control}
                       key={field.id}
@@ -533,6 +555,92 @@ export default function CardCustomizeForm({
                         </FormItem>
                       )}
                     />
+                  ))} */}
+
+                  {phoneFields.map((field, index) => (
+                    <div className="flex w-full items-end" key={field.id}>
+                      <FormField
+                        control={form.control}
+                        name={`phones.${index}.phone`}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <div className="flex items-center justify-between">
+                              <FormLabel
+                                className={cn(index !== 0 && "sr-only")}
+                              >
+                                Phone
+                              </FormLabel>
+                              <FormMessage />
+                            </div>
+                            <FormControl className="w-full">
+                              <Input
+                                type="tel"
+                                {...field}
+                                placeholder="+971 98 765 4321"
+                                className={cn(
+                                  "w-full rounded-e-none border-r-0"
+                                )}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`phones.${index}.label`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={"sr-only"}>
+                              Phone Label
+                            </FormLabel>
+
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger
+                                  tabIndex={-1}
+                                  className={cn(
+                                    "w-24 shrink-0 rounded-none text-xs font-medium text-muted-foreground",
+                                    emailFields.length === 1
+                                      ? "rounded-e-lg border-r"
+                                      : "border-r-0"
+                                  )}
+                                >
+                                  <SelectValue placeholder="Label" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="primary">Primary</SelectItem>
+                                <SelectItem value="work">Work</SelectItem>
+                                <SelectItem value="personal">
+                                  Personal
+                                </SelectItem>
+                                <SelectItem value="home">Home</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          removePhone(index);
+                        }}
+                        className={cn(
+                          "shrink-0",
+                          emailFields.length > 1
+                            ? "flex rounded-s-none"
+                            : "hidden"
+                        )}
+                      >
+                        <IconX className="size-4 text-muted-foreground" />
+                      </Button>
+                    </div>
                   ))}
 
                   <Button
@@ -542,14 +650,18 @@ export default function CardCustomizeForm({
                     className="px-0"
                     tabIndex={-1}
                     onClick={() => {
-                      const lastPhoneField =
-                        phoneFields[phoneFields.length - 1];
-                      if (lastPhoneField && !lastPhoneField.phone) {
-                        // Do not add a new phone field if the last one is empty
-                        toast.error(
-                          "Please add a phone number before adding another."
-                        );
-                        return;
+                      if (cardData.phones) {
+                        const lastPhoneField =
+                          cardData.phones[phoneFields.length - 1];
+
+                        console.log(lastPhoneField);
+                        if (lastPhoneField && !lastPhoneField.phone) {
+                          // Do not add a new phone field if the last one is empty
+                          toast.error(
+                            "Please add a email before adding another."
+                          );
+                          return;
+                        }
                       }
                       appendPhone({ phone: "", label: "primary" });
                     }}
@@ -591,7 +703,7 @@ export default function CardCustomizeForm({
                   control={form.control}
                   name="companyId"
                   render={({ field }) => (
-                    <FormItem className="">
+                    <FormItem>
                       <FormLabel>Company</FormLabel>
 
                       <Popover open={openPopover} onOpenChange={setOpenPopover}>

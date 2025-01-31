@@ -5,7 +5,7 @@ export const cardSchema = z.object({
   name: z
     .string()
     .min(2, { message: "Please enter full name" })
-    .max(100, { message: "Seriously this much long?" }),
+    .max(256, { message: "Seriously this much long?" }),
   phones: z
     .array(
       z.object({
