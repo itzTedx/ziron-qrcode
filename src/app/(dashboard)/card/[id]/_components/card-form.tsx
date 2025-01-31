@@ -21,7 +21,6 @@ import {
 } from "@tabler/icons-react";
 import { Reorder } from "framer-motion";
 import { useAction } from "next-safe-action/hooks";
-import { useQueryState } from "nuqs";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -68,7 +67,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { LINKS } from "@/constants";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -83,6 +82,7 @@ import { removeExtension } from "@/utils/remove-extension";
 
 import { Preview } from "./preview";
 import ProfileDashboard from "./profile-dashboard";
+import { TabsComp } from "./tabs";
 import { ThemeSelector } from "./theme-selector";
 
 interface CardCustomizeProps {
@@ -103,8 +103,6 @@ export default function CardCustomizeForm({
   const [openPopover, setOpenPopover] = useState(false);
   const [active, setActive] = useState(0);
 
-  const [tab, setTab] = useQueryState("tab");
-
   const dragRef = useRef<HTMLDivElement>(null);
 
   const openCompanyModal = useCompanyFormModal((state) => state.openModal);
@@ -112,8 +110,6 @@ export default function CardCustomizeForm({
 
   const searchParams = useSearchParams();
   const router = useRouter();
-
-  const defaultTab = tab || "information";
 
   const defaultValues = initialData
     ? {
@@ -236,10 +232,6 @@ export default function CardCustomizeForm({
     } as Person;
   }, [formValues, data, placeholderPhoto]);
 
-  const handleTabClick = (tab: string) => {
-    setTab(tab);
-  };
-
   function onSubmit(values: z.infer<typeof cardSchema>) {
     const validation = cardSchema.safeParse(values);
     console.log(validation);
@@ -258,31 +250,7 @@ export default function CardCustomizeForm({
             <ProfileDashboard data={cardData} loading={loading} />
           )}
           <div className="container grid max-w-7xl gap-8 py-3 pb-9 md:grid-cols-12 md:py-9">
-            <Tabs
-              defaultValue={defaultTab}
-              className="col-span-8 w-full items-start"
-            >
-              <TabsList className="w-full">
-                <TabsTrigger
-                  value="information"
-                  onClick={() => handleTabClick("information")}
-                >
-                  Information
-                </TabsTrigger>
-                <TabsTrigger
-                  value="links"
-                  onClick={() => handleTabClick("links")}
-                >
-                  Links
-                </TabsTrigger>
-                <TabsTrigger
-                  value="template"
-                  onClick={() => handleTabClick("template")}
-                >
-                  Template
-                </TabsTrigger>
-              </TabsList>
-
+            <TabsComp>
               <TabsContent
                 value="information"
                 className="grid grid-cols-2 gap-4"
@@ -1310,7 +1278,7 @@ export default function CardCustomizeForm({
                   Create Card
                 </Button>
               )}
-            </Tabs>
+            </TabsComp>
 
             <Preview
               closeModal={onOpenChange}
@@ -1320,26 +1288,7 @@ export default function CardCustomizeForm({
             />
           </div>
           <div className="fixed bottom-0 w-full bg-background/50 px-6 py-4 backdrop-blur-md md:hidden">
-            {isEditMode ? (
-              <div className="flex gap-3">
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={form.formState.isSubmitting || loading}
-                >
-                  Save Changes
-                </Button>
-                <Button
-                  type="submit"
-                  variant="destructive"
-                  className="flex-shrink-0"
-                  size="icon"
-                  disabled={form.formState.isSubmitting || loading}
-                >
-                  <IconTrash className="size-4" />
-                </Button>
-              </div>
-            ) : (
+            {!isEditMode && (
               <Button
                 type="submit"
                 className="w-full"
