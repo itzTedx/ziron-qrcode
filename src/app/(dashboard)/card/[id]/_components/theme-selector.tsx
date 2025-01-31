@@ -39,13 +39,15 @@ export const ThemeSelector = ({ onChange, value }: Props) => {
                 value={item.value}
                 className="peer sr-only after:absolute after:inset-0"
               />
-              <div className="relative aspect-[7/15] h-60 shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-input p-1 shadow-sm shadow-black/5 outline-offset-2 transition-colors peer-[:focus-visible]:outline peer-[:focus-visible]:outline-2 peer-[:focus-visible]:outline-ring/70 peer-data-[disabled]:cursor-not-allowed peer-data-[state=checked]:border-ring peer-data-[state=checked]:bg-accent peer-data-[disabled]:opacity-50 md:h-96 md:p-2 lg:h-[30rem]">
-                <Image
-                  src={item.image}
-                  alt={item.label}
-                  fill
-                  className="rounded-xl object-cover"
-                />
+              <div className="relative shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-input p-1 shadow-sm shadow-black/5 outline-offset-2 transition-colors peer-[:focus-visible]:outline peer-[:focus-visible]:outline-2 peer-[:focus-visible]:outline-ring/70 peer-data-[disabled]:cursor-not-allowed peer-data-[state=checked]:border-ring peer-data-[state=checked]:bg-accent peer-data-[disabled]:opacity-50 md:p-2">
+                <div className="relative aspect-[7/15] h-60 md:h-96 lg:h-[30rem]">
+                  <Image
+                    src={item.image}
+                    alt={item.label}
+                    fill
+                    className="rounded-xl object-cover"
+                  />
+                </div>
               </div>
 
               <span className="group mt-2 flex items-center justify-center gap-2 peer-data-[state=unchecked]:text-muted-foreground/70">
