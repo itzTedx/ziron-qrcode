@@ -1,8 +1,10 @@
 "use server";
 
+import { unstable_cache as cache } from "next/cache";
+
 import { db } from "../db";
 
-export async function getCards() {
+export const getCards = cache(async () => {
   try {
     const cards = await db.query.persons.findMany({
       with: {
@@ -17,4 +19,4 @@ export async function getCards() {
   } catch (error) {
     return { error: `Failed to get card details${error}` };
   }
-}
+}, ["card"]);

@@ -107,7 +107,7 @@ export const createCard = action
               }))
             );
           }
-          revalidateTag(`card-${editedCard[0].slug}`);
+          revalidateTag("card");
           revalidatePath("/");
 
           return {
