@@ -66,7 +66,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -89,6 +88,7 @@ import { cardSchema } from "@/types/card-schema";
 import { removeExtension } from "@/utils/remove-extension";
 
 import ProfileDashboard from "./profile-dashboard";
+import { ThemeSelector } from "./theme-selector";
 
 interface CardCustomizeProps {
   data: Company[];
@@ -1236,98 +1236,19 @@ export default function CardCustomizeForm({
                 value="template"
                 className="flex flex-col gap-4 overflow-hidden"
               >
-                <ScrollArea className="relative flex w-[calc(100svw-1rem)] gap-4 overflow-x-clip px-3 sm:w-auto md:gap-8">
+                <ScrollArea className="relative flex w-[calc(100svw-2rem)] gap-4 overflow-x-clip px-3 sm:w-auto md:gap-8">
                   <ScrollBar orientation="horizontal" />
 
                   <FormField
                     control={form.control}
                     name="template"
                     render={({ field }) => (
-                      <FormItem className="space-y-3 pb-6">
-                        <FormLabel>Select Theme</FormLabel>
+                      <FormItem className="shrink-0 space-y-3 pb-6">
                         <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="flex gap-9"
-                          >
-                            <FormItem className="flex flex-col items-center space-y-3">
-                              <Image
-                                src="/images/default-template.png"
-                                height={552}
-                                width={256}
-                                alt=""
-                                className="rounded-xl"
-                              />
-
-                              <div className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem
-                                    value="default"
-                                    id="default"
-                                    aria-label="Default Template"
-                                    className="size-5 border-primary shadow-none data-[state=checked]:border-primary data-[state=checked]:bg-primary"
-                                  />
-                                </FormControl>
-                                <FormLabel
-                                  className="font-normal"
-                                  htmlFor="default"
-                                >
-                                  Default
-                                </FormLabel>
-                              </div>
-                            </FormItem>
-                            <FormItem className="flex flex-col items-center space-y-3">
-                              <Image
-                                src="/images/modern-template.png"
-                                height={552}
-                                width={256}
-                                alt=""
-                                className="rounded-xl"
-                              />
-                              <div className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem
-                                    value="modern"
-                                    id="modern"
-                                    aria-label="Modern template"
-                                    className="size-5 border-primary shadow-none data-[state=checked]:border-primary data-[state=checked]:bg-primary"
-                                  />
-                                </FormControl>
-                                <FormLabel
-                                  className="font-normal"
-                                  htmlFor="modern"
-                                >
-                                  Modern
-                                </FormLabel>
-                              </div>
-                            </FormItem>
-                            <FormItem className="flex flex-col items-center space-y-3">
-                              <Image
-                                src="/images/card-template.png"
-                                height={552}
-                                width={256}
-                                alt=""
-                                className="rounded-xl"
-                              />
-                              <div className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem
-                                    value="card"
-                                    id="card"
-                                    aria-label="card template"
-                                    className="size-5 border-primary shadow-none data-[state=checked]:border-primary data-[state=checked]:bg-primary"
-                                  />
-                                </FormControl>
-                                <FormLabel
-                                  className="font-normal"
-                                  htmlFor="card"
-                                >
-                                  Card
-                                </FormLabel>
-                              </div>
-                            </FormItem>
-                          </RadioGroup>
+                          <ThemeSelector
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
