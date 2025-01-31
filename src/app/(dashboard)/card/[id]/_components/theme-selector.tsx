@@ -54,7 +54,7 @@ export const ThemeSelector = ({ onChange, value }: Props) => {
             </div>
           </div>
 
-          <span className="group mt-2 flex items-center justify-center gap-2 peer-data-[state=unchecked]:text-muted-foreground/70">
+          <span className="group mt-2 flex items-center justify-center gap-2">
             <div className="flex aspect-square size-5 items-center justify-center rounded-full border border-primary text-background shadow-none ring-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 disabled:cursor-not-allowed disabled:opacity-50 peer-data-[state=checked]:group-[]:border-primary peer-data-[state=checked]:group-[]:bg-primary peer-data-[state=checked]:group-[]:ring-1 peer-data-[state=checked]:group-[]:ring-foreground">
               <IconCheck
                 size={16}

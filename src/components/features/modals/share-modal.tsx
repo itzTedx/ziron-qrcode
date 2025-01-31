@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 import { IconCheck, IconChevronRight, IconCopy } from "@tabler/icons-react";
 import { toast } from "sonner";
@@ -18,12 +18,38 @@ import { Icons } from "../../assets/icons";
 import QRCodeDownload from "../../qr-code-download";
 import { Button } from "../../ui/button";
 
+const CopyButton = memo(({ copied }: { copied: boolean }) => (
+  <Button
+    className="text-gray-600"
+    size="smallIcon"
+    type="button"
+    variant="ghost"
+  >
+    {copied ? (
+      <IconCheck className="size-4" />
+    ) : (
+      <IconCopy className="size-4" />
+    )}
+  </Button>
+));
+CopyButton.displayName = "CopyButton";
+
+const ViewInBrowserButton = memo(() => (
+  <Button className="text-gray-600" size="smallIcon" variant="ghost">
+    <IconChevronRight className="size-4" />
+  </Button>
+));
+ViewInBrowserButton.displayName = "ViewInBrowserButton";
+
 export default function ShareModal() {
   const [copied, setCopied] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const { isOpen, data, closeModal } = useShareModalStore();
 
-  const copyLink = async () => {
+  const copyLink = useCallback(async () => {
+    if (isLoading || copied) return;
+
+    setIsLoading(true);
     try {
       await navigator.clipboard.writeText(data.url);
       toast.success("Link Copied!");
@@ -31,8 +57,11 @@ export default function ShareModal() {
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy text: ", err);
+      toast.error("Failed to copy link");
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [data.url, copied, isLoading]);
 
   return (
     <ResponsiveModal
@@ -45,8 +74,9 @@ export default function ShareModal() {
         <QRCodeDownload data={data} />
         <Separator />
         <button
-          className="flex w-full items-center justify-between gap-6 rounded-xl p-3 transition-colors hover:bg-gray-50"
+          className="flex w-full items-center justify-between gap-6 rounded-xl p-3 transition-colors hover:bg-gray-50 disabled:opacity-50"
           onClick={copyLink}
+          disabled={isLoading}
         >
           <div className="flex cursor-pointer items-center gap-4">
             <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-full border border-secondary bg-purple-100 text-secondary">
@@ -61,19 +91,7 @@ export default function ShareModal() {
               </p>
             </div>
           </div>
-          <Button
-            // onClick={copyLink}
-            className="text-gray-600"
-            size="smallIcon"
-            type="button"
-            variant="ghost"
-          >
-            {copied ? (
-              <IconCheck className="size-4" />
-            ) : (
-              <IconCopy className="size-4" />
-            )}
-          </Button>
+          <CopyButton copied={copied} />
         </button>
 
         <Link
@@ -94,9 +112,7 @@ export default function ShareModal() {
               />
             </div>
           </div>
-          <Button className="text-gray-600" size="smallIcon" variant="ghost">
-            <IconChevronRight className="size-4" />
-          </Button>
+          <ViewInBrowserButton />
         </Link>
       </div>
     </ResponsiveModal>

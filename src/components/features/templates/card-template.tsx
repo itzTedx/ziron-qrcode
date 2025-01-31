@@ -29,7 +29,8 @@ export default function CardTemplate({
 
   const companyData = company?.find((c) => c.id === card.companyId);
 
-  const textColor = getTextColorByBackground(card.btnColor || "#4938ff");
+  const textColor = getTextColorByBackground(card.theme || "#4938ff");
+  const btnTextColor = getTextColorByBackground(card.btnColor || "#4938ff");
 
   const theme = card.theme || "#4938ff";
   const btnColor = card.btnColor || "#4938ff";
@@ -137,21 +138,21 @@ export default function CardTemplate({
               </div>
             )}
 
-            {card.bio && (
-              <p className="w-full text-balance text-[10px] @sm:text-xs">
-                {card.bio}
-              </p>
-            )}
             <div className="w-full">
               <SaveContactButton
                 data={card}
                 imageBase64={imageBase64URI}
                 style={{
-                  backgroundColor: theme,
-                  color: textColor,
+                  backgroundColor: btnColor,
+                  color: btnTextColor,
                 }}
               />
             </div>
+            {card.bio && (
+              <p className="w-full text-balance text-[10px] @sm:text-xs">
+                {card.bio}
+              </p>
+            )}
           </section>
         </header>
 
