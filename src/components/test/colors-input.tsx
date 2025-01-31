@@ -14,9 +14,11 @@ import {
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
+import { Button } from "../ui/button";
 import {
   Drawer,
   DrawerContent,
+  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -131,7 +133,11 @@ export default function ColorsInput({ value = "#4938ff", onChange }: Props) {
         }}
       >
         <MemoizedResponsiveInput value={color}>
-          <HexColorPicker color={color} onChange={onColorChange} />
+          <HexColorPicker
+            color={color}
+            onChange={onColorChange}
+            className="!size-64"
+          />
         </MemoizedResponsiveInput>
 
         <Input
@@ -158,11 +164,14 @@ const ResponsiveInput = memo(
               backgroundColor: value,
             }}
           />
-          <DrawerContent>
+          <DrawerContent className="items-center gap-4">
             <DrawerHeader>
               <DrawerTitle>Customize Color</DrawerTitle>
             </DrawerHeader>
             {children}
+            <DrawerFooter className="w-full">
+              <Button>Save</Button>
+            </DrawerFooter>
           </DrawerContent>
         </Drawer>
       );
