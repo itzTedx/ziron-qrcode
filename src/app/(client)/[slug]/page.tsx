@@ -8,7 +8,6 @@ import { getCards } from "@/server/actions/get-cards";
 import { imageToBase64 } from "@/utils/get-image-to-base64";
 
 export const revalidate = 60;
-export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const { cards } = await getCards();

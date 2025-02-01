@@ -107,7 +107,7 @@ export const createCard = action
               }))
             );
           }
-          revalidateTag("card");
+          revalidateTag("persons");
           revalidatePath("/");
 
           return {
