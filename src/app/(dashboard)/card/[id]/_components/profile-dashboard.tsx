@@ -83,7 +83,7 @@ const ImageUploadField = memo(
       control={control}
       name="image"
       render={() => (
-        <FormItem className="p-6">
+        <FormItem className="px-6 pb-6">
           <FormLabel>
             Change {endpoint === "photo" ? "Profile Picture" : "Cover Image"}
           </FormLabel>
@@ -184,7 +184,7 @@ export default function ProfileDashboard({
               variant="outline"
             >
               <IconPhoto className="size-5 shrink-0" />
-              <span className="hidden sm:block"> Change Cover</span>
+              <span className="hidden sm:block">Change Cover</span>
             </Button>
           }
         >
@@ -232,7 +232,7 @@ export default function ProfileDashboard({
               />
             </ResponsiveModal>
           </div>
-          <div className="w-full max-md:mt-3 md:ml-32">
+          <div className="w-full max-md:mt-3 md:ml-36">
             <div className="flex items-center justify-between gap-3">
               <Badge variant="secondary" className="gap-1.5">
                 {data.company && data.company.logo && (
@@ -261,9 +261,7 @@ export default function ProfileDashboard({
                 </Button>
               </span>
             </div>
-            <h2 className="-mt-1 text-lg font-semibold lg:text-2xl">
-              {data.name}
-            </h2>
+            <h2 className="text-lg font-semibold lg:text-2xl">{data.name}</h2>
             <p className="text-sm">{data.designation}</p>
           </div>
         </div>

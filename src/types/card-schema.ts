@@ -50,7 +50,7 @@ export const cardSchema = z.object({
   links: z
     .array(
       z.object({
-        id: z.number().optional(),
+        id: z.string().optional(),
         label: z
           .string()
           .min(1, { message: "Please enter title for the link" }),

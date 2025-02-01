@@ -10,6 +10,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { getAbsoluteUrl } from "@/lib/get-absolute-url";
 import { cn } from "@/lib/utils";
 import { getCompanies } from "@/server/actions/get-company";
 import { getPlaceholder } from "@/utils/get-placeholder";
@@ -23,6 +24,11 @@ export default async function Home({
   searchParams: { default?: string };
 }) {
   const { companies } = await getCompanies();
+
+  const basePath =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "https://ziron-qrcode.vercel.app";
 
   if (!companies || companies?.length === 0)
     return (
@@ -104,8 +110,9 @@ export default async function Home({
               </div>
             )}
             {company.persons.map(async (person) => {
+              const cover = getAbsoluteUrl(person.cover, basePath);
               const placeholderImage = await getPlaceholder(person.image);
-              const placeholderCover = await getPlaceholder(person.image);
+              const placeholderCover = await getPlaceholder(cover);
               return (
                 <Card
                   className="relative overflow-hidden pt-12"
@@ -114,11 +121,12 @@ export default async function Home({
                   <CardContent className="flex flex-col items-center justify-between p-0">
                     <Image
                       src={person.cover}
-                      width={120}
-                      height={96}
-                      alt=""
+                      width={260}
+                      height={112}
+                      alt="Cover Image"
                       placeholder="blur"
                       blurDataURL={placeholderCover}
+                      quality={70}
                       className="absolute top-0 h-28 w-full object-cover"
                     />
                     <div className="z-10 flex flex-col items-center pb-3 text-center">

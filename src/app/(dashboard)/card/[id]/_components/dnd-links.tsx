@@ -223,7 +223,7 @@ export const DndLinks = ({ loading, open, setOpen }: Props) => {
 
   const handleLinkAdd = (link: Link, category: string) => {
     append({
-      id: link.id,
+      id: link.id.toString(),
       label: link.label,
       url: link.url,
       icon: link.icon,

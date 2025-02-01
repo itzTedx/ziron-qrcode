@@ -126,12 +126,13 @@ export const createCard = action
               attachmentFileName,
               attachmentUrl,
               companyId,
+              mapUrl,
               designation,
-              image: image || placeholderImage,
-              cover: cover || placeholderCover,
               template,
               theme,
               btnColor,
+              image: image || placeholderImage,
+              cover: cover || placeholderCover,
               slug: uniqueSlug,
             })
             .returning();
