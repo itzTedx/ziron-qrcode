@@ -141,7 +141,7 @@ LinkItem.displayName = "LinkItem";
 
 // Memoized Suggestion Card
 interface SuggestionCardProps {
-  link: { label: string; url: string; icon: string; id?: string };
+  link: { label: string; url: string; icon: string; id?: number };
   item: { label: string };
   onAppend: (data: {
     category: string;
@@ -335,7 +335,7 @@ export const DndLinks = ({ loading, open, setOpen }: Props) => {
           {suggestionLinks.map((link) => (
             <SuggestionCard
               key={link.id}
-              link={{ ...link, id: link.id?.toString() }}
+              link={{ ...link, id: link.id }}
               item={{ label: link.itemLabel }}
               onAppend={handleAppend}
             />

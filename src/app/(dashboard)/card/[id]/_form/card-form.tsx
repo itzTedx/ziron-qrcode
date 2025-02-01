@@ -140,6 +140,10 @@ export default function CardCustomizeForm({
     } as Person;
   }, [data, debouncedValue]);
 
+  /** Debugging */
+  // const validation = cardSchema.safeParse(debouncedValue);
+  // console.log("Validations: ", validation);
+
   // Optimize submit handler
   const onSubmit = useCallback(
     (values: z.infer<typeof cardSchema>) => {
