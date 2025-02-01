@@ -35,11 +35,6 @@ export default async function Image({ params }: { params: { slug: string } }) {
     cover: getAbsoluteUrl(card.cover, basePath),
   };
 
-  //   // Font loading, process.cwd() is Next.js project directory
-  //   const interSemiBold = await readFile(
-  //     join(process.cwd(), "assets/Inter-SemiBold.ttf")
-  //   );
-
   return new ImageResponse(
     (
       <div
@@ -55,8 +50,8 @@ export default async function Image({ params }: { params: { slug: string } }) {
           overflow: "hidden",
         }}
       >
-        <div tw="h-40 w-full flex">
-          <img src={data.cover} alt="" tw="object-cover h-full w-full" />
+        <div tw="h-40 aspect-[16/3] flex">
+          <img src={data.cover} alt="" tw="object-cover h-full rounded-2xl" />
         </div>
         <div tw="bg-gray-100 flex">
           <div tw="flex flex-row w-full py-10 px-16">
