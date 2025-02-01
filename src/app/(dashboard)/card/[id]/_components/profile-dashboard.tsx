@@ -171,8 +171,6 @@ export default function ProfileDashboard({
           title="Cover Image"
           className="object-cover transition-[filter] group-hover:brightness-90"
           quality={60}
-          placeholder="blur"
-          blurDataURL={`data:image/svg+xml;base64,...`} // Add appropriate blur placeholder
         />
 
         <ResponsiveModal

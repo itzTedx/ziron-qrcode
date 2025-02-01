@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * @license qrcode.react
  * Copyright (c) Paul O'Shannessy

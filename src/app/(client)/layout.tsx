@@ -14,6 +14,18 @@ export const metadata: Metadata = {
     icon: "/favicon.svg",
     shortcut: "/favicon.png",
   },
+  formatDetection: {
+    email: true,
+    address: true,
+    telephone: true,
+  },
+  referrer: "no-referrer",
+  generator: "Next.js",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: false,
+  },
 };
 export default function RootLayout({
   children,
@@ -22,6 +34,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+      </head>
       <body
         className={cn(
           "flex min-h-dvh @container sm:items-center sm:justify-center",

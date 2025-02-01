@@ -49,12 +49,41 @@ export async function generateMetadata({
   if (!card) return;
 
   const data = {
-    title: `${card.name} - ${card.company.name}`,
+    title: `${card.name} - ${card.company.name} | Digital Card`,
     description: card.bio,
+    icon: card.company.logo ?? undefined,
+    twitterHandler: card.links
+      .find((l) => l.label === "Twitter")
+      ?.url?.replace(/.*\.com\//, "@"),
   };
 
   return {
     title: data.title,
     description: data.description,
+    applicationName: data.title,
+    icons: {
+      icon: data.icon,
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: data.title,
+      description: data.description,
+      creator: data.twitterHandler,
+    },
+  };
+}
+
+export async function generateViewport({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { card } = await getCardBySlug(params.slug);
+  if (!card) return;
+
+  return {
+    colorScheme: "light",
+    themeColor: card.theme,
   };
 }
