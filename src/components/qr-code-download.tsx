@@ -16,6 +16,7 @@ import { getQRAsCanvas, getQRAsSVGDataUri, getQRData } from "@/lib/qr";
 
 import { Icons } from "./assets/icons";
 import { QRCode } from "./qr-code";
+import { Button } from "./ui/button";
 import { IconMenu } from "./ui/custom/icon-menu";
 import { Popover } from "./ui/custom/popover";
 import {
@@ -60,15 +61,12 @@ export default function QRCodeDownload({ data }: QRCodeDownloadProps) {
         </Label>
         <div className="flex items-center gap-2">
           <DownloadPopover qrData={qrData} props={data.name}>
-            <div>
-              <ButtonTooltip
-                tooltipProps={{
-                  content: "Download QR code",
-                }}
-              >
-                <IconDownload className="size-4 text-gray-500" />
-              </ButtonTooltip>
-            </div>
+            <Button
+              className="flex h-6 w-6 items-center justify-center rounded-md bg-transparent px-0 text-gray-500 transition-colors duration-75 hover:bg-gray-100 active:bg-gray-200 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              type="button"
+            >
+              <IconDownload className="size-4 shrink-0 text-gray-500" />
+            </Button>
           </DownloadPopover>
           <CopyPopover qrData={qrData}>
             <div>
@@ -164,7 +162,7 @@ function DownloadPopover({
               onClick={async () => {
                 download(await getQRAsSVGDataUri(qrData), "svg");
               }}
-              className="w-full rounded-md p-3 text-left text-sm font-medium outline-none transition-all duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              className="w-full cursor-pointer rounded-md p-3 text-left text-sm font-medium outline-none transition-all duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <IconMenu
                 text="Download SVG"
@@ -179,7 +177,7 @@ function DownloadPopover({
                   "png"
                 );
               }}
-              className="w-full rounded-md p-3 text-left text-sm font-medium outline-none transition-all duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              className="w-full cursor-pointer rounded-md p-3 text-left text-sm font-medium outline-none transition-all duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <IconMenu
                 text="Download PNG"
@@ -194,7 +192,7 @@ function DownloadPopover({
                   "jpg"
                 );
               }}
-              className="w-full rounded-md p-3 text-left text-sm font-medium outline-none transition-all duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              className="w-full cursor-pointer rounded-md p-3 text-left text-sm font-medium outline-none transition-all duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <IconMenu
                 text="Download JPEG"

@@ -205,7 +205,11 @@ export default function CardCustomizeForm({
                     <FormItem className="col-span-2">
                       <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="Address" {...field} />
+                        <Textarea
+                          placeholder="Address"
+                          {...field}
+                          className="min-h-[2rem] [field-sizing:content]"
+                        />
                       </FormControl>
 
                       <FormMessage />
@@ -259,6 +263,7 @@ export default function CardCustomizeForm({
                       <FormControl>
                         <Textarea
                           placeholder="More about the person"
+                          className="[field-sizing:content]"
                           {...field}
                           value={field.value ?? ""}
                         />

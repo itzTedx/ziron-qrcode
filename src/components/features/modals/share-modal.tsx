@@ -67,7 +67,7 @@ export default function ShareModal() {
     <ResponsiveModal
       isOpen={isOpen}
       closeModal={closeModal}
-      title="Share card"
+      title="Share digital card"
       className="max-w-lg"
     >
       <div className="space-y-1 p-6 pt-0">
