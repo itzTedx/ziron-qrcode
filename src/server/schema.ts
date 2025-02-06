@@ -36,7 +36,9 @@ export const persons = pgTable("persons", {
   mapUrl: text("map_url"),
   bio: text("bio"),
   designation: text("designation"),
-  companyId: integer("companyId").notNull(),
+  companyId: integer("companyId")
+    .notNull()
+    .references(() => companies.id, { onDelete: "cascade" }),
 
   attachmentUrl: text("attachmentUrl"),
   attachmentFileName: text("attachmentFileName"),
@@ -58,7 +60,9 @@ export const persons = pgTable("persons", {
 export const phones = pgTable("phones", {
   id: serial("id").primaryKey().notNull(),
   phone: text("phone"),
-  personId: integer("personId").notNull(),
+  personId: integer("personId")
+    .notNull()
+    .references(() => persons.id, { onDelete: "cascade" }),
   order: real("order").notNull(),
   label: text("label").notNull().default("primary"),
 
@@ -71,7 +75,9 @@ export const phones = pgTable("phones", {
 export const emails = pgTable("emails", {
   id: serial("id").primaryKey().notNull(),
   email: text("email"),
-  personId: integer("personId").notNull(),
+  personId: integer("personId")
+    .notNull()
+    .references(() => persons.id, { onDelete: "cascade" }),
   order: real("order").notNull(),
   label: text("label").notNull().default("primary"),
 
@@ -86,7 +92,9 @@ export const links = pgTable("links", {
   label: text("title").notNull(),
   url: text("url").notNull(),
   icon: text("icon").notNull(),
-  personId: integer("personId").notNull(),
+  personId: integer("personId")
+    .notNull()
+    .references(() => persons.id, { onDelete: "cascade" }),
   category: text("category"),
   order: real("order").notNull(),
 

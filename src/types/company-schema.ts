@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const companySchema = z.object({
+  id: z.number().optional(),
   name: z
     .string()
     .min(2, { message: "Please enter company name" })

@@ -16,6 +16,7 @@ import { getCompanies } from "@/server/actions/get-company";
 import { getPlaceholder } from "@/utils/get-placeholder";
 
 import EditCompanyButton from "./_components/edit-company-button";
+import { NothingFound } from "./_components/nothing-found";
 import ShareButton from "./_components/share-button";
 
 export default async function Home({
@@ -30,26 +31,7 @@ export default async function Home({
       ? "http://localhost:3000"
       : "https://ziron-qrcode.vercel.app";
 
-  if (!companies || companies?.length === 0)
-    return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background py-9">
-        <Image
-          src="/not-available.svg"
-          height={200}
-          width={200}
-          alt="No Cards Available"
-        />
-
-        <p className="pt-2 font-semibold text-muted-foreground">
-          No Cards or Company Available
-        </p>
-        <Button className="gap-2" asChild>
-          <Link href={`/`}>
-            <IconPlus className="size-4" /> Add Company
-          </Link>
-        </Button>
-      </div>
-    );
+  if (!companies || companies?.length === 0) return <NothingFound />;
 
   return (
     <main className="grid gap-8 px-4 py-6 md:px-12">
@@ -115,7 +97,7 @@ export default async function Home({
               const placeholderCover = await getPlaceholder(cover);
               return (
                 <Card
-                  className="relative overflow-hidden pt-12"
+                  className="relative overflow-hidden pt-10 md:pt-12"
                   key={person.id}
                 >
                   <CardContent className="flex flex-col items-center justify-between p-0">
@@ -127,7 +109,7 @@ export default async function Home({
                       placeholder="blur"
                       blurDataURL={placeholderCover}
                       quality={70}
-                      className="absolute top-0 h-28 w-full object-cover"
+                      className="absolute top-0 h-24 w-full object-cover md:h-28"
                     />
                     <div className="z-10 flex flex-col items-center pb-3 text-center">
                       <Image
@@ -138,7 +120,7 @@ export default async function Home({
                         blurDataURL={placeholderImage}
                         alt={`${person.name}'s Photo`}
                         title={`${person.name}'s Photo`}
-                        className="size-28 rounded-full border-4 border-background object-cover"
+                        className="size-24 rounded-full border-4 border-background object-cover md:size-28"
                       />
                       <h3 className="mt-2 font-semibold">{person.name}</h3>
                       <p className="text-sm text-muted-foreground">

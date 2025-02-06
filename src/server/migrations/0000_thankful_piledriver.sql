@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS "persons" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"address" text,
+	"map_url" text,
 	"bio" text,
 	"designation" text,
 	"companyId" integer NOT NULL,
@@ -60,3 +61,27 @@ CREATE TABLE IF NOT EXISTS "phones" (
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now()
 );
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "emails" ADD CONSTRAINT "emails_personId_persons_id_fk" FOREIGN KEY ("personId") REFERENCES "public"."persons"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "links" ADD CONSTRAINT "links_personId_persons_id_fk" FOREIGN KEY ("personId") REFERENCES "public"."persons"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "persons" ADD CONSTRAINT "persons_companyId_companies_id_fk" FOREIGN KEY ("companyId") REFERENCES "public"."companies"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "phones" ADD CONSTRAINT "phones_personId_persons_id_fk" FOREIGN KEY ("personId") REFERENCES "public"."persons"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;

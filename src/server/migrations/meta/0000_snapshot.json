@@ -1,5 +1,5 @@
 {
-  "id": "ec30d9bc-92fc-476c-bf86-b41a43c6a0a2",
+  "id": "26370d07-f25f-4122-9de3-c07db18ed283",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -115,7 +115,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "emails_personId_persons_id_fk": {
+          "name": "emails_personId_persons_id_fk",
+          "tableFrom": "emails",
+          "tableTo": "persons",
+          "columnsFrom": [
+            "personId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -181,7 +195,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "links_personId_persons_id_fk": {
+          "name": "links_personId_persons_id_fk",
+          "tableFrom": "links",
+          "tableTo": "persons",
+          "columnsFrom": [
+            "personId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -203,6 +231,12 @@
         },
         "address": {
           "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "map_url": {
+          "name": "map_url",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -292,7 +326,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "persons_companyId_companies_id_fk": {
+          "name": "persons_companyId_companies_id_fk",
+          "tableFrom": "persons",
+          "tableTo": "companies",
+          "columnsFrom": [
+            "companyId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "persons_slug_unique": {
@@ -355,7 +403,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "phones_personId_persons_id_fk": {
+          "name": "phones_personId_persons_id_fk",
+          "tableFrom": "phones",
+          "tableTo": "persons",
+          "columnsFrom": [
+            "personId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     }

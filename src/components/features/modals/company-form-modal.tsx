@@ -1,6 +1,6 @@
 "use client";
 
-import CompanyForm from "@/app/(dashboard)/company/company-form";
+import CompanyForm from "@/app/(dashboard)/_components/company-form";
 import { useCompanyFormModal } from "@/store/use-company-form-modal";
 
 import {
