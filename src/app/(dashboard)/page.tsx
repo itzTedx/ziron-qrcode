@@ -34,7 +34,7 @@ export default async function Home({
   if (!companies || companies?.length === 0) return <NothingFound />;
 
   return (
-    <main className="grid gap-8 px-4 py-6 md:px-12">
+    <section className="mt-20 grid gap-8 px-4 py-6 md:px-12">
       {companies.map((company, i) => (
         <Collapsible
           key={company.id}
@@ -153,6 +153,6 @@ export default async function Home({
           </CollapsibleContent>
         </Collapsible>
       ))}
-    </main>
+    </section>
   );
 }

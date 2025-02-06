@@ -20,11 +20,13 @@ export default async function CardPage({ params }: CardProps) {
   const isEditMode = !!card; // If card exists, it is in edit mode
 
   return (
-    <CardCustomizeForm
-      data={companies}
-      isEditMode={isEditMode}
-      initialData={card}
-      id={params.id}
-    />
+    <section>
+      <CardCustomizeForm
+        data={companies}
+        isEditMode={isEditMode}
+        initialData={card}
+        id={params.id}
+      />
+    </section>
   );
 }

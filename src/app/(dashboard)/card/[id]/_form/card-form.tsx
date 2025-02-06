@@ -168,7 +168,12 @@ export default function CardCustomizeForm({
             <MemoizedProfileDashboard data={cardData} loading={loading} />
           )}
 
-          <div className="container grid max-w-7xl gap-8 py-3 pb-9 md:grid-cols-12 md:py-9">
+          <div
+            className={cn(
+              "container grid max-w-7xl gap-8 py-3 pb-9 md:grid-cols-12 md:py-9",
+              !isEditMode && "mt-14"
+            )}
+          >
             <MemoizedTabsComp>
               <TabsContent
                 value="information"

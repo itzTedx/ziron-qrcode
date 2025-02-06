@@ -146,3 +146,9 @@ export type PersonType = InferResultType<
     links: true;
   }
 >;
+export type CompanyType = InferResultType<
+  "companies",
+  {
+    persons: true;
+  }
+>;

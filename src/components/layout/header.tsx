@@ -9,7 +9,7 @@ export default async function Header() {
   const { companies } = await getCompanies();
 
   return (
-    <div className="sticky top-0 z-50 flex h-16 w-full items-center justify-between gap-3 border-b bg-background/80 px-2 backdrop-blur-lg sm:px-4">
+    <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between gap-3 border-b bg-background/80 px-2 py-2 backdrop-blur-lg sm:px-4">
       <div className="flex items-center gap-4">
         <SidebarTrigger />
         {/* <MobileSidebar /> */}
@@ -20,6 +20,6 @@ export default async function Header() {
         {/* <ThemeToggle /> */}
         <AddAction />
       </div>
-    </div>
+    </header>
   );
 }

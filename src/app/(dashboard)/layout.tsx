@@ -8,13 +8,15 @@ import { extractRouterConfig } from "uploadthing/server";
 import BreakpointIndicator from "@/components/breakpoint-indicator";
 import CompanyFormModal from "@/components/features/modals/company-form-modal";
 import ShareModal from "@/components/features/modals/share-modal";
-import { AppSidebar } from "@/components/layout/app-sidebar";
 import Header from "@/components/layout/header";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { plusJakarta } from "@/fonts";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { getCompanies } from "@/server/actions/get-company";
 import "@/styles/globals.css";
 
 import { ourFileRouter } from "../api/uploadthing/core";
@@ -28,13 +30,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const cookieStore = cookies();
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
+  const { companies } = await getCompanies();
+
   return (
     <html lang="en" suppressHydrationWarning>
       {/* <head>
@@ -57,14 +61,18 @@ export default function RootLayout({
                   routerConfig={extractRouterConfig(ourFileRouter)}
                 />
 
-                <AppSidebar collapsible="icon" />
-                <div className="flex-1">
+                <AppSidebar
+                  collapsible="icon"
+                  variant="inset"
+                  data={companies}
+                />
+                <SidebarInset>
                   <Header />
                   <ShareModal />
-                  {children}
+                  <ScrollArea className="-mt-20">{children}</ScrollArea>
                   <CompanyFormModal />
                   <BreakpointIndicator />
-                </div>
+                </SidebarInset>
               </SidebarProvider>
             </div>
             <Toaster richColors />
