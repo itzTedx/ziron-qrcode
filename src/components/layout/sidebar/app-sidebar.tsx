@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/sidebar";
 import { CompanyType } from "@/server/schema";
 
+import { NavProjects } from "./nav-projects";
+
 const user = {
   user: {
     name: "shadcn",
@@ -49,8 +51,8 @@ export function AppSidebar({ data, ...props }: AppSidebarProps) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data} />
-        {/* <NavProjects projects={data.projects} /> */}
+        <NavMain />
+        <NavProjects data={data} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user.user} />

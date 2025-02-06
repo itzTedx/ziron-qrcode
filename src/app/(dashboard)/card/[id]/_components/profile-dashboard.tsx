@@ -160,7 +160,7 @@ export default function ProfileDashboard({
   }, [data.id, deleteExistingCard]);
 
   return (
-    <div className="">
+    <section>
       <div className="group relative h-72 bg-secondary">
         <Image
           src={data.cover!}
@@ -197,9 +197,9 @@ export default function ProfileDashboard({
           />
         </ResponsiveModal>
       </div>
-      <div className="container relative -mt-16 grid max-w-6xl grid-cols-10 rounded-lg border-t border-background bg-background/80 py-4 shadow-muted/30 backdrop-blur-xl sm:border sm:shadow-lg md:divide-x">
+      <div className="container relative -mt-16 grid max-w-7xl grid-cols-10 rounded-lg border-t border-background bg-background/80 py-4 shadow-muted/30 backdrop-blur-xl sm:border sm:shadow-lg md:divide-x">
         <div className="col-span-10 flex md:col-span-4 md:px-3 lg:px-6">
-          <div className="group absolute left-1/2 size-28 -translate-y-20 max-md:-translate-x-1/2 md:-top-[60%] md:left-5 md:size-36 md:translate-y-1/3">
+          <div className="group absolute left-1/2 size-28 -translate-y-20 max-md:-translate-x-1/2 md:-top-[60%] md:left-5 md:size-36 md:translate-y-[30%]">
             <Image
               src={data.image!}
               fill
@@ -269,7 +269,7 @@ export default function ProfileDashboard({
         <div className="col-span-10 flex items-center justify-between gap-4 md:col-span-4 md:px-3 lg:px-6">
           <div className="w-full space-y-2 max-md:hidden">
             <h3 className="max-md:text-xs">Link</h3>
-            <div className="inline-flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <CopyButton link={shareLink} />
               <Button
                 onClick={(e) => {
@@ -280,7 +280,7 @@ export default function ProfileDashboard({
                 className="hidden items-center gap-1.5 md:flex"
               >
                 <Icons.share className="size-4 stroke-[1.5]" />
-                <span>Share</span>
+                <span className="hidden lg:block">Share</span>
               </Button>
             </div>
           </div>
@@ -322,6 +322,6 @@ export default function ProfileDashboard({
           </Button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

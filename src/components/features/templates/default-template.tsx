@@ -134,7 +134,7 @@ export default function DefaultTemplate({
 
               {card.address && (
                 <Link
-                  href={`#`}
+                  href={card.mapUrl ?? "#"}
                   className="flex items-start gap-2 text-sm @sm:text-base"
                 >
                   <IconPinned className="mt-1.5 size-4 flex-shrink-0 stroke-[1.5] @sm:size-5" />
