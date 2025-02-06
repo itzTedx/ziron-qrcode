@@ -82,17 +82,18 @@ export const CompanyField = ({ companyData: data, companyId }: Props) => {
                   )}
                 >
                   {selectedCompany ? (
-                    <span className="inline-flex gap-2.5">
-                      <Image
-                        src={
-                          selectedCompany.logo ||
-                          "/images/placeholder-cover.jpg"
-                        }
-                        height={16}
-                        width={16}
-                        alt={`${selectedCompany.name} logo`}
-                        priority
-                      />
+                    <span className="inline-flex items-center gap-2.5">
+                      <div className="relative aspect-square size-4">
+                        <Image
+                          src={
+                            selectedCompany.logo ||
+                            "/images/placeholder-cover.jpg"
+                          }
+                          fill
+                          alt={`${selectedCompany.name} logo`}
+                          className="object-contain"
+                        />
+                      </div>
                       <span>{selectedCompany.name}</span>
                     </span>
                   ) : (
