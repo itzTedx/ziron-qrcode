@@ -47,7 +47,7 @@ export const createCard = action
           const currentCard = await db.query.persons.findFirst({
             where: eq(persons.id, id),
           });
-          console.log(currentCard);
+
           if (!currentCard) return { error: "Card not found" };
 
           const editedCard = await db
@@ -180,10 +180,8 @@ export const createCard = action
             console.log("Links added");
           }
 
-          console.log("Revalidating Path");
           revalidatePath("/");
-          console.log("Revalidated");
-          console.log("Success");
+
           return {
             success: `Digital Card: (${newCard[0].name}) has been created`,
             company: newCard[0].companyId,

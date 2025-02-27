@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { eq } from "drizzle-orm";
 import { createSafeActionClient } from "next-safe-action";
@@ -34,6 +34,7 @@ export const createCompany = action
             .returning();
 
           revalidatePath("/");
+          revalidateTag("companies");
 
           return {
             success: `Company: (${newCompany[0].name}) has been created`,
@@ -52,6 +53,7 @@ export const createCompany = action
             .returning();
 
           revalidatePath("/");
+          revalidateTag("companies");
 
           return {
             success: `Company: (${editedCompany[0].name}) has been created`,

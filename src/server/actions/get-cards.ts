@@ -21,7 +21,7 @@ export const getCards = cache(
       return { error: `Failed to get card details${error}` };
     }
   },
-  ["cards"],
+  ["persons-list"],
   {
     revalidate: 3600, // Cache for 1 hour
     tags: ["persons"],
