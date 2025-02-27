@@ -2,6 +2,7 @@ import withPlaiceholder from "@plaiceholder/next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: { optimizePackageImports: ["@tabler/icons-react"] },
   typescript: {
     ignoreBuildErrors: true,
   },
