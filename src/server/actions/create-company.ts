@@ -1,10 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { eq } from "drizzle-orm";
 import { createSafeActionClient } from "next-safe-action";
 
+import { formatWebsiteUrl } from "@/lib/utils";
 import { companySchema } from "@/types/company-schema";
 
 import { db } from "../db";
@@ -16,49 +17,38 @@ export const createCompany = action
   .schema(companySchema)
   .action(
     async ({ parsedInput: { name, phone, website, address, logo, id } }) => {
-      const formattedUrl = website
-        ? new URL(website.startsWith("http") ? website : `https://${website}`)
-            .href
-        : "";
       try {
-        if (!id) {
-          const newCompany = await db
-            .insert(companies)
-            .values({
-              name,
-              phone,
-              website: formattedUrl,
-              address,
-              logo,
-            })
-            .returning();
+        const formattedUrl = formatWebsiteUrl(website);
+        const companyData = {
+          name,
+          phone,
+          website: formattedUrl,
+          address,
+          logo,
+        };
 
-          revalidatePath("/");
+        const [result] = id
+          ? await db
+              .update(companies)
+              .set(companyData)
+              .where(eq(companies.id, id))
+              .returning()
+          : await db.insert(companies).values(companyData).returning();
 
-          return {
-            success: `Company: (${newCompany[0].name}) has been created`,
-          };
-        } else {
-          const editedCompany = await db
-            .update(companies)
-            .set({
-              name,
-              phone,
-              website: formattedUrl,
-              address,
-              logo,
-            })
-            .where(eq(companies.id, id))
-            .returning();
-
-          revalidatePath("/");
-
-          return {
-            success: `Company: (${editedCompany[0].name}) has been created`,
-          };
+        if (!result) {
+          return { error: "Failed to save company data" };
         }
+
+        revalidatePath("/");
+        revalidateTag("companies");
+
+        return {
+          success: `Company: (${result.name}) has been ${id ? "updated" : "created"}`,
+        };
       } catch (err) {
-        return { error: JSON.stringify(err) };
+        const errorMessage =
+          err instanceof Error ? err.message : "An unexpected error occurred";
+        return { error: errorMessage };
       }
     }
   );

@@ -27,7 +27,7 @@ export const getCardBySlug = cache(
       return { error: `Failed to get company details${error}` };
     }
   },
-  ["card-by-slug"],
+  ["person-by-slug"],
   {
     revalidate: 3600, // Cache for 1 hour
     tags: ["persons"],

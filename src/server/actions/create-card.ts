@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
 
 import { eq } from "drizzle-orm";
 import { createSafeActionClient } from "next-safe-action";
@@ -21,8 +20,8 @@ export const createCard = action
       parsedInput: {
         id,
         name,
-        phones: phonesData,
-        emails: emailsData,
+        phones: phonesData = [],
+        emails: emailsData = [],
         address,
         mapUrl,
         companyId,
@@ -35,89 +34,96 @@ export const createCard = action
         cover,
         theme,
         btnColor,
-        links: linksData,
+        links: linksData = [],
       },
     }) => {
+      const placeholderImage = `https://ui-avatars.com/api/?background=random&name=${name}&size=128`;
+      const placeholderCover = "/images/placeholder-cover.jpg";
+
       try {
-        const uniqueSlug = await generateUniqueSlug(name);
-        const placeholderImage = `https://ui-avatars.com/api/?background=random&name=${name}&size=128`;
-        const placeholderCover = "/images/placeholder-cover.jpg";
+        return await db.transaction(async (tx) => {
+          if (id) {
+            const currentCard = await tx.query.persons.findFirst({
+              where: eq(persons.id, id),
+            });
 
-        if (id) {
-          const currentCard = await db.query.persons.findFirst({
-            where: eq(persons.id, id),
-          });
-          console.log(currentCard);
-          if (!currentCard) return { error: "Card not found" };
+            if (!currentCard) {
+              throw new Error("Card not found");
+            }
 
-          const editedCard = await db
-            .update(persons)
-            .set({
-              name,
-              address,
-              bio,
-              attachmentFileName,
-              attachmentUrl,
-              companyId,
-              mapUrl,
-              designation,
-              template,
-              theme,
-              btnColor,
-              image: image || placeholderImage,
-              cover: cover || placeholderCover,
-            })
-            .where(eq(persons.id, id))
-            .returning();
+            const [editedCard] = await tx
+              .update(persons)
+              .set({
+                name,
+                address,
+                bio,
+                attachmentFileName,
+                attachmentUrl,
+                companyId,
+                mapUrl,
+                designation,
+                template,
+                theme,
+                btnColor,
+                image: image || placeholderImage,
+                cover: cover || placeholderCover,
+              })
+              .where(eq(persons.id, id))
+              .returning();
 
-          //Delete Existing Links and update with new one
-          await db.delete(links).where(eq(links.personId, editedCard[0].id));
-          await db.delete(phones).where(eq(phones.personId, editedCard[0].id));
-          await db.delete(emails).where(eq(emails.personId, editedCard[0].id));
+            // Batch delete operations
+            await Promise.all([
+              tx.delete(links).where(eq(links.personId, id)),
+              tx.delete(phones).where(eq(phones.personId, id)),
+              tx.delete(emails).where(eq(emails.personId, id)),
+            ]);
 
-          if (linksData && linksData.length) {
-            await db.insert(links).values(
-              linksData.map((link, i) => ({
-                icon: link.icon,
-                label: link.label,
-                url: link.url,
-                category: link.category,
-                personId: editedCard[0].id,
-                order: i,
-              }))
+            // Batch insert operations
+            await Promise.all(
+              [
+                linksData.length > 0 &&
+                  tx.insert(links).values(
+                    linksData.map((link, i) => ({
+                      icon: link.icon,
+                      label: link.label,
+                      url: link.url,
+                      category: link.category,
+                      personId: id,
+                      order: i,
+                    }))
+                  ),
+                phonesData.length > 0 &&
+                  tx.insert(phones).values(
+                    phonesData.map((phone, i) => ({
+                      phone: phone.phone,
+                      label: phone.label,
+                      personId: id,
+                      order: i,
+                    }))
+                  ),
+                emailsData.length > 0 &&
+                  tx.insert(emails).values(
+                    emailsData.map((email, i) => ({
+                      email: email.email,
+                      label: email.label,
+                      personId: id,
+                      order: i,
+                    }))
+                  ),
+              ].filter(Boolean)
             );
-          }
-          if (phonesData) {
-            await db.insert(phones).values(
-              phonesData.map((phone, i) => ({
-                phone: phone.phone,
-                label: phone.label,
-                personId: editedCard[0].id,
-                order: i,
-              }))
-            );
-          }
-          if (emailsData) {
-            await db.insert(emails).values(
-              emailsData.map((email, i) => ({
-                email: email.email,
-                label: email.label,
-                personId: editedCard[0].id,
-                order: i,
-              }))
-            );
-          }
-          revalidateTag("persons");
-          revalidatePath("/");
 
-          return {
-            success: `Digital Card: (${editedCard[0].name}) has been Edited`,
-            company: editedCard[0].companyId,
-          };
-        }
+            revalidateTag("persons");
+            revalidatePath("/");
 
-        if (!id) {
-          const newCard = await db
+            return {
+              success: `Digital Card: (${editedCard.name}) has been edited`,
+              company: editedCard.companyId,
+            };
+          }
+
+          const uniqueSlug = await generateUniqueSlug(name);
+          const [newCard] = await tx
             .insert(persons)
             .values({
               name,
@@ -136,62 +142,53 @@ export const createCard = action
               slug: uniqueSlug,
             })
             .returning();
-          console.log("Person added");
 
-          console.log("Checking for Phones");
-          if (phonesData) {
-            console.log("Phone found");
-            await db.insert(phones).values(
-              phonesData.map((phone, i) => ({
-                phone: phone.phone,
+          // Batch insert operations for new card
+          await Promise.all(
+            [
+              linksData.length > 0 &&
+                tx.insert(links).values(
+                  linksData.map((link, i) => ({
+                    icon: link.icon,
+                    label: link.label,
+                    url: link.url,
+                    category: link.category,
+                    personId: newCard.id,
+                    order: i,
+                  }))
+                ),
+              phonesData.length > 0 &&
+                tx.insert(phones).values(
+                  phonesData.map((phone, i) => ({
+                    phone: phone.phone,
+                    label: phone.label,
+                    personId: newCard.id,
+                    order: i,
+                  }))
+                ),
+              emailsData.length > 0 &&
+                tx.insert(emails).values(
+                  emailsData.map((email, i) => ({
+                    email: email.email,
+                    label: email.label,
+                    personId: newCard.id,
+                    order: i,
+                  }))
+                ),
+            ].filter(Boolean)
+          );
 
-                personId: newCard[0].id,
-                order: i,
-              }))
-            );
-            console.log("Phones added");
-          }
-          console.log("Checking for emails");
-          if (emailsData) {
-            console.log("Email found");
-            await db.insert(emails).values(
-              emailsData.map((email, i) => ({
-                email: email.email,
-
-                personId: newCard[0].id,
-                order: i,
-              }))
-            );
-            console.log("Emails added");
-          }
-          console.log("Checking for links");
-          if (linksData && linksData.length) {
-            console.log("Links found");
-            await db.insert(links).values(
-              linksData.map((link, i) => ({
-                icon: link.icon,
-                label: link.label,
-                url: link.url,
-                category: link.category,
-                personId: newCard[0].id,
-                order: i,
-              }))
-            );
-            console.log("Links added");
-          }
-
-          console.log("Revalidating Path");
           revalidatePath("/");
-          console.log("Revalidated");
-          console.log("Success");
+
           return {
-            success: `Digital Card: (${newCard[0].name}) has been created`,
-            company: newCard[0].companyId,
+            success: `Digital Card: (${newCard.name}) has been created`,
+            company: newCard.companyId,
           };
-        }
-        redirect("/");
+        });
       } catch (err) {
-        return { error: JSON.stringify(err) };
+        return {
+          error: err instanceof Error ? err.message : "Unknown error occurred",
+        };
       }
     }
   );
