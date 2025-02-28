@@ -13,3 +13,15 @@ export function slugify(slug: string) {
     .replace(/\s+/g, "-") // Replace spaces with hyphens
     .replace(/-+/g, "-"); // Remove duplicate hyphens
 }
+
+export const formatWebsiteUrl = (
+  website: string | null | undefined
+): string => {
+  if (!website) return "";
+  try {
+    return new URL(website.startsWith("http") ? website : `https://${website}`)
+      .href;
+  } catch {
+    return "";
+  }
+};
