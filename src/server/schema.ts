@@ -1,14 +1,33 @@
 import { relations } from "drizzle-orm";
 import {
   integer,
+  pgEnum,
   pgTable,
   real,
   serial,
   text,
   timestamp,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 import { InferResultType } from "./db";
+
+export const UserRoles = ["admin", "user"] as const;
+export type UserRole = (typeof UserRoles)[number];
+export const userRoleEnum = pgEnum("user_role", UserRoles);
+
+export const UserTable = pgTable("users", {
+  id: uuid().primaryKey().notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  salt: text("salt").notNull(),
+  role: userRoleEnum().notNull().default("user"),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
 
 export const companies = pgTable("companies", {
   id: serial("id").primaryKey().notNull(),
