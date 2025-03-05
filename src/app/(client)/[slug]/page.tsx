@@ -38,6 +38,7 @@ export default async function PreviewPage({
       return <DefaultTemplate card={card} imageBase64URI={imageURI} />;
   }
 }
+PreviewPage.theme = "dark";
 
 export async function generateMetadata({
   params,

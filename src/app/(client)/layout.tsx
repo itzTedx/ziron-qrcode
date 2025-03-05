@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { plusJakarta } from "@/fonts";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/providers/theme-provider";
 import "@/styles/globals.css";
 
 import Footer from "./_components/footer";
@@ -43,10 +44,17 @@ export default function RootLayout({
           plusJakarta.className
         )}
       >
-        <ScrollArea className="h-svh sm:h-[700px] sm:overflow-hidden sm:rounded-xl sm:shadow-xl md:max-w-md">
-          <main className="relative">{children}</main>
-        </ScrollArea>
-        <Footer />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          storageKey="dark-mode"
+          disableTransitionOnChange
+        >
+          <ScrollArea className="h-svh sm:h-[700px] sm:overflow-hidden sm:rounded-xl sm:shadow-xl md:max-w-md">
+            <main className="relative">{children}</main>
+          </ScrollArea>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
