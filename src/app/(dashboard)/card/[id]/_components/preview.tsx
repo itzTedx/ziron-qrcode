@@ -7,6 +7,7 @@ import PhoneMockup from "@/components/phone-mockup";
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import { Company, Person } from "@/types";
 
 interface Props {
@@ -33,7 +34,12 @@ export const Preview = ({
           title="Preview"
           className="max-w-sm gap-0"
         >
-          <CardContent className="light relative p-0">
+          <CardContent
+            className={cn(
+              "relative p-0",
+              cardData.isDarkMode ? "dark" : "light"
+            )}
+          >
             <ScrollArea className="h-[640px]">
               {(() => {
                 switch (cardData.template) {

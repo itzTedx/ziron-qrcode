@@ -34,25 +34,27 @@ export default function DefaultTemplate({
 
   const theme = card.theme || "#4938ff";
 
+  console.log("isDarkMode", card.isDarkMode);
+
   return (
-    <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
+    <div
+      className={cn(
+        "relative flex h-full w-full flex-col justify-between @sm:h-dvh",
+        card.isDarkMode
+          ? "dark bg-background text-foreground"
+          : "bg-white text-black"
+      )}
+    >
       <div className="no-scrollbar">
         <header className="w-full">
           <div className="relative">
-            <div className="absolute h-32 w-full bg-gradient-to-b from-background/30 to-transparent" />
-            <div
-              className="flex h-24 w-full items-start justify-center bg-cover bg-center bg-no-repeat pt-4 @sm:h-32"
-              style={{
-                backgroundImage: `url(${card.cover ? card.cover : "/images/placeholder-cover.jpg"})`,
-              }}
-            >
-              {card.company && card.company.logo && (
+            <div className="flex h-24 w-full items-start justify-center pt-4 @sm:h-36">
+              {card.cover && (
                 <Image
-                  src={card.company.logo}
-                  height={100}
-                  width={100}
+                  src={`${card.cover ? card.cover : "/images/placeholder-cover.jpg"}`}
+                  fill
                   alt="cover"
-                  className="z-30 h-5 object-contain"
+                  className="object-cover"
                 />
               )}
             </div>
@@ -65,6 +67,19 @@ export default function DefaultTemplate({
                   sizes="20vw"
                   className="object-cover"
                 />
+
+                {card.company && card.company.logo && (
+                  <>
+                    <Image
+                      src={card.company.logo}
+                      height={100}
+                      width={100}
+                      alt="cover"
+                      className="absolute bottom-3 left-1/2 z-30 h-5 -translate-x-1/2 object-contain"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background/50 to-transparent"></div>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -186,7 +201,12 @@ export default function DefaultTemplate({
           </section>
         )}
       </div>
-      <div className="sticky bottom-0 mt-auto h-20 w-full max-w-screen-sm bg-background p-4">
+      <div
+        className={cn(
+          "sticky bottom-0 mt-auto h-20 w-full max-w-screen-sm p-4",
+          card.isDarkMode ? "bg-background" : "bg-white"
+        )}
+      >
         <SaveContactButton
           data={card}
           imageBase64={imageBase64URI}

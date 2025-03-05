@@ -1,0 +1,1 @@
+ALTER TABLE "persons" ADD COLUMN "is_dark_mode" boolean DEFAULT false NOT NULL;

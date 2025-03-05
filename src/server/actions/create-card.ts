@@ -34,6 +34,7 @@ export const createCard = action
         cover,
         theme,
         btnColor,
+        isDarkMode,
         links: linksData = [],
       },
     }) => {
@@ -64,6 +65,7 @@ export const createCard = action
                 designation,
                 template,
                 theme,
+                isDarkMode,
                 btnColor,
                 image: image || placeholderImage,
                 cover: cover || placeholderCover,
@@ -136,6 +138,7 @@ export const createCard = action
               designation,
               template,
               theme,
+              isDarkMode,
               btnColor,
               image: image || placeholderImage,
               cover: cover || placeholderCover,
@@ -183,11 +186,14 @@ export const createCard = action
           return {
             success: `Digital Card: (${newCard.name}) has been created`,
             company: newCard.companyId,
+            error: false,
           };
         });
       } catch (err) {
         return {
           error: err instanceof Error ? err.message : "Unknown error occurred",
+          success: false,
+          company: null,
         };
       }
     }

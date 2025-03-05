@@ -12,6 +12,10 @@ import { z } from "zod";
 import ColorsInput from "@/components/test/colors-input";
 import { Button } from "@/components/ui/button";
 import {
+  InfoTooltip,
+  SimpleTooltipContent,
+} from "@/components/ui/custom/tooltip";
+import {
   Form,
   FormControl,
   FormField,
@@ -22,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
 import { TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -107,7 +112,7 @@ export default function CardCustomizeForm({
     }, []),
     onSuccess: ({ data }) => {
       if (data?.success) {
-        router.push(`/?default=${data.company}`);
+        router.push(`/?default=${data?.company}`);
         toast.dismiss();
         toast.success(data.success);
         setLoading(false);
@@ -322,6 +327,46 @@ export default function CardCustomizeForm({
                 </ScrollArea>
                 <section className="divide-y">
                   <h5 className="pb-3 text-sm font-medium">Customize Theme</h5>
+                  <FormField
+                    control={form.control}
+                    name={"isDarkMode"}
+                    render={({ field }) => (
+                      <FormItem className="flex w-full flex-col items-start justify-between gap-3 p-3 sm:flex-row sm:items-center">
+                        <FormLabel className="flex items-center gap-1.5">
+                          Dark Mode
+                          <InfoTooltip
+                            content={
+                              <SimpleTooltipContent title="Display your logo in the center of the QR code." />
+                            }
+                          />
+                        </FormLabel>
+                        <FormControl>
+                          <div className="flex items-center justify-between">
+                            <div className="relative inline-grid h-8 grid-cols-[1fr_1fr] items-center text-sm font-medium">
+                              <Switch
+                                id="logo"
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                className="peer absolute inset-0 h-[inherit] w-auto rounded-lg data-[state=unchecked]:bg-input/50 [&_span]:z-10 [&_span]:h-full [&_span]:w-1/2 [&_span]:rounded-md [&_span]:transition-transform [&_span]:duration-300 [&_span]:[transition-timing-function:cubic-bezier(0.16,1,0.3,1)] data-[state=checked]:[&_span]:translate-x-full rtl:data-[state=checked]:[&_span]:-translate-x-full"
+                              />
+                              <span className="min-w-78 pointer-events-none relative ms-0.5 flex items-center justify-center px-2 text-center transition-transform duration-300 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] peer-data-[state=checked]:invisible peer-data-[state=unchecked]:translate-x-full rtl:peer-data-[state=unchecked]:-translate-x-full">
+                                <span className="text-[10px] font-medium uppercase">
+                                  Off
+                                </span>
+                              </span>
+                              <span className="min-w-78 pointer-events-none relative me-0.5 flex items-center justify-center px-2 text-center transition-transform duration-300 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] peer-data-[state=unchecked]:invisible peer-data-[state=checked]:-translate-x-full peer-data-[state=checked]:text-white rtl:peer-data-[state=checked]:translate-x-full">
+                                <span className="text-[10px] font-medium uppercase">
+                                  On
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <FormField
                     control={form.control}
                     name={"theme"}

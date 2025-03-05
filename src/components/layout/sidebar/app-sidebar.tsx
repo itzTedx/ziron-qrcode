@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { CompanyType } from "@/server/schema";
 
+import { ThemeToggle } from "../theme-actions";
 import { NavProjects } from "./nav-projects";
 
 const user = {
@@ -55,6 +56,7 @@ export function AppSidebar({ data, ...props }: AppSidebarProps) {
         <NavProjects data={data} />
       </SidebarContent>
       <SidebarFooter>
+        <ThemeToggle />
         <NavUser user={user.user} />
       </SidebarFooter>
     </Sidebar>

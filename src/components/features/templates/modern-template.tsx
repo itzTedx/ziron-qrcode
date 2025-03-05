@@ -31,7 +31,14 @@ export default function ModernTemplate({
   const btnColor = card.btnColor || "#4938ff";
   return (
     <div className="relative flex h-full w-full flex-col justify-between @sm:h-dvh">
-      <div className="no-scrollbar md:overflow-y-scroll">
+      <div
+        className={cn(
+          "no-scrollbar md:overflow-y-scroll",
+          card.isDarkMode
+            ? "dark bg-background text-foreground"
+            : "bg-white text-black"
+        )}
+      >
         <header className="mb-9 w-full">
           <div className="relative">
             <section
