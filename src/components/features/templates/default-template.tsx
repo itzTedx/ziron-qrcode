@@ -39,7 +39,7 @@ export default function DefaultTemplate({
   return (
     <div
       className={cn(
-        "relative flex h-full w-full flex-col justify-between @sm:h-dvh",
+        "relative flex h-full w-full flex-col justify-between",
         card.isDarkMode
           ? "dark bg-background text-foreground"
           : "bg-white text-black"
