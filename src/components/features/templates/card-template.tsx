@@ -37,7 +37,14 @@ export default function CardTemplate({
 
   return (
     <div className="relative flex h-full w-full flex-col justify-between @sm:max-h-[700px]">
-      <div className="no-scrollbar pb-6">
+      <div
+        className={cn(
+          "no-scrollbar pb-6",
+          card.isDarkMode
+            ? "dark bg-background text-foreground"
+            : "bg-white text-black"
+        )}
+      >
         <header className="w-full">
           <div className="relative w-full">
             <div className="relative h-40">

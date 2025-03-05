@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
+  boolean,
   integer,
   pgEnum,
   pgTable,
@@ -67,6 +68,7 @@ export const persons = pgTable("persons", {
   slug: text("slug").unique(),
 
   template: text("template").default("default").notNull(),
+  isDarkMode: boolean("is_dark_mode").default(false).notNull(),
   theme: text("theme_color").default("#4938ff").notNull(),
   btnColor: text("button_color").default("#4938ff").notNull(),
 

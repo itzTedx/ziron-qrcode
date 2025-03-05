@@ -18,6 +18,7 @@ export interface Person {
   theme: string | null;
   btnColor: string | null;
   template: string | null;
+  isDarkMode: boolean | null;
 }
 
 export interface Company {
