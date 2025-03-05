@@ -82,7 +82,7 @@ export async function generateViewport({
   if (!card) return;
 
   return {
-    colorScheme: "light",
+    colorScheme: card.isDarkMode ? "dark" : "light",
     themeColor: card.theme,
   };
 }
