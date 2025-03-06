@@ -6,7 +6,6 @@ import {
 } from "./lib/auth/session";
 
 const privateRoutes = ["/private"];
-const adminRoutes = ["/card/"];
 
 export async function middleware(request: NextRequest) {
   const response = (await middlewareAuth(request)) ?? NextResponse.next();
@@ -29,7 +28,8 @@ async function middlewareAuth(request: NextRequest) {
     }
   }
 
-  if (adminRoutes.includes(request.nextUrl.pathname)) {
+  // Check if the path starts with /card to protect all routes under it
+  if (request.nextUrl.pathname.startsWith("/card")) {
     const user = await getUserFromSession(request.cookies);
     if (user == null) {
       return NextResponse.redirect(new URL("/signin", request.url));
