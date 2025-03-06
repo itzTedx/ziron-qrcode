@@ -87,7 +87,7 @@ export default function CardCustomizeForm({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-expect-error
     defaultValues,
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   // Optimize form watching

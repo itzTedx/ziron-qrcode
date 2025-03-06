@@ -1,4 +1,6 @@
-import React from "react";
+import { useState } from "react";
+
+import { toast } from "sonner";
 
 export function useCopyToClipboard({
   timeout = 2000,
@@ -7,7 +9,7 @@ export function useCopyToClipboard({
   timeout?: number;
   onCopy?: () => void;
 } = {}) {
-  const [isCopied, setIsCopied] = React.useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = (value: string) => {
     if (typeof window === "undefined" || !navigator.clipboard.writeText) {
@@ -18,6 +20,7 @@ export function useCopyToClipboard({
 
     navigator.clipboard.writeText(value).then(() => {
       setIsCopied(true);
+      toast.success("Copied");
 
       if (onCopy) {
         onCopy();
@@ -25,6 +28,7 @@ export function useCopyToClipboard({
 
       setTimeout(() => {
         setIsCopied(false);
+        toast.dismiss();
       }, timeout);
     }, console.error);
   };

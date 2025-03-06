@@ -30,6 +30,7 @@ export const createCard = action
         attachmentUrl,
         bio,
         image,
+        slug,
         template,
         cover,
         theme,
@@ -67,6 +68,7 @@ export const createCard = action
                 theme,
                 isDarkMode,
                 btnColor,
+                slug,
                 image: image || placeholderImage,
                 cover: cover || placeholderCover,
               })
@@ -142,7 +144,7 @@ export const createCard = action
               btnColor,
               image: image || placeholderImage,
               cover: cover || placeholderCover,
-              slug: uniqueSlug,
+              slug: slug ?? uniqueSlug,
             })
             .returning();
 
@@ -198,3 +200,31 @@ export const createCard = action
       }
     }
   );
+
+export const checkURLAvailability = async (slug: string) => {
+  const exists = await db.query.persons.findFirst({
+    where: eq(persons.slug, slug),
+    columns: {
+      slug: true,
+    },
+  });
+
+  if (!exists) {
+    console.log("not exists");
+
+    return { message: "URL Available", success: true };
+  }
+
+  console.log("exists");
+  return { message: "URL already taken", success: false };
+};
+
+export const updateSlug = async (slug: string, id: number) => {
+  await db
+    .update(persons)
+    .set({
+      slug,
+    })
+    .where(eq(persons.id, id));
+  return { message: "URL updated successfully", success: true };
+};

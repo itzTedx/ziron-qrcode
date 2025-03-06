@@ -3,14 +3,19 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 
 import {
+  IconArrowRight,
   IconArrowsMaximize,
   IconCamera,
+  IconCheck,
+  IconLoader2,
   IconPhoto,
   IconShare,
+  IconX,
 } from "@tabler/icons-react";
+import debounce from "lodash/debounce";
 import { useAction } from "next-safe-action/hooks";
 import {
   Control,
@@ -42,7 +47,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { UploadDropzone } from "@/lib/uploadthing";
+import { cn } from "@/lib/utils";
+import { checkURLAvailability, updateSlug } from "@/server/actions/create-card";
 import { deleteCard } from "@/server/actions/delete-card";
 import { usePreviewModalStore } from "@/store/use-preview-modal";
 import { useShareModalStore } from "@/store/use-share-modal";
@@ -125,10 +133,15 @@ export default function ProfileDashboard({
 }: ProfileDashboardProps) {
   const [openPhoto, setOpenPhoto] = useState(false);
   const [openCover, setOpenCover] = useState(false);
+  const [openSlug, setOpenSlug] = useState(false);
+  const [slug, setSlug] = useState(data.slug);
+  const [isSlugValid, setIsSlugValid] = useState(true);
+  const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const router = useRouter();
   const shareLink = `${process.env.NEXT_PUBLIC_BASE_PATH}/${data.slug}`;
 
-  const { setValue, control, setError } = useFormContext<zCardSchema>();
+  const { setValue, control, setError, clearErrors } =
+    useFormContext<zCardSchema>();
 
   const openModal = useShareModalStore((state) => state.openModal);
   const openPreview = usePreviewModalStore((state) => state.onOpenChange);
@@ -158,6 +171,134 @@ export default function ProfileDashboard({
       deleteExistingCard({ id: data.id });
     }
   }, [data.id, deleteExistingCard]);
+
+  // Create debounced check function
+  const debouncedCheck = useCallback(
+    debounce(async (value: string) => {
+      const result = await checkURLAvailability(value);
+      setIsCheckingSlug(false);
+      setIsSlugValid(result?.success ?? false);
+
+      if (!result?.success) {
+        setError("slug", {
+          type: "validate",
+          message: result?.message || "Invalid url",
+        });
+      } else {
+        setValue("slug", value);
+        clearErrors("slug");
+      }
+    }, 500),
+    [setError, setValue, clearErrors]
+  );
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      debouncedCheck.cancel();
+    };
+  }, [debouncedCheck]);
+
+  const handleSlugChange = useCallback(
+    (value: string) => {
+      setSlug(value);
+      if (!value) {
+        setIsSlugValid(false);
+        setError("slug", {
+          type: "validate",
+          message: "Slug cannot be empty",
+        });
+        return;
+      }
+
+      setIsCheckingSlug(true);
+      debouncedCheck(value);
+    },
+    [setError, debouncedCheck]
+  );
+
+  const handleSlugSave = useCallback(() => {
+    if (isSlugValid && slug && data.id) {
+      setValue("slug", slug);
+      setOpenSlug(false);
+      updateSlug(slug, data.id);
+      toast.success("URL updated successfully");
+    }
+  }, [isSlugValid, slug, setValue]);
+
+  const customizeUrlModal = (
+    <ResponsiveModal
+      isOpen={openSlug}
+      closeModal={setOpenSlug}
+      title="Customize URL"
+      trigger={
+        <Button
+          className="flex h-auto items-center justify-center gap-1.5 rounded-full px-0 py-0"
+          variant="link"
+          type="button"
+        >
+          Customize URL <IconArrowRight className="size-5" />
+        </Button>
+      }
+    >
+      <FormField
+        control={control}
+        name="slug"
+        render={() => (
+          <FormItem className="px-6 pb-2">
+            <FormLabel className="sr-only">Custom URL</FormLabel>
+            <FormControl>
+              <div
+                className={cn(
+                  "shadow-xs flex rounded-md focus-within:ring-2 focus-within:ring-offset-2",
+                  isCheckingSlug
+                    ? "focus-within:ring-muted"
+                    : isSlugValid
+                      ? "focus-within:ring-green-600"
+                      : "focus-within:ring-destructive"
+                )}
+              >
+                <span className="inline-flex items-center rounded-s-md border border-input bg-background px-3 text-sm text-muted-foreground">
+                  {process.env.NEXT_PUBLIC_BASE_PATH}/
+                </span>
+                <div className="relative flex-1">
+                  <Input
+                    value={slug ?? ""}
+                    onChange={(e) => handleSlugChange(e.target.value)}
+                    className="-ms-px rounded-s-none shadow-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0"
+                    placeholder="(optional)"
+                    type="text"
+                  />
+                  {isCheckingSlug && (
+                    <div className="absolute inset-y-0 right-3 flex items-center">
+                      <IconLoader2 className="animate-spin size-4 text-muted-foreground" />
+                    </div>
+                  )}
+                  {isCheckingSlug ? null : isSlugValid ? (
+                    <div className="absolute inset-y-0 right-3 flex items-center">
+                      <IconCheck className="size-4 text-green-600" />
+                    </div>
+                  ) : (
+                    <div className="absolute inset-y-0 right-3 flex items-center">
+                      <IconX className="size-4 text-destructive" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <div className="flex justify-end gap-2 px-6 pb-6">
+        <Button variant="outline" onClick={() => setOpenSlug(false)}>
+          Cancel
+        </Button>
+        <Button onClick={handleSlugSave} disabled={!isSlugValid}>
+          Save
+        </Button>
+      </div>
+    </ResponsiveModal>
+  );
 
   return (
     <section>
@@ -268,7 +409,10 @@ export default function ProfileDashboard({
 
         <div className="col-span-10 flex items-center justify-between gap-4 md:col-span-4 md:px-3 lg:px-6">
           <div className="w-full space-y-2 max-md:hidden">
-            <h3 className="max-md:text-xs">Link</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="max-md:text-xs">Link</h3>
+              {customizeUrlModal}
+            </div>
             <div className="flex items-center gap-2">
               <CopyButton link={shareLink} />
               <Button
