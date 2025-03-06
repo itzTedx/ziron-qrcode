@@ -6,7 +6,7 @@ import {
 } from "./lib/auth/session";
 
 const privateRoutes = ["/private"];
-const adminRoutes = ["/"];
+const adminRoutes = ["/card/"];
 
 export async function middleware(request: NextRequest) {
   const response = (await middlewareAuth(request)) ?? NextResponse.next();
