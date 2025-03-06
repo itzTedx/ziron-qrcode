@@ -5,7 +5,7 @@ import {
   updateUserSessionExpiration,
 } from "./lib/auth/session";
 
-const privateRoutes = ["/private"];
+const privateRoutes = ["/test"];
 
 export async function middleware(request: NextRequest) {
   const response = (await middlewareAuth(request)) ?? NextResponse.next();
