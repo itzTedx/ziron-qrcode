@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -28,8 +30,10 @@ import { signUp } from "@/server/actions/auth";
 import { signUpSchema } from "@/types/auth-schema";
 
 export const SignUpForm = () => {
+  const router = useRouter();
   const [error, setError] = useState<string>();
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const toggleVisibility = () => setIsVisible((prevState) => !prevState);
 
@@ -42,8 +46,18 @@ export const SignUpForm = () => {
   });
 
   async function onSubmit(data: z.infer<typeof signUpSchema>) {
-    const error = await signUp(data);
-    setError(error);
+    try {
+      const result = await signUp(data);
+      if (typeof result !== "string" && result.success) {
+        toast.success("Login successful!");
+        router.push("/");
+      }
+      if (typeof result !== "string" && result.error) {
+        setError(result.error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
   return (
     <Card>
@@ -118,10 +132,12 @@ export const SignUpForm = () => {
               )}
             />
             <div className="flex justify-end gap-4">
-              <Button asChild variant="link">
+              <Button asChild variant="link" disabled={isLoading}>
                 <Link href="/signin">Sign In</Link>
               </Button>
-              <Button type="submit">Sign Up</Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Signing up..." : "Sign up"}
+              </Button>
             </div>
           </form>
         </Form>

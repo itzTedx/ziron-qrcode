@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ export function SigninForm() {
   const router = useRouter();
   const [error, setError] = useState<string>();
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const toggleVisibility = () => setIsVisible((prevState) => !prevState);
 
@@ -44,12 +45,23 @@ export function SigninForm() {
   });
 
   async function onSubmit(data: z.infer<typeof signInSchema>) {
-    const result = await signIn(data);
+    setIsLoading(true);
+    setError(undefined);
 
-    if (typeof result !== "string" && result.success) router.push("/");
-
-    if (typeof result !== "string" && result.error) setError(result.error);
+    try {
+      const result = await signIn(data);
+      if (typeof result !== "string" && result.success) {
+        toast.success("Login successful!");
+        router.push("/");
+      }
+      if (typeof result !== "string" && result.error) {
+        setError(result.error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
+
   return (
     <Card>
       <CardHeader>
@@ -83,12 +95,12 @@ export function SigninForm() {
                   <FormItem>
                     <div className="flex items-center">
                       <FormLabel htmlFor="password">Password</FormLabel>
-                      <a
+                      {/* <a
                         href="#"
                         className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                       >
                         Forgot your password?
-                      </a>
+                      </a> */}
                     </div>
                     <FormControl>
                       <div className="relative">
@@ -119,16 +131,16 @@ export function SigninForm() {
                 )}
               />
 
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Signing in..." : "Sign in"}
               </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
+            {/* <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
               <Link href="/signup" className="underline underline-offset-4">
                 Sign up
               </Link>
-            </div>
+            </div> */}
           </form>
         </Form>
       </CardContent>

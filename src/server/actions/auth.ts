@@ -148,7 +148,7 @@ export async function signUp(unsafeData: z.infer<typeof signUpSchema>) {
       return { error: AuthError.SIGNUP_FAILED };
     }
 
-    redirect("/");
+    return { success: "Login successful" };
   } catch (error) {
     console.error("Signup process error:", error);
     return { error: AuthError.SYSTEM_ERROR };
