@@ -18,7 +18,6 @@ import {
 import { FullUser } from "@/lib/auth/current-user";
 import { CompanyType } from "@/server/schema";
 
-import { ThemeToggle } from "../theme-actions";
 import { NavProjects } from "./nav-projects";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
@@ -50,7 +49,6 @@ export function AppSidebar({ data, user, ...props }: AppSidebarProps) {
         <NavProjects data={data} />
       </SidebarContent>
       <SidebarFooter>
-        <ThemeToggle />
         <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>

@@ -4,6 +4,7 @@ import { SidebarTrigger } from "../ui/sidebar";
 import { AddAction } from "./add-actions";
 import HeaderTitle from "./header-title";
 import { Search } from "./search";
+import { ThemeToggle } from "./theme-actions";
 
 export default async function Header() {
   const { companies } = await getCompanies();
@@ -17,7 +18,7 @@ export default async function Header() {
       </div>
       <div className="flex gap-2 sm:gap-3">
         <Search data={companies!} />
-        {/* <ThemeToggle /> */}
+        <ThemeToggle />
         <AddAction />
       </div>
     </header>
