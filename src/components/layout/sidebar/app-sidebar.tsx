@@ -15,24 +15,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { FullUser } from "@/lib/auth/current-user";
 import { CompanyType } from "@/server/schema";
 
 import { ThemeToggle } from "../theme-actions";
 import { NavProjects } from "./nav-projects";
 
-const user = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-};
-
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   data?: CompanyType[];
+  user: FullUser;
 }
 
-export function AppSidebar({ data, ...props }: AppSidebarProps) {
+export function AppSidebar({ data, user, ...props }: AppSidebarProps) {
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -57,7 +51,7 @@ export function AppSidebar({ data, ...props }: AppSidebarProps) {
       </SidebarContent>
       <SidebarFooter>
         <ThemeToggle />
-        <NavUser user={user.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

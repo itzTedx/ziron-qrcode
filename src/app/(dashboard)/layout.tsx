@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { plusJakarta } from "@/fonts";
+import { getCurrentUser } from "@/lib/auth/current-user";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { getCompanies } from "@/server/actions/get-company";
@@ -38,15 +39,13 @@ export default async function RootLayout({
   const cookieStore = cookies();
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
   const { companies } = await getCompanies();
+  const currentUser = await getCurrentUser({
+    redirectIfNotFound: true,
+    withFullUser: true,
+  });
 
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* <head>
-        <Script
-          crossOrigin="anonymous"
-          src="//unpkg.com/react-scan/dist/auto.global.js"
-        />
-      </head> */}
       <body className={cn("antialiased", plusJakarta.className)}>
         <NuqsAdapter>
           <ThemeProvider
@@ -65,6 +64,7 @@ export default async function RootLayout({
                   collapsible="icon"
                   variant="inset"
                   data={companies}
+                  user={currentUser}
                 />
                 <SidebarInset>
                   <Header />

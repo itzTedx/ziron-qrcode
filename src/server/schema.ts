@@ -18,7 +18,7 @@ export type UserRole = (typeof UserRoles)[number];
 export const userRoleEnum = pgEnum("user_role", UserRoles);
 
 export const UserTable = pgTable("users", {
-  id: uuid().primaryKey().notNull(),
+  id: uuid().primaryKey().defaultRandom(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
