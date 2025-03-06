@@ -14,10 +14,16 @@ interface PersonCardProps {
   person: Person & { company: Company };
   placeholderImage?: string;
   placeholderCover?: string;
+  isAdmin: boolean;
 }
 
 export const PersonCard = memo(
-  ({ person, placeholderImage, placeholderCover }: PersonCardProps) => {
+  ({
+    person,
+    placeholderImage,
+    placeholderCover,
+    isAdmin,
+  }: PersonCardProps) => {
     return (
       <Card className="relative overflow-hidden pt-10 md:pt-12">
         <CardContent className="flex flex-col items-center justify-between p-0">
@@ -48,12 +54,18 @@ export const PersonCard = memo(
             </p>
           </div>
           <div className="flex w-full gap-2 border-t p-2">
-            <Button className="w-full gap-1.5 text-sm" variant="ghost" asChild>
-              <Link href={`card/${person.id}`}>
-                <IconEdit className="size-4" />
-                <span className="hidden sm:block">Edit</span>
-              </Link>
-            </Button>
+            {isAdmin && (
+              <Button
+                className="w-full gap-1.5 text-sm"
+                variant="ghost"
+                asChild
+              >
+                <Link href={`card/${person.id}`}>
+                  <IconEdit className="size-4" />
+                  <span className="hidden sm:block">Edit</span>
+                </Link>
+              </Button>
+            )}
             <ShareButton
               data={{
                 url: person.slug!,

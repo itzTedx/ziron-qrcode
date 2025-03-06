@@ -147,7 +147,7 @@ export default function CardCustomizeForm({
 
   /** Debugging */
   const validation = cardSchema.safeParse(debouncedValue);
-  console.log("Validations: ", validation);
+  // console.log("Validations: ", validation);
 
   // Optimize submit handler
   const onSubmit = useCallback(

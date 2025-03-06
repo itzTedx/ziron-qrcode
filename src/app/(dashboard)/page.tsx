@@ -9,6 +9,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { getCurrentUser } from "@/lib/auth/current-user";
 import { getAbsoluteUrl } from "@/lib/get-absolute-url";
 import { cn } from "@/lib/utils";
 import { getCompanies } from "@/server/actions/get-company";
@@ -24,6 +25,9 @@ interface HomeProps {
 
 export default async function Home({ searchParams }: HomeProps) {
   const { companies } = await getCompanies();
+  const currentUser = await getCurrentUser();
+
+  const isAdmin = currentUser?.role == "admin";
 
   if (!companies?.length) return <NothingFound />;
 
@@ -52,14 +56,16 @@ export default async function Home({ searchParams }: HomeProps) {
                 <h2 className="font-medium capitalize">{company.name}</h2>
               </div>
             </CollapsibleTrigger>
-            <div className="flex gap-2">
-              <EditCompanyButton initialData={company} />
-              <Button size="icon" variant="outline" asChild>
-                <Link href={`/card/new?company=${company.id}`}>
-                  <IconPlus className="size-4" />
-                </Link>
-              </Button>
-            </div>
+            {isAdmin && (
+              <div className="flex gap-2">
+                <EditCompanyButton initialData={company} />
+                <Button size="icon" variant="outline" asChild>
+                  <Link href={`/card/new?company=${company.id}`}>
+                    <IconPlus className="size-4" />
+                  </Link>
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Company Content */}
@@ -80,11 +86,13 @@ export default async function Home({ searchParams }: HomeProps) {
                 <p className="pt-2 font-semibold text-muted-foreground">
                   No Cards Available
                 </p>
-                <Button className="gap-2" asChild>
-                  <Link href={`/card/new?company=${company.id}`}>
-                    <IconPlus className="size-4" /> Add Card
-                  </Link>
-                </Button>
+                {isAdmin && (
+                  <Button className="gap-2" asChild>
+                    <Link href={`/card/new?company=${company.id}`}>
+                      <IconPlus className="size-4" /> Add Card
+                    </Link>
+                  </Button>
+                )}
               </div>
             ) : (
               <>
@@ -102,6 +110,7 @@ export default async function Home({ searchParams }: HomeProps) {
                       person={{ ...person, company }}
                       placeholderImage={placeholderImage}
                       placeholderCover={placeholderCover}
+                      isAdmin={isAdmin}
                     />
                   );
                 })}

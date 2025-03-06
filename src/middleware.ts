@@ -31,6 +31,7 @@ async function middlewareAuth(request: NextRequest) {
   // Check if the path starts with /card to protect all routes under it
   if (request.nextUrl.pathname.startsWith("/card")) {
     const user = await getUserFromSession(request.cookies);
+    console.log(user);
     if (user == null) {
       return NextResponse.redirect(new URL("/signin", request.url));
     }
