@@ -46,7 +46,7 @@
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.447.0",
     "motion": "^11.18.0",
-    "next": "14.2.14",
+    "next": "14.2.35",
     "next-safe-action": "^7.9.3",
     "next-themes": "^0.3.0",
     "nuqs": "^2.3.1",
